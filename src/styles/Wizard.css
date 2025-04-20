@@ -1,0 +1,115 @@
+/* src/Wizard.css */
+
+/* Container for the wizard */
+.wizard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Progress bar container */
+  .step-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+  
+  /* Individual step indicator */
+  .step {
+    position: relative;
+    text-align: center;
+    flex: 1;
+  }
+  
+  /* Step circle */
+  .step .circle {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    line-height: 30px;
+    color: #ffffff;
+    font-weight: bold;
+    z-index: 1;
+    position: relative;
+  }
+  
+  /* Active step */
+  .step.active .circle {
+    background-color: #007bff;
+  }
+  
+  /* Completed step */
+  .step.completed .circle {
+    background-color: #28a745;
+  }
+  
+  /* Step label */
+  .step-label {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #333333;
+  }
+  
+  /* Connector line between steps */
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background-color: #e0e0e0;
+    z-index: 0;
+  }
+  
+  /* Remove connector from the first step */
+  .step:first-child::before {
+    content: none;
+  }
+  
+  /* Active connector */
+  .step.active::before {
+    background-color: #007bff;
+  }
+  
+  /* Completed connector */
+  .step.completed::before {
+    background-color: #28a745;
+  }
+  
+  /* Navigation buttons */
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+  
+  .navigation-buttons button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .navigation-buttons .back-button {
+    background-color: #6c757d;
+    color: #ffffff;
+  }
+  
+  .navigation-buttons .next-button {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  .navigation-buttons .submit-button {
+    background-color: #28a745;
+    color: #ffffff;
+  }
+  
