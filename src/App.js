@@ -1,9 +1,9 @@
-import React from 'react';
+// App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Welcome from './components/shared/Welcome';
 import Dashboard from './components/dashboard/Dashboard';
 import ProjectView from './components/dashboard/ProjectView';
 import WizardRunner from './components/wizards/WizardRunner';
-import Welcome from './components/shared/Welcome';
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Welcome />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects/:id" element={<ProjectView />} />
-        <Route path="/onboarding/:type" element={<WizardRunner />} />
+        <Route path="/onboarding/:type/*" element={<WizardRunner />} />
       </Routes>
     </Router>
   );
