@@ -5,7 +5,7 @@ export default function Step1({ next, update }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>What’s the name of your business?</h2>
       <input placeholder="Business Name" />
       <h3>In one sentence, what do you do?</h3>

@@ -5,7 +5,7 @@ export default function Step2({ next, back, update }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Who are you trying to reach?</h2>
       <input placeholder="Target audience" />
       <h3>What does success look like for this project?</h3>

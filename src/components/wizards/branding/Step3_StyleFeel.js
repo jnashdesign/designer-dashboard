@@ -12,7 +12,7 @@ export default function Step3({ next, back, update }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Let’s find your brand’s personality.</h2>
 
       <div>

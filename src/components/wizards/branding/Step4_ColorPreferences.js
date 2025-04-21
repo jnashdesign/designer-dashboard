@@ -33,7 +33,7 @@ export default function Step4({ next, back, update }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Pick a starting color for your brand.</h2>
       <input type="color" value={baseColor} onChange={(e) => setBaseColor(e.target.value)} />
       <button onClick={generatePalette}>Generate Palette</button>

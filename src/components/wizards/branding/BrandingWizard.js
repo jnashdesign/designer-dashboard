@@ -29,9 +29,21 @@ export default function BrandingWizard() {
     '/onboarding/branding/summary': 6
   }[location.pathname] || 0;
 
+  const handleExit = () => {
+    if (window.confirm("Are you sure you want to exit the wizard?")) {
+      navigate('/dashboard');
+    }
+  };
+
   return (
     <>
+    <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <StepProgress currentStep={stepIndex} />
+      <button onClick={() => handleExit()} style={{ marginTop: '1rem' }}>
+        Exit Wizard
+      </button>
+    </div>
+
       <Routes>
         <Route index element={<Navigate to="step1" />} />
         <Route path="step1" element={<Step1 next={() => navigate('step2')} update={updateFormData} data={formData} />} />

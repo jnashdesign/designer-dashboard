@@ -5,7 +5,7 @@ export default function Step6({ back, update }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>You're all set!</h2>
       <p>Thanks for sharing all this info—it really helps us tailor the design to your vision.</p>
       <p>If there’s anything else you’d like us to know, you can add it below:</p>

@@ -20,7 +20,7 @@ export default function Step5({ next, back, update }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Share your inspiration</h2>
       <p>Seen any logos you like? Drop a link or upload an image.</p>
       {inspirationLinks.map((link, index) => (
