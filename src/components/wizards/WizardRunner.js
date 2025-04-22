@@ -9,4 +9,5 @@ export default function WizardRunner() {
   }
 
   return <Navigate to="/dashboard" />;
+
 }

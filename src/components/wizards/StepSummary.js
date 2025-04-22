@@ -7,20 +7,27 @@ export default function StepSummary({ formData }) {
   const { projectId } = useParams();
 
   const handleSubmit = async () => {
+    if (!projectId) {
+      alert("No project ID found.");
+      return;
+    }
+
     try {
       await saveWizardAnswers(projectId, formData);
-      alert("Submission saved!");
+      alert("Thanks! We'll review your answers and follow up soon.");
       navigate('/dashboard');
-    } catch (error) {
-      console.error("Failed to submit:", error);
-      alert("Submission failed.");
+    } catch (err) {
+      console.error("Error saving submission:", err);
+      alert("Something went wrong saving your answers.");
     }
   };
 
   return (
     <div className="container">
-      <h2>Review & Submit</h2>
-      <pre>{JSON.stringify(formData, null, 2)}</pre>
+      <h2>Review Your Answers</h2>
+      <pre style={{ background: '#f9f9f9', padding: '1rem' }}>
+        {JSON.stringify(formData, null, 2)}
+      </pre>
       <button onClick={handleSubmit}>Submit</button>
     </div>
   );

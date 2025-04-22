@@ -41,16 +41,12 @@ function App() {
           }
         />
 
-        <Route
-          path="/onboarding/:type/*"
-          element={
-            <RequireAuth>
-              <Layout>
-                <WizardRunner />
-              </Layout>
-            </RequireAuth>
-          }
-        />
+        <Route path="/onboarding/branding/:projectId/*" element={
+          <RequireAuth role="designer">
+          <WizardRunner />
+          </RequireAuth>
+        } />
+
       </Routes>
     </Router>
   );
