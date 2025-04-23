@@ -100,7 +100,7 @@ export default function Dashboard() {
                 width: "300px",
                 background: "#fafafa",
               }}>
-              <strong>{project.type}</strong> – <em>{project.status}</em>
+              <strong>{project.type}</strong> - <em>{project.status}</em>
               <p style={{ margin: "0.5rem 0" }}>
                 <small>Client: {getClientNameByRef(project.clientId)}</small>
               </p>
@@ -118,28 +118,12 @@ export default function Dashboard() {
               ) : (
                 <p style={{ color: "gray" }}>No submission yet</p>
               )}
-              {project.type === "branding" && (
+              {wizardLabels[wizardType] && (
                 <button
                   onClick={() =>
-                    navigate(`/onboarding/branding/${project.id}/step1`)
+                    navigate(`/onboarding/${wizardType}/${project.id}/step1`)
                   }>
-                  Start Creative Brief
-                </button>
-              )}
-              {project.type === "website" && (
-                <button
-                  onClick={() =>
-                    navigate(`/onboarding/website/${project.id}/step1`)
-                  }>
-                  Start Creative Brief
-                </button>
-              )}
-              {project.type === "app" && (
-                <button
-                  onClick={() =>
-                    navigate(`/onboarding/app/${project.id}/step1`)
-                  }>
-                  Start Creative Brief
+                  {wizardLabels[wizardType]}
                 </button>
               )}
             </div>
