@@ -6,7 +6,7 @@ export default function ProjectView() {
   return (
     <div className="container">
       <h2>Project View - {id}</h2>
-      <p>Project details, client submissions, and design comps will go here.</p>
+      <p>Project details, client briefs, and design comps will go here.</p>
     </div>
   );
 }

@@ -41,11 +41,14 @@ function App() {
           }
         />
 
-        <Route path="/onboarding/branding/:projectId/*" element={
-          <RequireAuth role="designer">
-          <WizardRunner />
-          </RequireAuth>
-        } />
+        <Route
+          path="/onboarding/:type/:projectId/*"
+          element={
+            <RequireAuth role="designer">
+              <WizardRunner />
+            </RequireAuth>
+          }
+        />
 
       </Routes>
     </Router>

@@ -1,0 +1,100 @@
+{
+  "branding": [
+    {
+      "title": "Basic Business Info",
+      "questions": [
+        { "type": "text", "name": "projectName", "label": "Project name." },
+        { "type": "text", "name": "companyName", "label": "Company name" },
+        { "type": "textarea", "name": "product", "label": "Describe your product or service." },
+        { "type": "text", "name": "tagline", "label": "In one sentence, what do you do?" }
+      ]
+    },
+    {
+      "title": "Target Audience",
+      "questions": [
+        { "type": "textarea", "name": "audience", "label": "Who is your target customer?" },
+        { "type": "textarea", "name": "ageRange", "label": "What is your target age range?" },
+        { "type": "textarea", "name": "goals", "label": "What does success look like?" }
+      ]
+    },
+    {
+      "title": "Inspiration Examples",
+      "questions": [
+        {
+          "type": "textList",
+          "name": "referenceLinks",
+          "label": "Share up to 3 links that show what you like."
+        },
+        {
+          "type": "imageUpload",
+          "name": "referenceImages",
+          "label": "Upload up to 3 image examples of the style you're looking for."
+        }
+      ]
+    }
+  ],
+    "website": [
+      {
+        "title": "Website Goals",
+        "questions": [
+          { "type": "text", "name": "projectName", "label": "Project name." },
+          { "type": "text", "name": "companyName", "label": "Company name" },  
+          { "type": "text", "name": "goal", "label": "What is the primary goal of your website?" },
+          { "type": "textarea", "name": "features", "label": "What features should your website include?" }
+        ]
+      },
+      {
+        "title": "Content & Design",
+        "questions": [
+          { "type": "text", "name": "inspirationSites", "label": "List any websites you like the look of." },
+          { "type": "textarea", "name": "contentPlan", "label": "Do you have content ready or will we help you with that?" }
+        ]
+      },
+      {
+        "title": "Inspiration Examples",
+        "questions": [
+          {
+            "type": "textList",
+            "name": "referenceLinks",
+            "label": "Share up to 3 links that show what you like."
+          },
+          {
+            "type": "imageUpload",
+            "name": "referenceImages",
+            "label": "Upload up to 3 image examples of the style you're looking for."
+          }
+        ]
+      }
+    ],
+    "app": [
+      {
+        "title": "App Overview",
+        "questions": [
+          { "type": "text", "name": "appName", "label": "What will your app be called?" },
+          { "type": "text", "name": "platforms", "label": "Which platforms should it support (iOS, Android, etc.)?" }
+        ]
+      },
+      {
+        "title": "Functionality",
+        "questions": [
+          { "type": "textarea", "name": "coreFeatures", "label": "What core features will your app include?" },
+          { "type": "textarea", "name": "userFlow", "label": "Describe the typical user experience flow." }
+        ]
+      },
+      {
+        "title": "Inspiration Examples",
+        "questions": [
+          {
+            "type": "textList",
+            "name": "referenceLinks",
+            "label": "Share up to 3 links that show what you like."
+          },
+          {
+            "type": "imageUpload",
+            "name": "referenceImages",
+            "label": "Upload up to 3 image examples of the style you're looking for."
+          }
+        ]
+      }
+    ]
+  }

@@ -1,13 +1,6 @@
-import { useParams, Navigate } from 'react-router-dom';
-import BrandingWizard from './branding/BrandingWizard';
+import React from 'react';
+import DynamicWizard from './DynamicWizard';
 
 export default function WizardRunner() {
-  const { type } = useParams();
-
-  if (type === 'branding') {
-    return <BrandingWizard />;
-  }
-
-  return <Navigate to="/dashboard" />;
-
+  return <DynamicWizard />;
 }

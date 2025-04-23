@@ -16,14 +16,14 @@ export default function SubmissionViewer({ answers, projectId }) {
   const handleSave = async () => {
     try {
       const q = query(
-        collection(db, 'submissions'),
+        collection(db, 'creativeBriefs'),
         where('projectId', '==', doc(db, 'projects', projectId))
       );
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const docId = snapshot.docs[0].id;
-        await updateDoc(doc(db, 'submissions', docId), {
-          wizardAnswers: formData,
+        await updateDoc(doc(db, 'creativeBriefs', docId), {
+          answers: formData,
         });
         alert('Updated successfully!');
         setEditing(false);
