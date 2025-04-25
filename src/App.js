@@ -10,6 +10,7 @@ import RequireAuth from "./components/auth/RequireAuth";
 
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
+import EditQuestions from './pages/EditQuestions';
 
 function App() {
   return (
@@ -49,7 +50,13 @@ function App() {
             </RequireAuth>
           }
         />
-
+        <Route path="/edit-questions" element={
+          <RequireAuth role="designer">
+            <Layout>
+              <EditQuestions />
+            </Layout>
+          </RequireAuth>
+        } />
       </Routes>
     </Router>
   );
