@@ -4,13 +4,18 @@ import { doc, updateDoc } from 'firebase/firestore';
 import './SubmissionModal.css';
 
 export default function SubmissionModal({ isOpen, onClose, brief }) {
-  const [editing, setEditing] = useState(false);
   const [editedAnswers, setEditedAnswers] = useState({});
+  const [originalAnswers, setOriginalAnswers] = useState({});
+  const [editing, setEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showConfirmClose, setShowConfirmClose] = useState(false);
 
   useEffect(() => {
     if (brief?.answers) {
       setEditedAnswers(brief.answers);
+      setOriginalAnswers(brief.answers);
+      setEditing(false);
+      setShowConfirmClose(false);
     }
   }, [brief]);
 
@@ -38,11 +43,27 @@ export default function SubmissionModal({ isOpen, onClose, brief }) {
     }));
   };
 
+  const handleRequestClose = () => {
+    if (JSON.stringify(editedAnswers) !== JSON.stringify(originalAnswers)) {
+      setShowConfirmClose(true);
+    } else {
+      onClose();
+    }
+  };
+
+  const confirmSaveAndExit = async () => {
+    await handleSave();
+  };
+
+  const confirmDiscardAndExit = () => {
+    onClose();
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal">
         <h2>{brief.type} Brief – {brief.createdAt?.seconds ? new Date(brief.createdAt.seconds * 1000).toLocaleDateString() : ''}</h2>
-        <div style={{ maxHeight: '400px', overflowY: 'scroll', backgroundColor: '#f9f9f9', padding: '1em' }}>
+        <div style={{ maxHeight: '400px', overflowY: 'auto', backgroundColor: '#f9f9f9', padding: '1em' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
@@ -100,9 +121,24 @@ export default function SubmissionModal({ isOpen, onClose, brief }) {
           ) : (
             <button onClick={() => setEditing(true)}>Edit</button>
           )}
-          <button onClick={onClose} style={{ marginLeft: '1rem' }}>Close</button>
+          <button onClick={handleRequestClose} style={{ marginLeft: '1rem' }}>Close</button>
         </div>
       </div>
+
+      {showConfirmClose && (
+        <div className="confirm-modal-overlay">
+          <div className="confirm-modal">
+            <h3>Unsaved Changes</h3>
+            <p>You have unsaved changes. What would you like to do?</p>
+            <div style={{ marginTop: '1rem', display: 'flex', gap: '10px' }}>
+              <button onClick={confirmSaveAndExit}>Save & Exit</button>
+              <button onClick={confirmDiscardAndExit}>Discard Changes</button>
+              <button onClick={() => setShowConfirmClose(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showToast && (
         <div className="toast">✅ Changes saved successfully!</div>
       )}
