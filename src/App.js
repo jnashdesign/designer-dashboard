@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import EditQuestions from './pages/EditQuestions';
 import TemplateChooser from './pages/TemplateChooser';
 import StartProjectLoader from './pages/StartProjectLoader';
+import ViewBrief from './pages/ViewBrief';
 
 function App() {
   return (
@@ -48,7 +49,9 @@ function App() {
           path="/onboarding/:type/:projectId/*"
           element={
             <RequireAuth role="designer">
+            <Layout>
               <WizardRunner />
+              </Layout>
             </RequireAuth>
           }
         />
@@ -75,6 +78,15 @@ function App() {
             </Layout>
           </RequireAuth>
         } />
+
+        <Route path="/view-brief/:briefId" element={
+          <RequireAuth role="designer">
+            <Layout>
+              <ViewBrief /> 
+            </Layout>
+          </RequireAuth>
+        } />
+        
       </Routes>      
     </Router>
   );
