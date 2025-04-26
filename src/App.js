@@ -11,6 +11,7 @@ import RequireAuth from "./components/auth/RequireAuth";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import EditQuestions from './pages/EditQuestions';
+import TemplateChooser from './pages/TemplateChooser';
 
 function App() {
   return (
@@ -57,7 +58,10 @@ function App() {
             </Layout>
           </RequireAuth>
         } />
+
       </Routes>
+
+      
     </Router>
   );
 }

@@ -7,39 +7,33 @@ export default function GroupItem({ group, index, setGroups }) {
 
   const addQuestion = () => {
     const newQuestion = { id: Date.now().toString(), text: '' };
-    setGroups(prev => 
-      prev.map(g => 
-        g.id === group.id
-          ? { ...g, questions: [...g.questions, newQuestion] }
-          : g
-      )
-    );
+    setGroups(prev => {
+      const updated = [...prev];
+      const targetGroup = updated.find(g => g.id === group.id);
+      targetGroup.questions.push(newQuestion);
+      return updated;
+    });
   };
 
   const handleGroupNameChange = (e) => {
     const newName = e.target.value;
     setGroupName(newName);
-    setGroups(prev => 
-      prev.map(g => 
-        g.id === group.id
-          ? { ...g, groupName: newName }
-          : g
-      )
-    );
+    setGroups(prev => {
+      const updated = [...prev];
+      const targetGroup = updated.find(g => g.id === group.id);
+      targetGroup.groupName = newName;
+      return updated;
+    });
   };
 
   const handleQuestionChange = (questionId, newText) => {
-    setGroups(prev => 
-      prev.map(g => {
-        if (g.id === group.id) {
-          const updatedQuestions = g.questions.map(q =>
-            q.id === questionId ? { ...q, text: newText } : q
-          );
-          return { ...g, questions: updatedQuestions };
-        }
-        return g;
-      })
-    );
+    setGroups(prev => {
+      const updated = [...prev];
+      const targetGroup = updated.find(g => g.id === group.id);
+      const targetQuestion = targetGroup.questions.find(q => q.id === questionId);
+      targetQuestion.text = newText;
+      return updated;
+    });
   };
 
   return (
