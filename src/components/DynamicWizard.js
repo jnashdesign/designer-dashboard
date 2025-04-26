@@ -10,6 +10,7 @@ export default function DynamicWizard({ initialQuestions }) {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const projectId = searchParams.get('projectId');
+  const navigate = useNavigate();
 
   const groups = groupQuestions(initialQuestions);
 
@@ -50,8 +51,19 @@ export default function DynamicWizard({ initialQuestions }) {
       if (!projectId) {
         throw new Error("Project ID missing.");
       }
+
+      // Validate all questions are answered
+      const allQuestionIds = groups.flatMap(g => g.questions.map(q => q.id));
+      const unanswered = allQuestionIds.filter(id => !answers[id]?.trim());
+
+      if (unanswered.length > 0) {
+        alert('Please complete all questions before submitting.');
+        return;
+      }
+
       await saveCreativeBrief(projectId, type, answers);
       alert('Brief submitted successfully!');
+      navigate('/dashboard');
     } catch (err) {
       console.error("Error submitting brief:", err);
       alert('Error submitting. Please try again.');
