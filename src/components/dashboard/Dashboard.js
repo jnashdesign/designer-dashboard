@@ -165,6 +165,12 @@ export default function Dashboard() {
               <p style={{ margin: '0.5rem 0' }}>
                 <small>Client: {getClientNameByRef(project.clientId)}</small>
               </p>
+              <button
+                style={{ marginTop: '0.5rem' }}
+                onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}`)}
+              >
+                + Create New Questionnaire
+              </button>
               {project.type === 'branding' && (
                 <button style={{ marginTop: '0.5rem' }} onClick={() => navigate(`/onboarding/branding/${project.id}/step1`)}>
                   Start Branding Wizard

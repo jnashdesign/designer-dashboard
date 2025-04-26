@@ -12,6 +12,7 @@ import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import EditQuestions from './pages/EditQuestions';
 import TemplateChooser from './pages/TemplateChooser';
+import StartProjectLoader from './pages/StartProjectLoader';
 
 function App() {
   return (
@@ -59,9 +60,22 @@ function App() {
           </RequireAuth>
         } />
 
-      </Routes>
+        <Route path="/choose-template/:type" element={
+          <RequireAuth role="designer">
+            <Layout>
+              <TemplateChooser /> 
+            </Layout>
+          </RequireAuth>
+        } />
 
-      
+        <Route path="/start-project/:type/:templateId" element={
+          <RequireAuth role="designer">
+            <Layout>
+              <StartProjectLoader /> 
+            </Layout>
+          </RequireAuth>
+        } />
+      </Routes>      
     </Router>
   );
 }
