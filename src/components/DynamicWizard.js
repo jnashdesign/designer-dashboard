@@ -25,10 +25,13 @@ export default function DynamicWizard({ initialQuestions }) {
 
   const currentGroup = groups[currentGroupIndex];
 
-  const handleInputChange = (questionId, value) => {
+  const handleInputChange = (questionId, value, questionText) => {
     setAnswers(prev => ({
       ...prev,
-      [questionId]: value
+      [questionId]: {
+        questionText: questionText,
+        answerText: value
+      }
     }));
   };
 
@@ -54,7 +57,7 @@ export default function DynamicWizard({ initialQuestions }) {
 
       // Validate all questions are answered
       const allQuestionIds = groups.flatMap(g => g.questions.map(q => q.id));
-      const unanswered = allQuestionIds.filter(id => !answers[id]?.trim());
+      const unanswered = allQuestionIds.filter(id => !answers[id]?.answerText?.trim());
 
       if (unanswered.length > 0) {
         alert('Please complete all questions before submitting.');
@@ -81,8 +84,8 @@ export default function DynamicWizard({ initialQuestions }) {
           </label>
           <input
             type="text"
-            value={answers[q.id] || ''}
-            onChange={(e) => handleInputChange(q.id, e.target.value)}
+            value={answers[q.id]?.answerText || ''}
+            onChange={(e) => handleInputChange(q.id, e.target.value, q.text)}
             style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ccc' }}
           />
         </div>

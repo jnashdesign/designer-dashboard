@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function ViewBrief() {
   const { briefId } = useParams();
@@ -33,7 +33,7 @@ export default function ViewBrief() {
     fetchBrief();
   }, [briefId]);
 
-  if (loading) return <p>Loading brief...</p>;
+  if (loading) return <LoadingSpinner message="Fetching brief details..." />;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   const { type, createdAt, answers } = brief;
@@ -41,12 +41,10 @@ export default function ViewBrief() {
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
       <button onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>← Back</button>
-
-      <h2>{type.charAt(0).toUpperCase() + type.slice(1)} Brief</h2>
+      <h2>{type?.charAt(0).toUpperCase() + type?.slice(1)} Brief</h2>
       <p style={{ fontStyle: 'italic', marginBottom: '2rem' }}>
         Created: {createdAt?.toDate?.().toLocaleDateString()}
       </p>
-
       {answers ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {Object.entries(answers).map(([qid, answer]) => (
