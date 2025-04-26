@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { saveCreativeBrief } from '../firebase/saveCreativeBrief';
 
 export default function DynamicWizard({ initialQuestions }) {
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+
+  const { type } = useParams();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const projectId = searchParams.get('projectId');
 
   const groups = groupQuestions(initialQuestions);
 
@@ -38,9 +45,17 @@ export default function DynamicWizard({ initialQuestions }) {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Final Answers:", answers);
-    alert('Thank you! Your answers have been submitted.');
+  const handleSubmit = async () => {
+    try {
+      if (!projectId) {
+        throw new Error("Project ID missing.");
+      }
+      await saveCreativeBrief(projectId, type, answers);
+      alert('Brief submitted successfully!');
+    } catch (err) {
+      console.error("Error submitting brief:", err);
+      alert('Error submitting. Please try again.');
+    }
   };
 
   return (
