@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { saveWizardAnswers } from '../../firebase/saveWizardAnswers';
-import { storage } from '../../firebase/config';
+import { storage, db, auth } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, getDoc } from 'firebase/firestore';
+import { defaultQuestions } from '../../data/defaultQuestions';
 
 export default function DynamicWizard() {
   const { type, projectId } = useParams();
+  const [searchParams] = useSearchParams();
+  const templateId = searchParams.get('templateId');
   const navigate = useNavigate();
 
   const [sections, setSections] = useState([]);
@@ -13,18 +17,63 @@ export default function DynamicWizard() {
   const [formData, setFormData] = useState({});
   const [imagePreviews, setImagePreviews] = useState({});
   const [uploadErrors, setUploadErrors] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/wizardQuestions.json')
-      .then(res => res.json())
-      .then(data => {
-        if (data[type]) {
-          setSections(data[type]);
-        } else {
-          console.warn("No sections found for this type");
+    const loadQuestions = async () => {
+      try {
+        let questions;
+        
+        if (templateId === 'default') {
+          // Use default questions
+          questions = defaultQuestions;
+        } else if (templateId) {
+          // Load questions from the selected template
+          const user = auth.currentUser;
+          if (!user) throw new Error("No authenticated user found.");
+          
+          const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+          const templateSnap = await getDoc(templateRef);
+          
+          if (templateSnap.exists()) {
+            const templateData = templateSnap.data();
+            // Flatten groups into a single array of questions
+            questions = templateData.groups.flatMap(group => group.questions);
+          } else {
+            console.error("Template not found");
+            questions = defaultQuestions; // Fallback to default
+          }
         }
-      });
-  }, [type]);
+
+        // Transform questions into wizard format
+        const wizardSection = {
+          title: `${type.charAt(0).toUpperCase() + type.slice(1)} Questionnaire`,
+          questions: questions.map(q => ({
+            name: q.id,
+            label: q.text,
+            type: 'text'  // You might want to add support for different question types
+          }))
+        };
+
+        // Load the rest of the wizard sections from JSON
+        const response = await fetch('/wizardQuestions.json');
+        const data = await response.json();
+        const remainingSections = data[type]?.slice(1) || []; // Skip the first section
+
+        setSections([wizardSection, ...remainingSections]);
+      } catch (error) {
+        console.error("Error loading questions:", error);
+        // Fallback to JSON questions
+        const response = await fetch('/wizardQuestions.json');
+        const data = await response.json();
+        setSections(data[type] || []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [type, templateId]);
 
   const handleImageUpload = async (e, name, index) => {
     const file = e.target.files[0];
@@ -78,21 +127,106 @@ export default function DynamicWizard() {
     });
   };
 
+  const handleCancel = () => {
+    const confirmCancel = window.confirm('Are you sure you want to cancel? Your progress will be lost.');
+    if (confirmCancel) {
+      navigate('/dashboard');
+    }
+  };
+
   if (!sections.length) return <p>Loading questions...</p>;
   if (sectionIndex >= sections.length) {
     return (
-      <div>
-        <h2>Review Your Answers</h2>
-        <pre>{JSON.stringify(formData, null, 2)}</pre>
-        <button onClick={async () => {
-          try {
-            await saveWizardAnswers(projectId, formData, type);
-            alert('Submission saved!');
-            navigate('/dashboard');
-          } catch (err) {
-            alert('Failed to save submission.');
-          }
-        }}>Submit</button>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
+        <h2 style={{ marginBottom: '0.5rem' }}>
+          {type.charAt(0).toUpperCase() + type.slice(1)} Brief Review
+        </h2>
+        <p style={{ fontStyle: 'italic', marginBottom: '1.5rem' }}>
+          Please review your answers before submitting
+        </p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {Object.entries(formData).map(([questionId, answer]) => {
+            // Find the question text from sections
+            const question = sections.flatMap(s => s.questions).find(q => q.name === questionId);
+            
+            if (Array.isArray(answer)) {
+              // Handle array type answers (like image URLs or text lists)
+              return (
+                <div key={questionId} style={{ borderBottom: '1px solid #eee', paddingBottom: '0.75rem' }}>
+                  <p style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                    Q: {question?.label || "Unknown Question"}
+                  </p>
+                  <div style={{ marginLeft: '1rem' }}>
+                    {answer.map((item, index) => (
+                      <div key={index} style={{ marginBottom: '0.5rem' }}>
+                        {question?.type === 'imageUpload' && item ? (
+                          <img src={item} alt={`Upload ${index + 1}`} style={{ maxWidth: '200px', marginTop: '0.5rem' }} />
+                        ) : (
+                          <p style={{ color: item ? '#333' : '#888', fontStyle: item ? 'normal' : 'italic' }}>
+                            {item || '(No answer provided)'}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={questionId} style={{ borderBottom: '1px solid #eee', paddingBottom: '0.75rem' }}>
+                <p style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                  Q: {question?.label || "Unknown Question"}
+                </p>
+                <p style={{ 
+                  marginLeft: '1rem', 
+                  color: answer ? '#333' : '#888', 
+                  fontStyle: answer ? 'normal' : 'italic' 
+                }}>
+                  {answer || '(No answer provided)'}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+          <button 
+            onClick={handleCancel}
+            style={{
+              padding: '0.75rem 2rem',
+              background: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={async () => {
+              try {
+                await saveWizardAnswers(projectId, formData, type);
+                alert('Submission saved!');
+                navigate('/dashboard');
+              } catch (err) {
+                alert('Failed to save submission.');
+              }
+            }}
+            style={{
+              padding: '0.75rem 2rem',
+              background: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Submit
+          </button>
+        </div>
       </div>
     );
   }
@@ -158,7 +292,20 @@ export default function DynamicWizard() {
           )}
         </div>
       ))}
-      <div>
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <button 
+          onClick={handleCancel}
+          style={{
+            padding: '0.75rem 2rem',
+            background: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          Cancel
+        </button>
         {sectionIndex > 0 && (
           <button onClick={() => setSectionIndex(sectionIndex - 1)}>Back</button>
         )}

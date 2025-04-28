@@ -11,6 +11,7 @@ export default function TemplateChooser() {
   const { type } = useParams();
   const searchParams = new URLSearchParams(window.location.search);
   const projectId = searchParams.get('projectId');
+  const isWizard = searchParams.get('wizard') === 'true';
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -33,14 +34,22 @@ export default function TemplateChooser() {
 
   const handleContinue = () => {
     if (selectedTemplateId) {
-      navigate(`/start-project/${type}/${selectedTemplateId}?projectId=${projectId}`);
+      if (isWizard) {
+        navigate(`/onboarding/${type}/${projectId}/step1?templateId=${selectedTemplateId}`);
+      } else {
+        navigate(`/template/${selectedTemplateId}/edit?projectId=${projectId}`);
+      }
     } else {
       alert("Please select a template to continue.");
     }
   };
 
   const handleStartWithDefault = () => {
-    navigate(`/start-project/${type}/default?projectId=${projectId}`);
+    if (isWizard) {
+      navigate(`/onboarding/${type}/${projectId}/step1?templateId=default`);
+    } else {
+      navigate(`/template/default/edit?projectId=${projectId}`);
+    }
   };
 
   if (loading) return <p>Loading templates...</p>;

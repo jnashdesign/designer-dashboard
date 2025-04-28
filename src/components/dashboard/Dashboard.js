@@ -104,9 +104,8 @@ export default function Dashboard() {
     }
   };
 
-  const getClientNameByRef = (clientRef) => {
-    const id = clientRef?.id;
-    const client = clients.find(c => c.id === id);
+  const getClientNameByRef = (clientId) => {
+    const client = clients.find(c => c.id === clientId);
     return client ? client.name : 'Unknown Client';
   };
 
@@ -130,8 +129,6 @@ export default function Dashboard() {
   return (
     <div className="container" style={{ padding: '2rem' }}>
       <h2>Designer Dashboard</h2>
-
-      <RunMigrationButton />
 
       {notification.message && (
         <div style={{
@@ -191,9 +188,21 @@ export default function Dashboard() {
       {projects.length === 0 ? (
         <p>No projects yet.</p>
       ) : (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',  // Changed from 'wrap' to 'column'
+          gap: '2rem' 
+        }}>
           {projects.map((project) => (
-            <div key={project.id} style={{ border: '1px solid #ccc', padding: '1.5rem', borderRadius: '8px', width: '320px', background: '#fafafa' }}>
+            <div 
+              key={project.id} 
+              style={{ 
+                border: '1px solid #ccc', 
+                padding: '1.5rem', 
+                borderRadius: '8px',
+                background: '#fafafa' 
+              }}
+            >
               <strong>{project.type}</strong> – <em>{project.status}</em>
               <p style={{ margin: '0.5rem 0' }}>
                 <small>Client: {getClientNameByRef(project.clientId)}</small>
@@ -205,17 +214,26 @@ export default function Dashboard() {
                 ➕ Create New Questionnaire
               </button>
               {project.type === 'branding' && (
-                <button style={{ marginBottom: '0.5rem' }} onClick={() => navigate(`/onboarding/branding/${project.id}/step1`)}>
+                <button 
+                  style={{ marginBottom: '0.5rem' }} 
+                  onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                >
                   Start Branding Wizard
                 </button>
               )}
               {project.type === 'website' && (
-                <button style={{ marginBottom: '0.5rem' }} onClick={() => navigate(`/onboarding/website/${project.id}/step1`)}>
+                <button 
+                  style={{ marginBottom: '0.5rem' }} 
+                  onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                >
                   Start Website Wizard
                 </button>
               )}
               {project.type === 'app' && (
-                <button style={{ marginBottom: '0.5rem' }} onClick={() => navigate(`/onboarding/app/${project.id}/step1`)}>
+                <button 
+                  style={{ marginBottom: '0.5rem' }} 
+                  onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                >
                   Start App Wizard
                 </button>
               )}

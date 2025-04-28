@@ -14,6 +14,8 @@ import EditQuestions from './pages/EditQuestions';
 import TemplateChooser from './pages/TemplateChooser';
 import StartProjectLoader from './pages/StartProjectLoader';
 import ViewBrief from './pages/ViewBrief';
+import QuestionnaireBuilder from './pages/QuestionnaireBuilder';
+import QuestionnaireEditor from './pages/QuestionnaireEditor';
 
 function App() {
   return (
@@ -83,6 +85,22 @@ function App() {
           <RequireAuth role="designer">
             <Layout>
               <ViewBrief /> 
+            </Layout>
+          </RequireAuth>
+        } />
+
+        <Route path="/dashboard/create-draft" element={
+          <RequireAuth role="designer">
+            <Layout>
+              <QuestionnaireBuilder /> 
+            </Layout>
+          </RequireAuth>
+        } />
+
+        <Route path="/template/:templateId/edit" element={
+          <RequireAuth role="designer">
+            <Layout>
+              <QuestionnaireEditor />
             </Layout>
           </RequireAuth>
         } />
