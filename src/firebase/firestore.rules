@@ -1,0 +1,33 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /clients/{clientId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.designerId;
+      allow list: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == request.resource.data.designerId;
+    }
+
+    match /projects/{projectId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.designerId;
+      allow list: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == request.resource.data.designerId;
+    }
+
+    match /creativeBriefs/{briefId} {
+      allow get: if true;
+      allow list: if false;
+      allow create, update, delete: if request.auth != null && isProjectOwner(request.resource.data.projectId);
+    }
+
+    function isProjectOwner(projectId) {
+      return get(/databases/$(database)/documents/projects/$(projectId)).data.designerId == request.auth.uid;
+    }
+
+  }
+}

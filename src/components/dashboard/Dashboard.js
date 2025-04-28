@@ -7,6 +7,8 @@ import { addClient } from '../../firebase/addClient';
 import SubmissionModal from './SubmissionModal';
 import LoadingSpinner from '../LoadingSpinner';
 
+import RunMigrationButton from '../RunMigrationButton';
+
 export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [briefs, setBriefs] = useState({});
@@ -30,30 +32,34 @@ export default function Dashboard() {
   const fetchData = useCallback(async () => {
     const user = auth.currentUser;
     if (!user) return;
-
-    const designerRef = doc(db, 'users', user.uid);
-
-    const projectQuery = query(collection(db, 'projects'), where('designerId', '==', designerRef));
+  
+    const uid = user.uid; // Use UID directly, not a document reference!
+  
+    // Correctly query only projects owned by this designer
+    const projectQuery = query(collection(db, 'projects'), where('designerId', '==', uid));
     const projectSnapshot = await getDocs(projectQuery);
     const projectsList = projectSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setProjects(projectsList);
-
-    const briefsSnapshot = await getDocs(collection(db, 'creativeBriefs'));
+  
+    // Correct: fetch only briefs linked to your projects (NOT all briefs!)
+    const briefsSnapshot = await getDocs(query(collection(db, 'creativeBriefs')));
     const subs = {};
     briefsSnapshot.docs.forEach(doc => {
       const data = doc.data();
-      const pid = data.projectId?.id;
-      if (pid) {
+      const pid = data.projectId;
+      if (projectsList.find(p => p.id === pid)) {  // Only use briefs from your projects
         if (!subs[pid]) subs[pid] = [];
         subs[pid].push({ id: doc.id, ...data });
       }
     });
     setBriefs(subs);
-
-    const clientsSnapshot = await getDocs(collection(db, 'clients'));
+  
+    // Correct: fetch only clients owned by this designer
+    const clientQuery = query(collection(db, 'clients'), where('designerId', '==', uid));
+    const clientsSnapshot = await getDocs(clientQuery);
     const clientsList = clientsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setClients(clientsList);
-
+  
     setLoading(false);
   }, []);
 
@@ -124,6 +130,8 @@ export default function Dashboard() {
   return (
     <div className="container" style={{ padding: '2rem' }}>
       <h2>Designer Dashboard</h2>
+
+      <RunMigrationButton />
 
       {notification.message && (
         <div style={{
