@@ -194,14 +194,7 @@ export default function DynamicWizard() {
         <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
           <button 
             onClick={handleCancel}
-            style={{
-              padding: '0.75rem 2rem',
-              background: '#dc3545',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
+            className="btn-secondary"
           >
             Cancel
           </button>
@@ -215,14 +208,7 @@ export default function DynamicWizard() {
                 alert('Failed to save submission.');
               }
             }}
-            style={{
-              padding: '0.75rem 2rem',
-              background: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
+            className="primary"
           >
             Submit
           </button>
@@ -295,21 +281,14 @@ export default function DynamicWizard() {
       <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
         <button 
           onClick={handleCancel}
-          style={{
-            padding: '0.75rem 2rem',
-            background: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer'
-          }}
+          className="btn-secondary"
         >
           Cancel
         </button>
         {sectionIndex > 0 && (
-          <button onClick={() => setSectionIndex(sectionIndex - 1)}>Back</button>
+          <button onClick={() => setSectionIndex(sectionIndex - 1)} className="btn-primary">Back</button>
         )}
-        <button onClick={() => setSectionIndex(sectionIndex + 1)}>Next</button>
+        <button onClick={() => setSectionIndex(sectionIndex + 1)} className="btn-primary">Next</button>
       </div>
     </div>
   );

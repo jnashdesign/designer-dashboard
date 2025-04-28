@@ -66,7 +66,7 @@ export default function LoginPage() {
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
           />
-          <button onClick={handlePasswordReset}>Send Reset Email</button>
+          <button onClick={handlePasswordReset} className='btn-primary'>Send Reset Email</button>
         </div>
       )}
     </div>

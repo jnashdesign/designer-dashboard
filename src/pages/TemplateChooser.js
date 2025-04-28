@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { loadTemplatesByType } from '../firebase/loadTemplates';
 import { auth } from '../firebase/config';
+import '../bootstrap.min.css';
 
 export default function TemplateChooser() {
   const [templates, setTemplates] = useState([]);
@@ -80,15 +81,7 @@ export default function TemplateChooser() {
           <button
             onClick={handleContinue}
             disabled={!selectedTemplateId}
-            style={{
-              padding: '1rem 2rem',
-              background: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: selectedTemplateId ? 'pointer' : 'not-allowed',
-              marginBottom: '2rem'
-            }}
+            className="btn-primary"
           >
             Continue With Selected Template
           </button>
@@ -98,14 +91,7 @@ export default function TemplateChooser() {
       <div style={{ marginTop: '2rem' }}>
         <button
           onClick={handleStartWithDefault}
-          style={{
-            padding: '1rem 2rem',
-            background: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer'
-          }}
+          className="btn-secondary"
         >
           Start With Default Brief
         </button>

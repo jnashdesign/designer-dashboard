@@ -1,5 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
+import '../../bootstrap.min.css';
 
 export default function SubmissionModal({ isOpen, onClose, brief }) {
   if (!isOpen || !brief) return null;

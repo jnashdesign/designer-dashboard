@@ -1,5 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import '../../bootstrap.min.css';
+
 
 export default function ProjectView() {
   const { id } = useParams();

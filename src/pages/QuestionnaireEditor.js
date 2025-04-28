@@ -128,14 +128,7 @@ export default function QuestionnaireEditor() {
       <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
         <button 
           onClick={handleCancel}
-          style={{
-            padding: '0.75rem 2rem',
-            background: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer'
-          }}
+          className='btn-secondary'
         >
           Cancel
         </button>

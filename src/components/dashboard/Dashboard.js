@@ -7,7 +7,8 @@ import { addClient } from '../../firebase/addClient';
 import SubmissionModal from './SubmissionModal';
 import LoadingSpinner from '../LoadingSpinner';
 
-import RunMigrationButton from '../RunMigrationButton';
+import '../../bootstrap.min.css';
+import './Dashboard.css';
 
 export default function Dashboard() {
   const [projects, setProjects] = useState([]);
@@ -26,6 +27,10 @@ export default function Dashboard() {
   const [projectType, setProjectType] = useState('branding');
 
   const [notification, setNotification] = useState({ message: '', type: '' });
+
+  const [showAddQuestionnaireForm, setShowAddQuestionnaireForm] = useState(false);
+  const [questionnaireType, setQuestionnaireType] = useState('branding');
+  const [selectedProjectId, setSelectedProjectId] = useState('');
 
   const navigate = useNavigate();
 
@@ -124,38 +129,79 @@ export default function Dashboard() {
     setSelectedBrief(null);
   };
 
+  const handleCreateQuestionnaire = () => {
+    if (!selectedProjectId) {
+      alert('Please select a project');
+      return;
+    }
+    const project = projects.find(p => p.id === selectedProjectId);
+    navigate(`/choose-template/${project.type}?projectId=${selectedProjectId}`);
+    setShowAddQuestionnaireForm(false);
+    setSelectedProjectId('');
+  };
+
   if (loading) return <LoadingSpinner message="Fetching your dashboard..." />;
 
   return (
-    <div className="container" style={{ padding: '2rem' }}>
-      <h2>Designer Dashboard</h2>
+    <div className="dashboard-container">
+      <h2 className="dashboard-title">Designer Dashboard</h2>
 
       {notification.message && (
-        <div style={{
-          backgroundColor: notification.type === 'success' ? '#d4edda' : '#f8d7da',
-          color: notification.type === 'success' ? '#155724' : '#721c24',
-          padding: '0.75rem',
-          marginBottom: '1rem',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>{notification.message}</div>
+        <div className={`alert ${notification.type === 'success' ? 'alert-success' : 'alert-danger'}`}>
+          {notification.message}
+        </div>
       )}
 
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        <button onClick={() => setShowAddClientForm(!showAddClientForm)}>
+      <div className="action-buttons mb-4">
+        <button 
+          className={`btn ${showAddClientForm ? 'btn-secondary' : 'btn-primary'} shadow-sm mr-2`}
+          onClick={() => setShowAddClientForm(!showAddClientForm)}
+        >
           {showAddClientForm ? 'Cancel Add Client' : 'Add Client'}
         </button>
-        <button onClick={() => setShowAddProjectForm(!showAddProjectForm)}>
+        <button 
+          className={`btn ${showAddProjectForm ? 'btn-secondary' : 'btn-primary'} shadow-sm mr-2`}
+          onClick={() => setShowAddProjectForm(!showAddProjectForm)}
+        >
           {showAddProjectForm ? 'Cancel Add Project' : 'Add Project'}
+        </button>
+        <button 
+          className={`btn ${showAddQuestionnaireForm ? 'btn-secondary' : 'btn-primary'} shadow-sm`}
+          onClick={() => setShowAddQuestionnaireForm(!showAddQuestionnaireForm)}
+        >
+          {showAddQuestionnaireForm ? 'Cancel New Questionnaire' : 'Create New Questionnaire'}
         </button>
       </div>
 
       {showAddClientForm && (
-        <form onSubmit={handleAddClient} style={{ marginBottom: '1rem' }}>
-          <input placeholder="Client Name" value={clientName} onChange={(e) => setClientName(e.target.value)} required />
-          <input placeholder="Client Email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} required />
-          <button type="submit">Create Client</button>
-        </form>
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
+          </div>
+          <div className="card-body">
+            <form onSubmit={handleAddClient}>
+              <div className="form-group">
+                <input 
+                  className="form-control"
+                  placeholder="Client Name" 
+                  value={clientName} 
+                  onChange={(e) => setClientName(e.target.value)} 
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <input 
+                  className="form-control"
+                  placeholder="Client Email" 
+                  value={clientEmail} 
+                  onChange={(e) => setClientEmail(e.target.value)} 
+                  required 
+                />
+              </div>
+              <button type="submit" className="btn btn-primary">Create Client</button>
+            </form>
+          </div>
+        </div>
       )}
 
       {showAddProjectForm && (
@@ -184,84 +230,116 @@ export default function Dashboard() {
         </form>
       )}
 
-      <h3>Your Projects</h3>
+      {showAddQuestionnaireForm && (
+        <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <h6 className="m-0 font-weight-bold text-primary">Create New Questionnaire</h6>
+          </div>
+          <div className="card-body">
+            <form onSubmit={(e) => { e.preventDefault(); handleCreateQuestionnaire(); }}>
+              <div className="form-group">
+                <label>Select Project</label>
+                <select 
+                  className="form-control"
+                  value={selectedProjectId}
+                  onChange={(e) => setSelectedProjectId(e.target.value)}
+                  required
+                >
+                  <option value="">Select a project</option>
+                  {projects.map(project => (
+                    <option key={project.id} value={project.id}>
+                      {project.type.charAt(0).toUpperCase() + project.type.slice(1)} - {getClientNameByRef(project.clientId)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button type="submit" className="btn btn-primary">Create Questionnaire</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <h3 className="h3 mb-4 text-gray-800">Your Projects</h3>
       {projects.length === 0 ? (
-        <p>No projects yet.</p>
+        <div className="card shadow">
+          <div className="card-body">No projects yet.</div>
+        </div>
       ) : (
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column',  // Changed from 'wrap' to 'column'
-          gap: '2rem' 
-        }}>
+        <div className="projects-container">
           {projects.map((project) => (
-            <div 
-              key={project.id} 
-              style={{ 
-                border: '1px solid #ccc', 
-                padding: '1.5rem', 
-                borderRadius: '8px',
-                background: '#fafafa' 
-              }}
-            >
-              <strong>{project.type}</strong> – <em>{project.status}</em>
-              <p style={{ margin: '0.5rem 0' }}>
-                <small>Client: {getClientNameByRef(project.clientId)}</small>
-              </p>
-              <button
-                style={{ marginTop: '0.5rem' }}
-                onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}`)}
-              >
-                ➕ Create New Questionnaire
-              </button>
-              {project.type === 'branding' && (
-                <button 
-                  style={{ marginBottom: '0.5rem' }} 
-                  onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
-                >
-                  Start Branding Wizard
-                </button>
-              )}
-              {project.type === 'website' && (
-                <button 
-                  style={{ marginBottom: '0.5rem' }} 
-                  onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
-                >
-                  Start Website Wizard
-                </button>
-              )}
-              {project.type === 'app' && (
-                <button 
-                  style={{ marginBottom: '0.5rem' }} 
-                  onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
-                >
-                  Start App Wizard
-                </button>
-              )}
-              <p style={{ cursor: 'pointer', color: 'blue', marginTop: '1rem' }} onClick={() => toggleExpandBriefs(project.id)}>
-                {expandedBriefs[project.id] ? '▾ Hide Briefs' : '▸ View Briefs'} ({briefs[project.id]?.length || 0})
-              </p>
-              {expandedBriefs[project.id] && (
-                <div style={{ marginTop: '0.5rem' }}>
-                  {briefs[project.id]?.length > 0 ? (
-                    briefs[project.id]
-                      .sort((a, b) => b.createdAt?.toDate?.() - a.createdAt?.toDate?.())
-                      .map((brief) => (
-                        <button
-                          key={brief.id}
-                          style={{ width: '100%', marginBottom: '0.5rem', textAlign: 'left' }}
-                          onClick={() => openBrief(brief)}
-                        >
-                          View Brief ({brief.type}) - {brief.createdAt?.toDate?.().toLocaleDateString()}
-                        </button>
-                      ))
-                  ) : (
-                    <p style={{ fontStyle: 'italic', color: '#666' }}>No creative briefs yet.</p>
+            <div key={project.id} className="card shadow mb-4">
+              <div className="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 className="m-0 font-weight-bold text-primary">
+                  Client: {getClientNameByRef(project.clientId)}
+                </h6>
+                <span className={`badge badge-${project.type}`}>
+                  {project.type.charAt(0).toUpperCase() + project.type.slice(1)} Project - {project.status}
+                </span>
+              </div>
+              <div className="card-body">
+                <div className='project-info mb-6'>
+                <div className="client-info mb-3">
+                </div>
+                
+                <div className="action-buttons">
+                  {project.type === 'branding' && (
+                    <button 
+                      className="btn btn-info btn-sm mb-2 w-100"
+                      onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                    >
+                      Start Branding Wizard
+                    </button>
+                  )}
+                  {project.type === 'website' && (
+                    <button 
+                      className="btn btn-info btn-sm mb-2 w-100"
+                      onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                    >
+                      Start Website Wizard
+                    </button>
+                  )}
+                  {project.type === 'app' && (
+                    <button 
+                      className="btn btn-info btn-sm mb-2 w-100"
+                      onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                    >
+                      Start App Wizard
+                    </button>
                   )}
                 </div>
-              )}
+
+                <div 
+                  className="brief-toggle mt-3 text-primary cursor-pointer"
+                  onClick={() => toggleExpandBriefs(project.id)}
+                >
+                  {expandedBriefs[project.id] ? '▾' : '▸'} Briefs ({briefs[project.id]?.length || 0})
+                </div>
+                
+                {expandedBriefs[project.id] && (
+                  <div className="briefs-container mt-2">
+                    {briefs[project.id]?.length > 0 ? (
+                      briefs[project.id]
+                        .sort((a, b) => b.createdAt?.toDate?.() - a.createdAt?.toDate?.())
+                        .map((brief) => (
+                          <button
+                            key={brief.id}
+                            className="btn btn-light btn-sm w-100 text-left mb-2"
+                            onClick={() => openBrief(brief)}
+                          >
+                            View Brief ({brief.type}) - {brief.createdAt?.toDate?.().toLocaleDateString()}
+                          </button>
+                        ))
+                    ) : (
+                      <p className="text-muted font-italic">No creative briefs yet.</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
             </div>
           ))}
         </div>
+        
       )}
 
       {selectedBrief && (

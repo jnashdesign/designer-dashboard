@@ -21,8 +21,8 @@ export default function SaveTemplateModal({ onSave, onClose }) {
           style={{ width: '80%', margin: '1rem 0' }}
         />
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button onClick={handleSave}>Save Template</button>
-          <button onClick={onClose}>Cancel</button>
+          <button onClick={handleSave} className='btn btn-primary'>Save Template</button>
+          <button className='btn btn-secondary' onClick={onClose}>Cancel</button>
         </div>
       </div>
     </div>

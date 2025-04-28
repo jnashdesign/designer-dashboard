@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../bootstrap.min.css';
 
 export default function Modal({ isOpen, onClose, children }) {
   if (!isOpen) return null;

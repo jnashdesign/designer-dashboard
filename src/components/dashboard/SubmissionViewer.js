@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../bootstrap.min.css';
 
 export default function SubmissionViewer({ answers, projectId, briefId }) {
   const [editing, setEditing] = useState(false);

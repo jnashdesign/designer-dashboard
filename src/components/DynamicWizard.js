@@ -93,11 +93,11 @@ export default function DynamicWizard({ initialQuestions }) {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
         {currentGroupIndex > 0 && (
-          <button onClick={handleBack} style={navButtonStyle}>
+          <button onClick={handleBack} className='btn btn-primary'>
             ← Back
           </button>
         )}
-        <button onClick={handleNext} style={navButtonStyle}>
+        <button onClick={handleNext} className='btn btn-primary'>
           {currentGroupIndex === groups.length - 1 ? 'Submit' : 'Next →'}
         </button>
       </div>
