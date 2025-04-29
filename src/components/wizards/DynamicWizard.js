@@ -223,12 +223,12 @@ export default function DynamicWizard() {
     <div className="container">
       <h2>{section.title}</h2>
       {section.questions.map((q) => (
-        <div key={q.name} style={{ marginBottom: '1rem' }}>
+        <div key={q.name}>
           <label>{q.label}</label>
           {q.type === 'imageUpload' ? (
             <>
               {[0, 1, 2].map((i) => (
-                <div key={i} style={{ marginTop: '0.5rem' }}>
+                <div key={i}>
                   <input
                     type="file"
                     accept="image/*"
@@ -257,8 +257,9 @@ export default function DynamicWizard() {
             />
           ) : q.type === 'textList' ? (
             [...Array(3)].map((_, idx) => (
-              <input
+              <input type="text"
                 key={idx}
+                className="col-8"
                 placeholder={`Example link ${idx + 1}`}
                 value={(formData[q.name] && formData[q.name][idx]) || ''}
                 onChange={e => {
@@ -266,7 +267,6 @@ export default function DynamicWizard() {
                   updatedList[idx] = e.target.value;
                   setFormData(prev => ({ ...prev, [q.name]: updatedList }));
                 }}
-                style={{ display: 'block', marginTop: '0.5rem' }}
               />
             ))
           ) : (
@@ -278,7 +278,7 @@ export default function DynamicWizard() {
           )}
         </div>
       ))}
-      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
         <button 
           onClick={handleCancel}
           className="btn-secondary"

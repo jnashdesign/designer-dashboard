@@ -152,7 +152,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="action-buttons mb-4">
+      <div className="action-buttons col-12">
         <button 
           className={`btn ${showAddClientForm ? 'btn-secondary' : 'btn-primary'} shadow-sm mr-2`}
           onClick={() => setShowAddClientForm(!showAddClientForm)}
@@ -174,13 +174,13 @@ export default function Dashboard() {
       </div>
 
       {showAddClientForm && (
-        <div className="card shadow mb-4">
+        <div className="card shadow col-4">
           <div className="card-header py-3">
             <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
           </div>
           <div className="card-body">
             <form onSubmit={handleAddClient}>
-              <div className="form-group">
+              <div className="form-group col-6">
                 <input 
                   className="form-control"
                   placeholder="Client Name" 
@@ -189,7 +189,7 @@ export default function Dashboard() {
                   required 
                 />
               </div>
-              <div className="form-group">
+              <div className="form-group col-6">
                 <input 
                   className="form-control"
                   placeholder="Client Email" 
@@ -231,7 +231,7 @@ export default function Dashboard() {
       )}
 
       {showAddQuestionnaireForm && (
-        <div className="card shadow mb-4">
+        <div className="card shadow col-4">
           <div className="card-header py-3">
             <h6 className="m-0 font-weight-bold text-primary">Create New Questionnaire</h6>
           </div>
@@ -259,7 +259,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h3 className="h3 mb-4 text-gray-800">Your Projects</h3>
+      <h3 className="h3 col-4 text-gray-800">Your Projects</h3>
       {projects.length === 0 ? (
         <div className="card shadow">
           <div className="card-body">No projects yet.</div>
@@ -267,7 +267,7 @@ export default function Dashboard() {
       ) : (
         <div className="projects-container">
           {projects.map((project) => (
-            <div key={project.id} className="card shadow mb-4">
+            <div key={project.id} className="card shadow col-4">
               <div className="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 className="m-0 font-weight-bold text-primary">
                   Client: {getClientNameByRef(project.clientId)}
@@ -277,7 +277,7 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="card-body">
-                <div className='project-info mb-6'>
+                <div className='project-info col-6'>
                 <div className="client-info mb-3">
                 </div>
                 
@@ -309,7 +309,7 @@ export default function Dashboard() {
                 </div>
 
                 <div 
-                  className="brief-toggle mt-3 text-primary cursor-pointer"
+                  className="brief-toggle text-primary cursor-pointer"
                   onClick={() => toggleExpandBriefs(project.id)}
                 >
                   {expandedBriefs[project.id] ? '▾' : '▸'} Briefs ({briefs[project.id]?.length || 0})

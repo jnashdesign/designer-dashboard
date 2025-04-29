@@ -59,14 +59,14 @@ button.btn-secondary {
 .cursor-pointer {
   cursor: pointer;
 }
-.brief-toggle.mt-3.text-primary.cursor-pointer {
+.brief-toggle.text-primary.cursor-pointer {
   background: rgba(0, 0, 0, 0.05);
   padding: 10px;
 }
 .briefs-container {
   padding: 10px;
 }
-.brief-toggle.mt-3.text-primary.cursor-pointer, .briefs-container {
+.brief-toggle.text-primary.cursor-pointer, .briefs-container {
   border: 1px solid #e3e6f0;
 }
 input[type="text"], textarea {
@@ -81,10 +81,10 @@ input[type="text"], textarea {
 .badge.badge-info {
   text-transform: capitalize;
 }
-.projects-container {
+.card {
   width: calc(100% - 20px);
   max-width: 800px;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 button.btn.btn-light {
   background: rgba(0, 0, 0, 0.075);
@@ -92,4 +92,25 @@ button.btn.btn-light {
 }
 button.btn.btn-light:hover {
   background: rgba(0, 0, 0, 0.1);
+}
+.action-buttons {
+  margin-bottom: 20px;
+}
+.projects-container .card-body {
+  margin: 0 -30px;
+}
+.projects-container .briefs-container {
+  margin-top: -1px !important;
+}
+.project-info .action-buttons {
+  margin-bottom: 0px;
+}
+.project-info.col-6 {
+  margin-top: -20px;
+}
+
+input[type="file"] {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from './context/ThemeContext';
 
 import Dashboard from "./components/dashboard/Dashboard";
 import WizardRunner from "./components/wizards/WizardRunner";
@@ -19,94 +20,96 @@ import QuestionnaireEditor from './pages/QuestionnaireEditor';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Welcome />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/dashboard"
-          element={
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth role="designer">
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/client-dashboard"
+            element={
+              <RequireAuth role="client">
+                <Layout>
+                  <ClientDashboard />
+                </Layout>
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/onboarding/:type/:projectId/*"
+            element={
+              <RequireAuth role="designer">
+              <Layout>
+                <WizardRunner />
+                </Layout>
+              </RequireAuth>
+            }
+          />
+          <Route path="/edit-questions" element={
             <RequireAuth role="designer">
               <Layout>
-                <Dashboard />
+                <EditQuestions />
               </Layout>
             </RequireAuth>
-          }
-        />
+          } />
 
-        <Route
-          path="/client-dashboard"
-          element={
-            <RequireAuth role="client">
-              <Layout>
-                <ClientDashboard />
-              </Layout>
-            </RequireAuth>
-          }
-        />
-
-        <Route
-          path="/onboarding/:type/:projectId/*"
-          element={
+          <Route path="/choose-template/:type" element={
             <RequireAuth role="designer">
-            <Layout>
-              <WizardRunner />
+              <Layout>
+                <TemplateChooser /> 
               </Layout>
             </RequireAuth>
-          }
-        />
-        <Route path="/edit-questions" element={
-          <RequireAuth role="designer">
-            <Layout>
-              <EditQuestions />
-            </Layout>
-          </RequireAuth>
-        } />
+          } />
 
-        <Route path="/choose-template/:type" element={
-          <RequireAuth role="designer">
-            <Layout>
-              <TemplateChooser /> 
-            </Layout>
-          </RequireAuth>
-        } />
+          <Route path="/start-project/:type/:templateId" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <StartProjectLoader /> 
+              </Layout>
+            </RequireAuth>
+          } />
 
-        <Route path="/start-project/:type/:templateId" element={
-          <RequireAuth role="designer">
-            <Layout>
-              <StartProjectLoader /> 
-            </Layout>
-          </RequireAuth>
-        } />
+          <Route path="/view-brief/:briefId" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <ViewBrief /> 
+              </Layout>
+            </RequireAuth>
+          } />
 
-        <Route path="/view-brief/:briefId" element={
-          <RequireAuth role="designer">
-            <Layout>
-              <ViewBrief /> 
-            </Layout>
-          </RequireAuth>
-        } />
+          <Route path="/dashboard/create-draft" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <QuestionnaireBuilder /> 
+              </Layout>
+            </RequireAuth>
+          } />
 
-        <Route path="/dashboard/create-draft" element={
-          <RequireAuth role="designer">
-            <Layout>
-              <QuestionnaireBuilder /> 
-            </Layout>
-          </RequireAuth>
-        } />
-
-        <Route path="/template/:templateId/edit" element={
-          <RequireAuth role="designer">
-            <Layout>
-              <QuestionnaireEditor />
-            </Layout>
-          </RequireAuth>
-        } />
-        
-      </Routes>      
-    </Router>
+          <Route path="/template/:templateId/edit" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <QuestionnaireEditor />
+              </Layout>
+            </RequireAuth>
+          } />
+          
+        </Routes>      
+      </Router>
+    </ThemeProvider>
   );
 }
 
