@@ -205,6 +205,11 @@ export default function Dashboard() {
       )}
 
       {showAddProjectForm && (
+        <div className="card shadow col-4">
+        <div className="card-header py-3">
+          <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
+        </div>
+        <div className="card-body">
         <form onSubmit={handleAddProject} style={{ marginBottom: '2rem' }}>
           <label>
             Client:
@@ -228,6 +233,8 @@ export default function Dashboard() {
           </label>
           <button type="submit">Create Project</button>
         </form>
+        </div>
+        </div>
       )}
 
       {showAddQuestionnaireForm && (
