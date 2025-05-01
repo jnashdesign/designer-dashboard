@@ -174,13 +174,14 @@ export default function Dashboard() {
       </div>
 
       {showAddClientForm && (
-        <div className="card shadow col-4">
+        <div className="card shadow">
           <div className="card-header py-3">
             <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
           </div>
           <div className="card-body">
             <form onSubmit={handleAddClient}>
-              <div className="form-group col-6">
+              <div className="form-group">
+                <label>Client Name
                 <input 
                   className="form-control"
                   placeholder="Client Name" 
@@ -188,8 +189,8 @@ export default function Dashboard() {
                   onChange={(e) => setClientName(e.target.value)} 
                   required 
                 />
-              </div>
-              <div className="form-group col-6">
+                </label>
+                <label>Client Email
                 <input 
                   className="form-control"
                   placeholder="Client Email" 
@@ -197,22 +198,24 @@ export default function Dashboard() {
                   onChange={(e) => setClientEmail(e.target.value)} 
                   required 
                 />
-              </div>
+                </label>
+              
               <button type="submit" className="btn btn-primary">Create Client</button>
+              </div>
             </form>
           </div>
         </div>
       )}
 
       {showAddProjectForm && (
-        <div className="card shadow col-4">
+        <div className="card shadow">
         <div className="card-header py-3">
           <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
         </div>
         <div className="card-body">
         <form onSubmit={handleAddProject} style={{ marginBottom: '2rem' }}>
           <label>
-            Client:
+            Client
             <select value={projectClientId} onChange={(e) => setProjectClientId(e.target.value)} required>
               <option value="">Select client</option>
               {clients.map((client) => (
@@ -223,7 +226,7 @@ export default function Dashboard() {
             </select>
           </label>
           <label>
-            Project Type:
+            Project Type
             <select value={projectType} onChange={(e) => setProjectType(e.target.value)}>
               <option value="branding">Branding</option>
               <option value="website">Website</option>
@@ -238,7 +241,7 @@ export default function Dashboard() {
       )}
 
       {showAddQuestionnaireForm && (
-        <div className="card shadow col-4">
+        <div className="card shadow">
           <div className="card-header py-3">
             <h6 className="m-0 font-weight-bold text-primary">Create New Questionnaire</h6>
           </div>
@@ -266,7 +269,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h3 className="h3 col-4 text-gray-800">Your Projects</h3>
+      <h3 className="h3 text-gray-800">Your Projects</h3>
       {projects.length === 0 ? (
         <div className="card shadow">
           <div className="card-body">No projects yet.</div>
@@ -274,9 +277,9 @@ export default function Dashboard() {
       ) : (
         <div className="projects-container">
           {projects.map((project) => (
-            <div key={project.id} className="card shadow col-4">
+            <div key={project.id} className="card shadow">
               <div className="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 className="m-0 font-weight-bold text-primary">
+                <h6 className="m-0 text-primary">
                   Client: {getClientNameByRef(project.clientId)}
                 </h6>
                 <span className={`badge badge-${project.type}`}>
@@ -294,7 +297,7 @@ export default function Dashboard() {
                       className="btn btn-info btn-sm mb-2 w-100"
                       onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
                     >
-                      Start Branding Wizard
+                      Start Creative Brief
                     </button>
                   )}
                   {project.type === 'website' && (
@@ -302,7 +305,7 @@ export default function Dashboard() {
                       className="btn btn-info btn-sm mb-2 w-100"
                       onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
                     >
-                      Start Website Wizard
+                    Start Creative Brief
                     </button>
                   )}
                   {project.type === 'app' && (
@@ -310,7 +313,7 @@ export default function Dashboard() {
                       className="btn btn-info btn-sm mb-2 w-100"
                       onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
                     >
-                      Start App Wizard
+                    Start Creative Brief
                     </button>
                   )}
                 </div>

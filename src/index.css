@@ -8,7 +8,9 @@ select {
   border: 1px solid #ddd;
   padding: 10px !important;
   color: #777;
-  width: calc(100% - 20px);
+  width: 100%;
+  max-width: 500px;
+
 }
 .container {
   max-width: 960px;
@@ -80,8 +82,7 @@ input[type="text"], textarea {
   text-transform: capitalize;
 }
 .card {
-  width: calc(100% - 20px);
-  max-width: 800px;
+  max-width: 950px;
   border-radius: 10px;
 }
 button.btn.btn-light {
@@ -95,7 +96,7 @@ button.btn.btn-light:hover {
   margin-bottom: 20px;
 }
 .projects-container .card-body {
-  margin: 0 -30px;
+  margin: 0 -10px;
 }
 .projects-container .briefs-container {
   margin-top: -1px !important;
@@ -121,15 +122,33 @@ select.form-control:not([size]):not([multiple]) {
   padding-left: 0;
 }
 
-/* padding and margin for drag handle */
-[data-rfd-drag-handle-context-id=":r2j:"] {
-  padding: 0 10px;
-  margin-left: -10px;
+form label {
+  margin-right: 20px;
 }
 
 /* delete question button */
 button.delete-question {
   margin-top: -10px;
   margin-left: 10px;
-  background: #f4e3e3;
+  background: #ddd;
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+button i::before {
+  color: #aaa;
+}
+
+.draggable-item input {
+  margin-left: 10px;
+}
+
+.login-page input, .signup-page input {
+  max-width: 500px;
+}
+.login-page .col-12, .signup-page .col-12 {
+  padding-left: 0;
 }

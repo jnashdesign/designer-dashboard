@@ -1,46 +1,115 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
-import { useNavigate } from 'react-router-dom';
+import { doc, setDoc } from 'firebase/firestore';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('designer');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
-      await setDoc(doc(db, 'users', uid), {
-        name,
-        email,
-        role
+      const user = userCredential.user;
+
+      // Create user document with role
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        role: role,
+        createdAt: new Date()
       });
-      navigate('/dashboard');
-    } catch (error) {
-      console.error("Signup error:", error.message);
-      alert("Failed to sign up.");
+
+      // Navigate based on role
+      navigate(role === 'designer' ? '/dashboard' : '/client-dashboard');
+    } catch (err) {
+      setError(err.message.includes('email-already-in-use') 
+        ? 'An account with this email already exists' 
+        : 'Failed to create account. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container">
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignup}>
-        <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="designer">Designer</option>
-          <option value="client">Client</option>
-        </select>
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card shadow">
+            <div className="card-body p-5">
+              <h2 className="text-center mb-4">Sign Up</h2>
+              {error && <div className="alert alert-danger">{error}</div>}
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Confirm Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="form-label">I am a...</label>
+                  <select 
+                    className="form-select"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                  >
+                    <option value="designer">Designer</option>
+                    <option value="client">Client</option>
+                  </select>
+                </div>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary w-100"
+                  disabled={loading}
+                >
+                  {loading ? 'Creating Account...' : 'Sign Up'}
+                </button>
+              </form>
+              <div className="text-center mt-3">
+                Already have an account? <Link to="/login">Log In</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   );
 }

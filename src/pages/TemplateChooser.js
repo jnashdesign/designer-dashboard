@@ -65,6 +65,7 @@ export default function TemplateChooser() {
         </div>
       ) : (
         <>
+        <div>
           <select
             value={selectedTemplateId}
             onChange={(e) => setSelectedTemplateId(e.target.value)}
@@ -77,7 +78,7 @@ export default function TemplateChooser() {
               </option>
             ))}
           </select>
-
+          </div>
           <button
             onClick={handleContinue}
             disabled={!selectedTemplateId}

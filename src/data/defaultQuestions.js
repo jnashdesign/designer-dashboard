@@ -1,14 +1,30 @@
 export const defaultQuestions = [
-  { "id": "question-b1", "text": "What is your company name?" },
-  { "id": "question-b2", "text": "Who is your target audience?" },
-  { "id": "question-b3", "text": "What style of logo do you prefer?" },
-  { "id": "question-b4", "text": "What colors do you want to use?" },
-  { "id": "question-b5", "text": "Do you have any specific images or symbols in mind?" },
-  { "id": "question-b6", "text": "What is your budget for this project?" },
-  { "id": "question-b7", "text": "What is your timeline for completion?" },
-  { "id": "question-b8", "text": "Do you have any examples of logos you like?" },
-  { "id": "question-b9", "text": "What message do you want your logo to convey?" },
-  { "id": "question-b10", "text": "Are there any logos you dislike? Why?" }
+  {
+    id: 'group-business',
+    name: 'Business Info',
+    questions: [
+      { id: 'question-b1', text: 'What is the name of your business or project?' },
+      { id: 'question-b2', text: 'Describe what your business/product/service does.' },
+      { id: 'question-b3', text: 'What problem are you solving for your customers or users?' },
+    ]
+  },
+  {
+    id: 'group-goals-values',
+    name: 'Goals and Values',
+    questions: [
+      { id: 'question-b4', text: 'What are your short and long-term goals for this project?' },
+      { id: 'question-b5', text: 'What does success look like for this project?' },
+      { id: 'question-b6', text: 'Do you have an established mission statement or core values?' },
+    ]
+  },
+  {
+    id: 'group-audience-competitors',
+    name: 'Audience and Competitors',
+    questions: [
+      { id: 'question-b7', text: 'Who is your primary target audience? (Age, gender, occupation, interests, tech-savviness, etc.)' },
+      { id: 'question-b8', text: 'Who are your competitors, and how do you differ from them?' }
+    ]
+  }
 ];
 
 // Check what your defaultQuestions look like

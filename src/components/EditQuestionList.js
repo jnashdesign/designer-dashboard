@@ -32,6 +32,7 @@ export default function EditQuestionList({ questions, setQuestions }) {
                       borderRadius: '6px',
                       cursor: 'grab'
                     }}
+                    className='draggable-item'
                   >
                     {q.text}
                   </li>

@@ -18,6 +18,7 @@ export default function QuestionItem({ question, index, onChange }) {
             alignItems: 'center',
             ...provided.draggableProps.style
           }}
+          className='draggable-item'
         >
           <input
             type="text"

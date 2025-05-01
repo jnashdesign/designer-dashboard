@@ -5,7 +5,7 @@ import { defaultQuestions } from '../data/defaultQuestions';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase/config';
 
-const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuestionDelete, onGroupNameChange, isExpanded, onToggleExpand }) => {
+const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuestionDelete, onGroupNameChange, isExpanded, onToggleExpand, onAddQuestion }) => {
   return (
     <Draggable draggableId={group.id} index={groupIndex}>
       {(provided) => (
@@ -30,8 +30,9 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
                 type="text"
                 value={group.name}
                 onChange={(e) => onGroupNameChange(groupIndex, e.target.value)}
-                className="form-control w-auto"
+                className="form-control"
                 placeholder="Group Name"
+                style={{ minWidth: '500px' }}
               />
             </div>
             <span className="text-muted">
@@ -51,7 +52,7 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        className="p-3 mb-2 rounded d-flex align-items-center bg-white border"
+                        className="p-3 mb-2 rounded d-flex align-items-center bg-white border draggable-item"
                       >
                         <div 
                           {...provided.dragHandleProps}
@@ -82,6 +83,12 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
                   </Draggable>
                 ))}
                 {provided.placeholder}
+                <button
+                  className="btn btn-primary btn-sm mt-3"
+                  onClick={() => onAddQuestion(groupIndex)}
+                >
+                  Add Question to Group
+                </button>
               </div>
             )}
           </Droppable>
@@ -102,17 +109,10 @@ export default function QuestionnaireEditor() {
     const loadTemplate = async () => {
       try {
         if (templateId === 'default') {
-          const initialGroup = {
-            id: 'group-1',
-            name: 'Default Questions',
-            questions: defaultQuestions.map((q, index) => ({
-              ...q,
-              id: `question-${index}`
-            }))
-          };
-          setGroups([initialGroup]);
-          // Expand the default group
-          setExpandedGroups(new Set(['group-1']));
+          // Use the groups directly from defaultQuestions
+          setGroups(defaultQuestions);
+          // Expand all groups by default
+          setExpandedGroups(new Set(defaultQuestions.map(group => group.id)));
         } else {
           const user = auth.currentUser;
           const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
@@ -282,13 +282,8 @@ export default function QuestionnaireEditor() {
                     onGroupNameChange={handleGroupNameChange}
                     isExpanded={expandedGroups.has(group.id)}
                     onToggleExpand={toggleGroup}
+                    onAddQuestion={addQuestion}
                   />
-                  <button
-                    className={`btn btn-outline-primary btn-sm mt-2 ${expandedGroups.has(group.id) ? '' : 'd-none'}`}
-                    onClick={() => addQuestion(index)}
-                  >
-                    Add Question to Group
-                  </button>
                 </div>
               ))}
               {provided.placeholder}

@@ -1,74 +1,90 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
-import { auth, db } from '../firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase/config';
+import { useNavigate, Link } from 'react-router-dom';
+import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showResetForm, setShowResetForm] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
-
-      const userDoc = await getDoc(doc(db, 'users', uid));
-      const role = userDoc.data()?.role;
-
-      if (role === 'designer') {
-        navigate('/dashboard');
-      } else if (role === 'client') {
-        navigate('/client-dashboard');
-      } else {
-        alert('Unknown user role.');
-      }
-    } catch (error) {
-      console.error("Login error:", error.message);
-      alert("Failed to log in.");
-    }
-  };
-
-  const handlePasswordReset = async () => {
-    try {
-      await sendPasswordResetEmail(auth, resetEmail);
-      alert("Password reset email sent!");
-      setShowResetForm(false);
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/dashboard');
     } catch (err) {
+      setError('Failed to sign in. Please check your credentials.');
       console.error(err);
-      alert("Error sending reset email.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container">
-      <h2>Log In</h2>
-      <form onSubmit={handleLogin}>
-        <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Log In</button>
-      </form>
-      <p>Don't have an account? <a href="/signup">Register here</a></p>
-      <p>
-        <button type="button" onClick={() => setShowResetForm(true)}>
-          Forgot Password?
-        </button>
-      </p>
-      {showResetForm && (
-        <div style={{ marginTop: '1rem' }}>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={resetEmail}
-            onChange={(e) => setResetEmail(e.target.value)}
-          />
-          <button onClick={handlePasswordReset} className='btn-primary'>Send Reset Email</button>
+    <div className="dashboard-container login-page">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card shadow">
+            <div className="card-body p-5">
+              <h2 className="text-center mb-4">Log In</h2>
+              {error && <div className="alert alert-danger">{error}</div>}
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary w-100"
+                  disabled={loading}
+                >
+                  {loading ? 'Logging in...' : 'Log In'}
+                </button>
+              </form>
+              <div className="text-center mt-3">
+                <button
+                  className="btn btn-link"
+                  onClick={() => setShowForgotPassword(true)}
+                >
+                  Forgot Password?
+                </button>
+              </div>
+              <div className="text-center mt-3">
+                Need an account? <Link to="/signup">Sign Up</Link>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
+
+      <ForgotPasswordModal 
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+      />
     </div>
   );
 }

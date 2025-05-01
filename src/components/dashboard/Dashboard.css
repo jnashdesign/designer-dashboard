@@ -15,6 +15,7 @@
   --bg-card: #2a2c3d;
   --text-primary: #e0e2e7;
   --text-secondary: #b3b5bd;
+  --text-input: #5a5c69;
   --border-color: #3d4052;
   --card-header-bg: #252837;
 }
@@ -60,14 +61,15 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .card-header {
-  padding: 0.75rem 1.25rem;
-  margin: 0 -15px;
+  text-transform: capitalize;
   background-color: var(--card-header-bg);
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;   
   border-bottom: 1px solid var(--border-color);
 }
-
+.card-header i {
+  margin-right: 10px;
+}
 .card-body {
   flex: 1 1 auto;
   min-height: 1px;
@@ -168,15 +170,16 @@ select.form-control::-ms-expand {
 
 /* Add dark mode styles for form controls */
 .dark-mode .form-control {
-  background-color: var(--bg-card);
+  background-color: #fff;
+  border-radius: 0;
   border-color: var(--border-color);
-  color: var(--text-primary);
+  color: var(--text-input);
 }
 
 .dark-mode .btn-light {
   background-color: var(--card-header-bg);
   border-color: var(--border-color);
-  color: var(--text-primary);
+  color: var(--text-input);
 }
 
 /* Add dark mode styles for buttons and toggles */
@@ -192,6 +195,10 @@ select.form-control::-ms-expand {
     color: #fff !important;
 }
 
+.dark-mode .draggable-item {
+    background-color: #3d4052 !important;
+    border-color: #222 !important;
+}
 /* Drag and drop styles */
 .drag-handle {
   cursor: move;
