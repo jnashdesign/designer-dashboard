@@ -76,8 +76,8 @@ h1, h2, h3, h4, h5, h6,
   padding: 1.25rem;
 }
 .text-primary {
-  color: #4e73df !important;
-}
+    color: var(--text-primary) !important;
+  }
 
 .shadow {
   box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
