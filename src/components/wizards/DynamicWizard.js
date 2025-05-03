@@ -18,6 +18,7 @@ export default function DynamicWizard() {
   const [imagePreviews, setImagePreviews] = useState({});
   const [uploadErrors, setUploadErrors] = useState({});
   const [loading, setLoading] = useState(true);
+  const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -74,6 +75,35 @@ export default function DynamicWizard() {
 
     loadQuestions();
   }, [type, templateId]);
+
+  useEffect(() => {
+    const loadTemplate = async () => {
+      try {
+        if (templateId === 'default') {
+          setQuestions(defaultQuestions);
+          return;
+        }
+
+        const user = auth.currentUser;
+        if (!user) throw new Error("No authenticated user");
+
+        const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+        const templateDoc = await getDoc(templateRef);
+        
+        if (templateDoc.exists()) {
+          setQuestions(templateDoc.data().groups);
+        } else {
+          console.error("Template not found");
+          setQuestions(defaultQuestions);
+        }
+      } catch (error) {
+        console.error("Error loading template:", error);
+        setQuestions(defaultQuestions);
+      }
+    };
+
+    loadTemplate();
+  }, [templateId]);
 
   const handleImageUpload = async (e, name, index) => {
     const file = e.target.files[0];

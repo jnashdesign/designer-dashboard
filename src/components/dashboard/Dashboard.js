@@ -18,13 +18,13 @@ export default function Dashboard() {
   const [expandedBriefs, setExpandedBriefs] = useState({});
   const [selectedBrief, setSelectedBrief] = useState(null);
 
-  const [showAddClientForm, setShowAddClientForm] = useState(false);
-  const [clientName, setClientName] = useState('');
-  const [clientEmail, setClientEmail] = useState('');
-
-  const [showAddProjectForm, setShowAddProjectForm] = useState(false);
-  const [projectClientId, setProjectClientId] = useState('');
-  const [projectType, setProjectType] = useState('branding');
+  const [showAddClient, setShowAddClient] = useState(false);
+  const [showAddProject, setShowAddProject] = useState(false);
+  const [showNewQuestionnaire, setShowNewQuestionnaire] = useState(false);
+  const [newClientName, setNewClientName] = useState('');
+  const [newClientEmail, setNewClientEmail] = useState('');
+  const [newProjectName, setNewProjectName] = useState('');
+  const [selectedClient, setSelectedClient] = useState('');
 
   const [notification, setNotification] = useState({ message: '', type: '' });
 
@@ -83,11 +83,11 @@ export default function Dashboard() {
     e.preventDefault();
     try {
       const designerId = auth.currentUser.uid;
-      const clientId = await addClient(clientName, clientEmail, designerId);
+      const clientId = await addClient(newClientName, newClientEmail, designerId);
       showNotification('Client added successfully!', 'success');
-      setShowAddClientForm(false);
-      setClientName('');
-      setClientEmail('');
+      setShowAddClient(false);
+      setNewClientName('');
+      setNewClientEmail('');
       await fetchData();
     } catch (err) {
       showNotification('Failed to add client.', 'error');
@@ -98,11 +98,11 @@ export default function Dashboard() {
     e.preventDefault();
     try {
       const designerId = auth.currentUser.uid;
-      const projectId = await addProject(projectClientId, designerId, projectType);
+      const projectId = await addProject(selectedClient, designerId, questionnaireType);
       showNotification('Project added successfully!', 'success');
-      setShowAddProjectForm(false);
-      setProjectClientId('');
-      setProjectType('branding');
+      setShowAddProject(false);
+      setSelectedClient('');
+      setQuestionnaireType('branding');
       await fetchData();
     } catch (err) {
       showNotification('Failed to add project.', 'error');
@@ -144,128 +144,33 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h2 className="dashboard-title">Designer Dashboard</h2>
+    <h2>Dashboard</h2>
+      <div className="d-flex justify-content-between align-items-left mb-4">
+        <div>
+          <button 
+            className="btn btn-primary me-2 mr-3" 
+            onClick={() => setShowAddClient(true)}
+          >
+            Add Client
+          </button>
+          <button 
+            className="btn btn-primary me-2 mr-3" 
+            onClick={() => setShowAddProject(true)}
+          >
+            Add Project
+          </button>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => setShowNewQuestionnaire(true)}
+          >
+            Create New Questionnaire
+          </button>
+        </div>
+      </div>
 
       {notification.message && (
         <div className={`alert ${notification.type === 'success' ? 'alert-success' : 'alert-danger'}`}>
           {notification.message}
-        </div>
-      )}
-
-      <div className="action-buttons col-12">
-        <button 
-          className={`btn ${showAddClientForm ? 'btn-secondary' : 'btn-primary'} shadow-sm mr-2`}
-          onClick={() => setShowAddClientForm(!showAddClientForm)}
-        >
-          {showAddClientForm ? 'Cancel Add Client' : 'Add Client'}
-        </button>
-        <button 
-          className={`btn ${showAddProjectForm ? 'btn-secondary' : 'btn-primary'} shadow-sm mr-2`}
-          onClick={() => setShowAddProjectForm(!showAddProjectForm)}
-        >
-          {showAddProjectForm ? 'Cancel Add Project' : 'Add Project'}
-        </button>
-        <button 
-          className={`btn ${showAddQuestionnaireForm ? 'btn-secondary' : 'btn-primary'} shadow-sm`}
-          onClick={() => setShowAddQuestionnaireForm(!showAddQuestionnaireForm)}
-        >
-          {showAddQuestionnaireForm ? 'Cancel New Questionnaire' : 'Create New Questionnaire'}
-        </button>
-      </div>
-
-      {showAddClientForm && (
-        <div className="card shadow">
-          <div className="card-header py-3">
-            <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
-          </div>
-          <div className="card-body">
-            <form onSubmit={handleAddClient}>
-              <div className="form-group">
-                <label>Client Name
-                <input 
-                  className="form-control"
-                  placeholder="Client Name" 
-                  value={clientName} 
-                  onChange={(e) => setClientName(e.target.value)} 
-                  required 
-                />
-                </label>
-                <label>Client Email
-                <input 
-                  className="form-control"
-                  placeholder="Client Email" 
-                  value={clientEmail} 
-                  onChange={(e) => setClientEmail(e.target.value)} 
-                  required 
-                />
-                </label>
-              
-              <button type="submit" className="btn btn-primary">Create Client</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {showAddProjectForm && (
-        <div className="card shadow">
-        <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">Add New Client</h6>
-        </div>
-        <div className="card-body">
-        <form onSubmit={handleAddProject} style={{ marginBottom: '2rem' }}>
-          <label>
-            Client
-            <select value={projectClientId} onChange={(e) => setProjectClientId(e.target.value)} required>
-              <option value="">Select client</option>
-              {clients.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {client.name} ({client.email})
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Project Type
-            <select value={projectType} onChange={(e) => setProjectType(e.target.value)}>
-              <option value="branding">Branding</option>
-              <option value="website">Website</option>
-              <option value="app">App</option>
-              <option value="graphic design">Graphic Design</option>
-            </select>
-          </label>
-          <button type="submit">Create Project</button>
-        </form>
-        </div>
-        </div>
-      )}
-
-      {showAddQuestionnaireForm && (
-        <div className="card shadow">
-          <div className="card-header py-3">
-            <h6 className="m-0 font-weight-bold text-primary">Create New Questionnaire</h6>
-          </div>
-          <div className="card-body">
-            <form onSubmit={(e) => { e.preventDefault(); handleCreateQuestionnaire(); }}>
-              <div className="form-group">
-                <label>Select Project</label>
-                <select 
-                  className="form-control"
-                  value={selectedProjectId}
-                  onChange={(e) => setSelectedProjectId(e.target.value)}
-                  required
-                >
-                  <option value="">Select a project</option>
-                  {projects.map(project => (
-                    <option key={project.id} value={project.id}>
-                      {project.type.charAt(0).toUpperCase() + project.type.slice(1)} - {getClientNameByRef(project.clientId)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button type="submit" className="btn btn-primary">Create Questionnaire</button>
-            </form>
-          </div>
         </div>
       )}
 
@@ -354,6 +259,178 @@ export default function Dashboard() {
 
       {selectedBrief && (
         <SubmissionModal isOpen={true} onClose={closeBrief} brief={selectedBrief} />
+      )}
+
+      {/* Add Client Modal */}
+      {showAddClient && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Add New Client</h5>
+                <button 
+                  type="button" 
+                  className="btn btn-outline-danger ms-2 delete-question" 
+                  onClick={() => setShowAddClient(false)}
+                >X</button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleAddClient}>
+                  <div className="mb-3">
+                    <label className="form-label">Client Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newClientName}
+                      onChange={(e) => setNewClientName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Client Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={newClientEmail}
+                      onChange={(e) => setNewClientEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="modal-footer">
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary" 
+                      onClick={() => setShowAddClient(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary"
+                    >
+                      Add Client
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Project Modal */}
+      {showAddProject && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Add New Project</h5>
+                <button 
+                  type="button" 
+                  className="btn btn-outline-danger ms-2 delete-question" 
+                  onClick={() => setShowAddProject(false)}
+                >X</button>
+              </div>  
+              <div className="modal-body">
+                <form onSubmit={handleAddProject}>
+                  <div className="mb-3">
+                    <label className="form-label">Project Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={newProjectName}
+                      onChange={(e) => setNewProjectName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Client</label>
+                    <select 
+                      className="form-select"
+                      value={selectedClient}
+                      onChange={(e) => setSelectedClient(e.target.value)}
+                      required
+                    >
+                      <option value="">Select a client</option>
+                      {clients.map(client => (
+                        <option key={client.id} value={client.id}>
+                          {client.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="modal-footer">
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary" 
+                      onClick={() => setShowAddProject(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary"
+                    >
+                      Add Project
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create New Questionnaire Modal */}
+      {showNewQuestionnaire && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Create New Questionnaire</h5>
+                <button 
+                  type="button" 
+                  className="btn btn-outline-danger ms-2 delete-question" 
+                  onClick={() => setShowNewQuestionnaire(false)}
+                >X</button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-4">
+                  <h5>What type of questionnaire do you want to create?</h5>
+                  <div className="d-grid gap-2 questionnaire-types">
+                    <button 
+                      className="btn btn-secondary mr-3"
+                      onClick={() => {
+                        setShowNewQuestionnaire(false);
+                        navigate('/choose-template/website');
+                      }}
+                    >
+                      Website Questionnaire
+                    </button>
+                    <button 
+                      className="btn btn-secondary mr-3"
+                      onClick={() => {
+                        setShowNewQuestionnaire(false);
+                        navigate('/choose-template/app');
+                      }}
+                    >
+                      App Questionnaire
+                    </button>
+                    <button 
+                      className="btn btn-secondary mr-3"
+                      onClick={() => {
+                        setShowNewQuestionnaire(false);
+                        navigate('/choose-template/branding');
+                      }}
+                    >
+                      Branding Questionnaire
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { loadTemplatesByType } from '../firebase/loadTemplates';
-import { auth } from '../firebase/config';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db, auth } from '../firebase/config';
+import { defaultQuestions } from '../data/defaultQuestions';
 import '../bootstrap.min.css';
 
 export default function TemplateChooser() {
@@ -10,46 +11,61 @@ export default function TemplateChooser() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { type } = useParams();
-  const searchParams = new URLSearchParams(window.location.search);
-  const projectId = searchParams.get('projectId');
+  const [searchParams] = useSearchParams();
   const isWizard = searchParams.get('wizard') === 'true';
 
   useEffect(() => {
-    const fetchTemplates = async () => {
+    const loadTemplates = async () => {
       try {
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-          if (user) {
-            const loaded = await loadTemplatesByType(type);
-            setTemplates(loaded);
-          }
-          setLoading(false);
-          unsubscribe();
+        const user = auth.currentUser;
+        if (!user) throw new Error("No authenticated user");
+
+        // Get user's custom templates
+        const templatesRef = collection(db, "users", user.uid, "questionnaireTemplates");
+        const q = query(templatesRef, where("type", "==", type));
+        const querySnapshot = await getDocs(q);
+        
+        const loadedTemplates = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Add default template
+        loadedTemplates.unshift({
+          id: 'default',
+          name: 'Default Template',
+          groups: defaultQuestions
         });
-      } catch (err) {
-        console.error('Error loading templates:', err);
+
+        setTemplates(loadedTemplates);
+      } catch (error) {
+        console.error("Error loading templates:", error);
+      } finally {
         setLoading(false);
       }
     };
-    fetchTemplates();
+
+    loadTemplates();
   }, [type]);
 
   const handleContinue = () => {
-    if (selectedTemplateId) {
-      if (isWizard) {
-        navigate(`/onboarding/${type}/${projectId}/step1?templateId=${selectedTemplateId}`);
-      } else {
-        navigate(`/template/${selectedTemplateId}/edit?projectId=${projectId}`);
-      }
+    if (!selectedTemplateId) return;
+    
+    if (isWizard) {
+      // If we're starting a wizard (creative brief)
+      navigate(`/wizard/${type}/${selectedTemplateId}`);
     } else {
-      alert("Please select a template to continue.");
+      // If we're creating a new template based on selected template
+      navigate(`/template/create/${type}?baseTemplate=${selectedTemplateId}`);
     }
   };
 
   const handleStartWithDefault = () => {
     if (isWizard) {
-      navigate(`/onboarding/${type}/${projectId}/step1?templateId=default`);
+      navigate(`/wizard/${type}/default`);
     } else {
-      navigate(`/template/default/edit?projectId=${projectId}`);
+      // Start with empty default template for the selected type
+      navigate(`/template/create/${type}`);
     }
   };
 
@@ -57,34 +73,39 @@ export default function TemplateChooser() {
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h2>Choose a {type.charAt(0).toUpperCase() + type.slice(1)} Template</h2>
+      <h2>
+        {isWizard 
+          ? `Choose a ${type.charAt(0).toUpperCase() + type.slice(1)} Template` 
+          : `Create New ${type.charAt(0).toUpperCase() + type.slice(1)} Template`
+        }
+      </h2>
 
       {templates.length === 0 ? (
         <div style={{ marginBottom: '2rem' }}>
-          <p>No templates found. You can start with a default brief.</p>
+          <p>No templates found. You can start with a default template.</p>
         </div>
       ) : (
         <>
-        <div>
-          <select
-            value={selectedTemplateId}
-            onChange={(e) => setSelectedTemplateId(e.target.value)}
-            style={{ width: '100%', padding: '1rem', fontSize: '1rem', marginBottom: '1rem' }}
-          >
-            <option value="">Select a template</option>
-            {templates.map(template => (
-              <option key={template.id} value={template.id}>
-                {template.name}
-              </option>
-            ))}
-          </select>
+          <div>
+            <select
+              value={selectedTemplateId}
+              onChange={(e) => setSelectedTemplateId(e.target.value)}
+              style={{ width: '100%', padding: '1rem', fontSize: '1rem', marginBottom: '1rem' }}
+            >
+              <option value="">Select a template to start from</option>
+              {templates.map(template => (
+                <option key={template.id} value={template.id}>
+                  {template.name}
+                </option>
+              ))}
+            </select>
           </div>
           <button
             onClick={handleContinue}
             disabled={!selectedTemplateId}
             className="btn-primary"
           >
-            Continue With Selected Template
+            {isWizard ? 'Continue With Selected Template' : 'Use As Starting Point'}
           </button>
         </>
       )}
@@ -94,7 +115,7 @@ export default function TemplateChooser() {
           onClick={handleStartWithDefault}
           className="btn-secondary"
         >
-          Start With Default Brief
+          {isWizard ? 'Start With Default Brief' : 'Start Fresh'}
         </button>
       </div>
     </div>

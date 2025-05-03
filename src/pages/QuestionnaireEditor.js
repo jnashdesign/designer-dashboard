@@ -1,11 +1,179 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { useParams, useNavigate } from 'react-router-dom';
-import { defaultQuestions } from '../data/defaultQuestions';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { defaultQuestions, websiteQuestions, appQuestions } from '../data/defaultQuestions';
+import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase/config';
+import { questionSuggestions } from '../data/questionSuggestions';
+import AutocompleteInput from '../components/AutocompleteInput';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+const QuestionInput = ({ question, onChange, onFileUpload }) => {
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [preview, setPreview] = useState(null);
+
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+
+  const validateFile = (file) => {
+    setError('');
+    
+    if (!file) return false;
+    
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError('Only JPG, JPEG, PNG and PDF files are allowed.');
+      return false;
+    }
+    
+    if (file.size > MAX_FILE_SIZE) {
+      setError('File size must be less than 5MB.');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleFileUpload = async (file) => {
+    if (!validateFile(file)) return;
+
+    try {
+      setUploading(true);
+      setError('');
+      
+      // Create preview for images
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setPreview(null);
+      }
+
+      const storage = getStorage();
+      const fileRef = ref(storage, `uploads/${auth.currentUser.uid}/${Date.now()}_${file.name}`);
+      
+      await uploadBytes(fileRef, file);
+      const downloadURL = await getDownloadURL(fileRef);
+      
+      onFileUpload(downloadURL);
+      
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setError('Failed to upload file. Please try again.');
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Get relevant suggestions based on group name or question context
+  const getSuggestions = () => {
+    if (question.text.toLowerCase().includes('color') || 
+        question.text.toLowerCase().includes('design') ||
+        question.text.toLowerCase().includes('brand')) {
+      return questionSuggestions.design;
+    } else if (question.text.toLowerCase().includes('audience') || 
+               question.text.toLowerCase().includes('customer') ||
+               question.text.toLowerCase().includes('market')) {
+      return questionSuggestions.audience;
+    }
+    return questionSuggestions.business;
+  };
+
+  switch (question.type) {
+    case 'textarea':
+      return (
+        <AutocompleteInput
+          value={question.text}
+          onChange={onChange}
+          type="textarea"
+          suggestions={getSuggestions()}
+        />
+      );
+    case 'file':
+      return (
+        <div className="w-100">
+          <div className="mb-2">
+            <AutocompleteInput
+              value={question.text}
+              onChange={onChange}
+              suggestions={getSuggestions()}
+            />
+          </div>
+          <div>
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              onChange={(e) => handleFileUpload(e.target.files[0])}
+              className="form-control"
+              style={{ maxWidth: '300px' }}
+              disabled={uploading}
+            />
+            {error && (
+              <div className="text-danger mt-2" style={{ maxWidth: '300px' }}>
+                {error}
+              </div>
+            )}
+            {uploading && (
+              <div className="progress mt-2" style={{ maxWidth: '300px' }}>
+                <div 
+                  className="progress-bar" 
+                  role="progressbar" 
+                  style={{ width: `${uploadProgress}%` }}
+                >
+                  {uploadProgress}%
+                </div>
+              </div>
+            )}
+            {(preview || question.fileUrl) && (
+              <div className="mt-2" style={{ maxWidth: '200px' }}>
+                {question.fileUrl && question.fileUrl.toLowerCase().endsWith('.pdf') ? (
+                  <div className="d-flex align-items-center">
+                    <i className="fas fa-file-pdf me-2" style={{ fontSize: '24px' }}></i>
+                    <a href={question.fileUrl} target="_blank" rel="noopener noreferrer">
+                      View PDF
+                    </a>
+                  </div>
+                ) : (
+                  <img 
+                    src={preview || question.fileUrl} 
+                    alt="Upload preview" 
+                    className="img-fluid"
+                    style={{ 
+                      width: '200px', 
+                      objectFit: 'contain',
+                      border: '1px solid #dee2e6',
+                      borderRadius: '4px'
+                    }}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    default:
+      return (
+        <AutocompleteInput
+          value={question.text}
+          onChange={onChange}
+          suggestions={getSuggestions()}
+        />
+      );
+  }
+};
 
 const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuestionDelete, onGroupNameChange, isExpanded, onToggleExpand, onAddQuestion }) => {
+  const [newQuestionType, setNewQuestionType] = useState('text');
+
+  const handleAddQuestion = () => {
+    onAddQuestion(groupIndex, newQuestionType);
+  };
+
   return (
     <Draggable draggableId={group.id} index={groupIndex}>
       {(provided) => (
@@ -54,24 +222,14 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
                         {...provided.draggableProps}
                         className="p-3 mb-2 rounded d-flex align-items-center bg-white border draggable-item"
                       >
-                        <div 
-                          {...provided.dragHandleProps}
-                          className="me-3"
-                        >
-                          ⋮⋮
-                        </div>
-                        <input
-                          type="text"
-                          value={question.text}
-                          onChange={(e) => onQuestionChange(groupIndex, index, e.target.value)}
-                          className="form-control"
+                        <div {...provided.dragHandleProps} className="me-3">⋮⋮</div>
+                        <QuestionInput
+                          question={question}
+                          onChange={(value) => onQuestionChange(groupIndex, index, value)}
+                          onFileUpload={(fileUrl) => {/* Handle file upload */}}
                         />
                         <button
-                          onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this question?')) {
-                              onQuestionDelete(groupIndex, index);
-                            }
-                          }}
+                          onClick={() => onQuestionDelete(groupIndex, index)}
                           className="btn btn-outline-danger ms-2 delete-question"
                           type="button"
                           title="Delete question"
@@ -83,12 +241,24 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
                   </Draggable>
                 ))}
                 {provided.placeholder}
-                <button
-                  className="btn btn-primary btn-sm mt-3"
-                  onClick={() => onAddQuestion(groupIndex)}
-                >
-                  Add Question to Group
-                </button>
+                <div className="d-flex mt-3">
+                  <select
+                    className="form-select me-2 mr-3"
+                    style={{ width: 'auto' }}
+                    value={newQuestionType}
+                    onChange={(e) => setNewQuestionType(e.target.value)}
+                  >
+                    <option value="text">Text Input</option>
+                    <option value="textarea">Text Area</option>
+                    <option value="file">File Upload</option>
+                  </select>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleAddQuestion}
+                  >
+                    Add Question
+                  </button>
+                </div>
               </div>
             )}
           </Droppable>
@@ -98,40 +268,86 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
   );
 });
 
-export default function QuestionnaireEditor() {
+const QuestionnaireEditor = () => {
+  const { templateId, type } = useParams();
+  const [searchParams] = useSearchParams();
+  const baseTemplateId = searchParams.get('baseTemplate');
   const [groups, setGroups] = useState([]);
   const [saving, setSaving] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState(new Set());
-  const { templateId } = useParams();
   const navigate = useNavigate();
+  const [templateName, setTemplateName] = useState('');
+  const [showNameDialog, setShowNameDialog] = useState(false);
 
   useEffect(() => {
     const loadTemplate = async () => {
       try {
-        if (templateId === 'default') {
-          // Use the groups directly from defaultQuestions
-          setGroups(defaultQuestions);
-          // Expand all groups by default
-          setExpandedGroups(new Set(defaultQuestions.map(group => group.id)));
-        } else {
-          const user = auth.currentUser;
-          const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
-          const templateSnap = await getDoc(templateRef);
+        const user = auth.currentUser;
+        if (!user) throw new Error("No authenticated user");
+
+        // If we're creating a new template
+        if (templateId === 'create') {
+          if (baseTemplateId && baseTemplateId !== 'default') {
+            // Load the selected template as a starting point
+            const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", baseTemplateId);
+            const templateDoc = await getDoc(templateRef);
+            
+            if (templateDoc.exists()) {
+              setGroups(templateDoc.data().groups);
+              return;
+            }
+          }
           
-          if (templateSnap.exists()) {
-            const templateData = templateSnap.data();
-            setGroups(templateData.groups || []);
+          // Load default questions for the type if no base template or if base template not found
+          switch (type) {
+            case 'website':
+              setGroups(websiteQuestions);
+              break;
+            case 'app':
+              setGroups(appQuestions);
+              break;
+            case 'branding':
+            default:
+              setGroups(defaultQuestions);
+          }
+          return;
+        }
+
+        // If we're editing an existing template
+        const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+        const templateDoc = await getDoc(templateRef);
+        
+        if (templateDoc.exists()) {
+          setGroups(templateDoc.data().groups);
+        } else {
+          console.error("Template not found");
+          // Load appropriate default questions based on type
+          switch (type) {
+            case 'website':
+              setGroups(websiteQuestions);
+              break;
+            case 'app':
+              setGroups(appQuestions);
+              break;
+            default:
+              setGroups(defaultQuestions);
           }
         }
       } catch (error) {
         console.error("Error loading template:", error);
+        setGroups(defaultQuestions);
       }
     };
 
     loadTemplate();
-  }, [templateId]);
+  }, [templateId, type, baseTemplateId]);
 
-  const handleSave = async () => {
+  const handleSave = async (name = '') => {
+    if (templateId === 'default' && !name) {
+      setShowNameDialog(true);
+      return;
+    }
+
     try {
       setSaving(true);
       const user = auth.currentUser;
@@ -141,6 +357,7 @@ export default function QuestionnaireEditor() {
       const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", saveTemplateId);
       
       await setDoc(templateRef, {
+        name: name || templateName || 'Untitled Template',
         groups,
         updatedAt: new Date(),
         type: 'branding',
@@ -152,6 +369,37 @@ export default function QuestionnaireEditor() {
       alert("Failed to save template. Please try again.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleNameSubmit = (e) => {
+    e.preventDefault();
+    setShowNameDialog(false);
+    handleSave(templateName);
+  };
+
+  const handleDelete = async () => {
+    // Don't allow deletion of default template
+    if (templateId === 'default') {
+      alert("Cannot delete the default template");
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this template? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("No authenticated user");
+
+      const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+      await deleteDoc(templateRef);
+
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Error deleting template:", error);
+      alert("Failed to delete template. Please try again.");
     }
   };
 
@@ -238,12 +486,21 @@ export default function QuestionnaireEditor() {
     setExpandedGroups(prev => new Set([...prev, newGroupId]));
   };
 
-  const addQuestion = (groupIndex) => {
+  const addQuestion = (groupIndex, type = 'text') => {
     const newGroups = [...groups];
     newGroups[groupIndex].questions.push({
       id: `question-${Date.now()}`,
-      text: "New Question"
+      text: "New Question",
+      type: type,
+      accept: type === 'file' ? 'image/*,.pdf' : undefined,
+      fileUrl: null
     });
+    setGroups(newGroups);
+  };
+
+  const handleFileUpload = (groupIndex, questionIndex, fileUrl) => {
+    const newGroups = [...groups];
+    newGroups[groupIndex].questions[questionIndex].fileUrl = fileUrl;
     setGroups(newGroups);
   };
 
@@ -253,14 +510,22 @@ export default function QuestionnaireEditor() {
         <h2>Edit Questions</h2>
         <div>
           <button 
-            className="btn btn-secondary mr-3"
+            className="btn btn-secondary me-2 mr-3"
             onClick={() => navigate('/dashboard')}
           >
             Cancel
           </button>
+          {templateId !== 'default' && (
+            <button 
+              className="btn btn-danger me-2 mr-3"
+              onClick={handleDelete}
+            >
+              Delete Template
+            </button>
+          )}
           <button 
             className="btn btn-primary"
-            onClick={handleSave}
+            onClick={() => setShowNameDialog(true)}
             disabled={saving}
           >
             {saving ? 'Saving...' : 'Save Template'}
@@ -300,6 +565,53 @@ export default function QuestionnaireEditor() {
           Add New Group
         </button>
       </div>
+
+      {showNameDialog && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <form onSubmit={handleNameSubmit}>
+                <div className="modal-header">
+                  <h5 className="modal-title">Name Your Template</h5>
+                </div>
+                <div className="modal-body">
+                  <div className="form-group">
+                    <label htmlFor="templateName" className="form-label">Template Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="templateName"
+                      value={templateName}
+                      onChange={(e) => setTemplateName(e.target.value)}
+                      placeholder="Enter template name"
+                      required
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    onClick={() => setShowNameDialog(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                    disabled={!templateName.trim()}
+                  >
+                    Save Template
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-} 
+};
+
+export default QuestionnaireEditor; 

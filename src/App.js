@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from './context/ThemeContext';
+import '../src/bootstrap.min.css';
 
 import Dashboard from "./components/dashboard/Dashboard";
 import WizardRunner from "./components/wizards/WizardRunner";
@@ -110,6 +111,22 @@ function App() {
             <RequireAuth role="designer">
               <Layout>
                 <QuestionnaireEditor />
+              </Layout>
+            </RequireAuth>
+          } />
+
+          <Route path="/template/create/:type" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <QuestionnaireEditor />
+              </Layout>
+            </RequireAuth>
+          } />
+
+          <Route path="/wizard/:type/:templateId" element={
+            <RequireAuth>
+              <Layout>
+                <WizardRunner />
               </Layout>
             </RequireAuth>
           } />
