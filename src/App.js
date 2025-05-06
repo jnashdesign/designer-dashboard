@@ -18,6 +18,7 @@ import StartProjectLoader from './pages/StartProjectLoader';
 import ViewBrief from './pages/ViewBrief';
 import QuestionnaireBuilder from './pages/QuestionnaireBuilder';
 import QuestionnaireEditor from './pages/QuestionnaireEditor';
+import AssetRepository from './components/brand/AssetRepository';
 
 function App() {
   return (
@@ -127,6 +128,14 @@ function App() {
             <RequireAuth>
               <Layout>
                 <WizardRunner />
+              </Layout>
+            </RequireAuth>
+          } />
+
+          <Route path="/project/:projectId/assets" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <AssetRepository />
               </Layout>
             </RequireAuth>
           } />

@@ -247,6 +247,46 @@ select.form-control::-ms-expand {
   background-color: rgba(0,0,0,0.05);
 }
 
+button.btn.btn-sm.btn-danger {
+    padding: 0px 5px;
+    font-size: 12px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+.file-preview p.file-name.mt-2 {
+    margin: 0;
+}
+.file-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 5px;
+    border-radius: 10px;
+}
+.expanded-section .file-preview p {
+    display: none;
+}
 .dark-mode .suggestion-item:hover {
   background-color: rgba(255,255,255,0.1);
+}
+.dark-mode .upload-zone {
+    color: #333;
+}
+.dark-mode .upload-section .container {
+    color: #fff;
+    background: #2a2c3d;
+}
+
+.btn-link {
+  color: var(--text-primary);
+}
+
+.btn-link:hover {
+  color: var(--text-secondary);
+}
+
+.dark-mode .btn-link {
+  color: var(--text-primary);
+}
+
+.dark-mode .btn-link:hover {
+  color: var(--text-secondary);
 }

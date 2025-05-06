@@ -130,7 +130,7 @@ const QuestionInput = ({ question, onChange, onFileUpload }) => {
               </div>
             )}
             {(preview || question.fileUrl) && (
-              <div className="mt-2" style={{ maxWidth: '200px' }}>
+              <div className="mt-2" style={{ maxWidth: '80px' }}>
                 {question.fileUrl && question.fileUrl.toLowerCase().endsWith('.pdf') ? (
                   <div className="d-flex align-items-center">
                     <i className="fas fa-file-pdf me-2" style={{ fontSize: '24px' }}></i>
@@ -144,7 +144,7 @@ const QuestionInput = ({ question, onChange, onFileUpload }) => {
                     alt="Upload preview" 
                     className="img-fluid"
                     style={{ 
-                      width: '200px', 
+                      width: '80px', 
                       objectFit: 'contain',
                       border: '1px solid #dee2e6',
                       borderRadius: '4px'

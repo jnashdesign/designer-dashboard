@@ -70,6 +70,8 @@ button.btn-secondary {
 }
 .brief-toggle.text-primary.cursor-pointer, .briefs-container {
   border: 1px solid #e3e6f0;
+  width: 100%;
+  text-align: left;
 }
 input[type="email"],input[type="tel"], input[type="text"], textarea, select {
   padding: 10px;
@@ -127,15 +129,26 @@ form label {
 }
 
 /* delete question button */
-button.delete-question {
+button.delete-question,
+button.btn-close {
   margin-top: -10px;
   margin-left: 10px;
+  padding: 10px;
   background: #ddd;
   color: #333;
   border: none;
   border-radius: 50%;
   width: 40px;
   height: 40px;
+}
+.alert {
+  padding: 1rem 4rem 1rem 1.25rem;
+}
+.alert button.btn-close {
+  position: absolute;
+  top: 15px;
+  right: 5px;
+  background: none;
 }
 
 button i::before {
@@ -152,7 +165,9 @@ button i::before {
 .login-page .col-12, .signup-page .col-12 {
   padding-left: 0;
 }
-
+.file-types {
+  font-size: 0.8em;
+}
   @media (min-width: 576px) {
     .questionnaire-types button {
       width: 100%;

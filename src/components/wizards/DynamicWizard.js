@@ -164,6 +164,24 @@ export default function DynamicWizard() {
     }
   };
 
+  const handleComplete = async () => {
+    // ... save brief data
+    
+    if (type === 'branding') {
+      return (
+        <div className="completion-actions">
+          <h4>What's Next?</h4>
+          <button 
+            className="btn btn-primary"
+            onClick={() => navigate(`/project/${projectId}/assets/upload`)}
+          >
+            Upload Brand Assets
+          </button>
+        </div>
+      );
+    }
+  };
+
   if (!sections.length) return <p>Loading questions...</p>;
   if (sectionIndex >= sections.length) {
     return (
@@ -191,7 +209,7 @@ export default function DynamicWizard() {
                     {answer.map((item, index) => (
                       <div key={index} style={{ marginBottom: '0.5rem' }}>
                         {question?.type === 'imageUpload' && item ? (
-                          <img src={item} alt={`Upload ${index + 1}`} style={{ maxWidth: '200px', marginTop: '0.5rem' }} />
+                          <img src={item} alt={`Upload ${index + 1}`} style={{ maxWidth: '80px', marginTop: '0.5rem' }} />
                         ) : (
                           <p style={{ color: item ? '#333' : '#888', fontStyle: item ? 'normal' : 'italic' }}>
                             {item || '(No answer provided)'}

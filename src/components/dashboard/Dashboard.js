@@ -195,7 +195,15 @@ export default function Dashboard() {
                 <div className='project-info col-6'>
                 <div className="client-info mb-3">
                 </div>
-                
+                <div className="project-actions">
+                <button 
+                  className="btn btn-secondary mb-2 w-100"
+                  onClick={() => navigate(`/project/${project.id}/assets`)}
+                >
+                  Assets
+                </button>
+              </div>
+
                 <div className="action-buttons">
                   {project.type === 'branding' && (
                     <button 
