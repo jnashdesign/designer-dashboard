@@ -29,7 +29,9 @@ function App() {
           <Route path="/signup" element={
             <Layout>
             <SignupPage />
-          </Layout>} />
+          </Layout>
+          } />
+
           <Route path="/login" element={
             <Layout>
             <LoginPage />
@@ -44,8 +46,7 @@ function App() {
                   <Dashboard />
                 </Layout>
               </RequireAuth>
-            }
-          />
+            } />
 
           <Route
             path="/client-dashboard"
@@ -55,8 +56,7 @@ function App() {
                   <ClientDashboard />
                 </Layout>
               </RequireAuth>
-            }
-          />
+            } />
 
           <Route
             path="/onboarding/:type/:projectId/*"
@@ -66,15 +66,17 @@ function App() {
                 <WizardRunner />
                 </Layout>
               </RequireAuth>
-            }
+            } 
           />
+
           <Route path="/edit-questions" element={
             <RequireAuth role="designer">
               <Layout>
                 <EditQuestions />
               </Layout>
             </RequireAuth>
-          } />
+            }
+          />
 
           <Route path="/choose-template/:type" element={
             <RequireAuth role="designer">

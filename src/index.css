@@ -58,6 +58,9 @@ button.btn-primary {
 button.btn-secondary {
   background: #6c757d;
 }
+button:focus {
+  outline: none;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -133,12 +136,12 @@ button.delete-question,
 button.btn-close {
   margin-top: -10px;
   margin-left: 10px;
-  padding: 10px;
+  padding: 0 10px;
   background: #ddd;
   color: #333;
   border: none;
   border-radius: 50%;
-  width: 40px;
+  width: 44px;
   height: 40px;
 }
 .alert {
@@ -155,8 +158,9 @@ button i::before {
   color: #aaa;
 }
 
-.draggable-item input {
+.draggable-item input, .draggable-item textarea {
   margin-left: 10px;
+  width: calc(100% - 20px);
 }
 
 .login-page input, .signup-page input {
@@ -167,6 +171,12 @@ button i::before {
 }
 .file-types {
   font-size: 0.8em;
+}
+
+@media (max-width: 991px) {
+  .nav-logo {
+    margin-left: 50px;
+  }
 }
   @media (min-width: 576px) {
     .questionnaire-types button {

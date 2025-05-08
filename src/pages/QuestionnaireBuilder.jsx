@@ -1,4 +1,3 @@
-
 // QuestionnaireBuilder.jsx
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -11,9 +10,20 @@ export default function QuestionnaireBuilder() {
   const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
-    const template = searchParams.get("template");
-    if (template === "default") {
+    // Check for the different URL parameters
+    const useDefaults = searchParams.get("useDefaults");
+    const empty = searchParams.get("empty");
+    const templateId = searchParams.get("templateId");
+
+    if (useDefaults === "true") {
+      // Load default questions
       setQuestions(defaultQuestions);
+    } else if (empty === "true") {
+      // Start with empty array
+      setQuestions([]);
+    } else if (templateId) {
+      // Load specific template (to be implemented)
+      // fetchTemplate(templateId);
     }
   }, [searchParams]);
 

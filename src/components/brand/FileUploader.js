@@ -5,13 +5,24 @@ import { doc, arrayUnion, setDoc, serverTimestamp, getDoc } from 'firebase/fires
 import { db } from '../../firebase/config';
 import FilePreview from './FilePreview';
 
-const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) => {
+const FileUploader = ({ projectId, onUploadComplete }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null); // { type: 'success' | 'error', message: string }
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef();
   const [pendingUploads, setPendingUploads] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  const categories = {
+    logos: 'Logo Files',
+    brandmarks: 'Brand Marks & Icons',
+    typography: 'Typography',
+    colors: 'Color Palettes',
+    guidelines: 'Brand Guidelines',
+    templates: 'Templates & Stationery',
+    other: 'Other Brand Assets'
+  };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -45,21 +56,54 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
     setUploading(true);
     setUploadStatus(null);
     
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
-    const allowedTypes = [
-      'application/pdf',
-      'application/illustrator',
-      'image/svg+xml',
-      'application/eps',
-      'application/x-eps',
-      'application/postscript',
-      'image/x-eps',
-      'image/eps',
-      'image/png',
-      'image/jpeg',
-      'image/jpg',
-      'application/octet-stream'
-    ];
+    const MAX_FILE_SIZE = 25 * 1024 * 1024; // Increased to 25MB for large brand files
+    const allowedTypes = {
+      logos: [
+        'application/illustrator',
+        'image/svg+xml',
+        'application/eps',
+        'image/png',
+        'application/pdf'
+      ],
+      brandmarks: [
+        'application/illustrator',
+        'image/svg+xml',
+        'application/eps',
+        'image/png',
+        'application/pdf'
+      ],
+      typography: [
+        'application/x-font-ttf',
+        'application/x-font-otf',
+        'font/ttf',
+        'font/otf',
+        'application/pdf'
+      ],
+      colors: [
+        'application/pdf',
+        'image/png',
+        'image/jpeg',
+        'application/illustrator'
+      ],
+      guidelines: [
+        'application/pdf',
+        'application/illustrator'
+      ],
+      templates: [
+        'application/pdf',
+        'application/illustrator',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+        'application/msword' // .doc
+      ],
+      other: [
+        'application/pdf',
+        'application/illustrator',
+        'image/svg+xml',
+        'application/eps',
+        'image/png',
+        'image/jpeg'
+      ]
+    };
 
     const errors = {
       size: [],
@@ -75,11 +119,15 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
         isValid = false;
       }
 
-      // Check file type
-      const isAllowedType = allowedTypes.includes(file.type) || 
-                           file.name.toLowerCase().endsWith('.eps') ||
-                           file.name.toLowerCase().endsWith('.ai');
-      if (!isAllowedType) {
+      // Check file type based on selected category
+      const isAllowedType = 
+        allowedTypes[selectedCategory]?.includes(file.type) ||
+        (file.name.toLowerCase().endsWith('.eps') && ['logos', 'brandmarks', 'other'].includes(selectedCategory)) ||
+        (file.name.toLowerCase().endsWith('.ai') && ['logos', 'brandmarks', 'guidelines', 'templates', 'other'].includes(selectedCategory)) ||
+        (file.name.toLowerCase().endsWith('.ttf') && selectedCategory === 'typography') ||
+        (file.name.toLowerCase().endsWith('.otf') && selectedCategory === 'typography');
+
+      if (!isAllowedType && selectedCategory) {
         errors.type.push(file.name);
         isValid = false;
       }
@@ -90,10 +138,19 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
     // Show error messages if any
     const errorMessages = [];
     if (errors.size.length > 0) {
-      errorMessages.push(`The following files exceed the 5MB size limit: ${errors.size.join(', ')}`);
+      errorMessages.push(`The following files exceed the 25MB size limit: ${errors.size.join(', ')}`);
     }
     if (errors.type.length > 0) {
-      errorMessages.push(`The following files are not allowed (must be AI, EPS, SVG, PNG, JPG, or PDF): ${errors.type.join(', ')}`);
+      const allowedExtensions = {
+        logos: 'AI, EPS, SVG, PNG, PDF',
+        brandmarks: 'AI, EPS, SVG, PNG, PDF',
+        typography: 'TTF, OTF, PDF',
+        colors: 'PDF, PNG, JPG, AI',
+        guidelines: 'PDF, AI',
+        templates: 'PDF, AI, DOC, DOCX',
+        other: 'AI, EPS, SVG, PNG, JPG, PDF'
+      };
+      errorMessages.push(`The following files are not allowed for ${categories[selectedCategory]} (must be ${allowedExtensions[selectedCategory]}): ${errors.type.join(', ')}`);
     }
     
     if (errorMessages.length > 0) {
@@ -110,7 +167,7 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
     
     const uploadPromises = validFiles.map(async (file) => {
       try {
-        const path = `projects/${projectId}/${category}/${subCategory || ''}/${file.name}`;
+        const path = `projects/${projectId}/${selectedCategory}/${file.name}`;
         const fileRef = ref(storage, path);
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
@@ -153,41 +210,41 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
   };
 
   const handleConfirmUploads = async () => {
+    if (!selectedCategory) {
+      setUploadStatus({
+        type: 'error',
+        message: 'Please select a file category before confirming upload.'
+      });
+      return;
+    }
+
     try {
       setUploading(true);
-      const assetRef = doc(db, 'projects', projectId, 'assets', category);
+      const assetRef = doc(db, 'projects', projectId, 'assets', selectedCategory);
       
-      // Prepare new files data with regular timestamp
       const newFiles = pendingUploads.map(file => ({
         name: file.name,
         url: file.url,
         type: file.type,
+        fileType: selectedCategory,
         path: file.path,
-        category,
-        subCategory: subCategory || null,
-        uploadedAt: new Date().toISOString() // Use ISO string instead of serverTimestamp
+        uploadedAt: new Date().toISOString()
       }));
 
-      // Get existing files first
       const assetDoc = await getDoc(assetRef);
       const existingFiles = assetDoc.exists() ? assetDoc.data().files || [] : [];
 
-      // Update Firestore with combined array
       await setDoc(assetRef, {
         files: [...existingFiles, ...newFiles]
       }, { merge: true });
 
-      // Update local state through parent component
       onUploadComplete(newFiles);
-      
-      // Clear pending uploads
       setPendingUploads([]);
       
       setUploadStatus({
         type: 'success',
         message: 'Files successfully saved to project!'
       });
-
     } catch (error) {
       console.error('Error saving files:', error);
       setUploadStatus({
@@ -206,20 +263,16 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
   return (
     <>
       {uploadStatus && (
-        <div 
-          className={`alert ${uploadStatus.type === 'success' ? 'alert-success' : 'alert-danger'} mb-3`}
-          style={{ fontSize: '0.9rem' }}
-        >
+        <div className={`alert ${uploadStatus.type === 'success' ? 'alert-success' : 'alert-danger'} mb-3`}>
           {uploadStatus.message}
           <button 
             type="button" 
             className="btn-close float-end" 
             onClick={() => setUploadStatus(null)}
-            aria-label="Close"
           >X</button>
         </div>
       )}
-      
+
       <div
         className={`upload-zone ${isDragging ? 'dragging' : ''} ${uploading ? 'uploading' : ''}`}
         onDragEnter={handleDrag}
@@ -249,27 +302,46 @@ const FileUploader = ({ projectId, category, subCategory, onUploadComplete }) =>
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Uploading...</span>
             </div>
-            <p>Uploading files...</p>
+            <p>Uploading brand assets...</p>
           </div>
         ) : (
           <div>
             <i className="fas fa-cloud-upload-alt mb-2" style={{ fontSize: '2rem' }}></i>
-            <p>Drag and drop files here or click to select</p>
+            <p>Drag and drop brand files here or click to select</p>
+            <p className="text-muted small">Supported formats vary by category</p>
           </div>
         )}
       </div>
 
       {pendingUploads.length > 0 && (
         <div className="mt-4">
+          <div className="mb-3">
+            <label htmlFor="fileCategory" className="form-label">Asset Category</label>
+            <select 
+              id="fileCategory"
+              className="form-select"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              required
+            >
+              <option value="">Select a category</option>
+              {Object.entries(categories).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h6>Pending Uploads</h6>
+            <h6>Files to Upload</h6>
             <button 
               className="btn btn-primary"
               onClick={handleConfirmUploads}
+              disabled={!selectedCategory}
             >
               Confirm Upload
             </button>
           </div>
+
           <div className="d-flex flex-wrap gap-3">
             {pendingUploads.map((file, index) => (
               <div key={index} className="file-thumb position-relative mr-2 mb-2">

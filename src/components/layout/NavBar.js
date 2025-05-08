@@ -4,6 +4,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle';
+import Logo from '../shared/Logo';
 
 export default function NavBar() {
   const [role, setRole] = useState(null);
@@ -34,33 +35,11 @@ export default function NavBar() {
       background: 'var(--bg-card)',
       borderBottom: '1px solid var(--border-color)'
     }}>
-      <h2 style={{ margin: 0 }}>
-        <Link to="/" style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>BrandEZ</Link>
-      </h2>
+      <Link to="/" className="nav-logo d-flex align-items-center text-decoration-none">
+        <Logo />
+      </Link>
+      
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {role === 'designer' && (
-          <Link 
-            to="/dashboard" 
-            style={{ 
-              color: 'var(--text-primary)', 
-              textDecoration: 'none' 
-            }}
-          >
-            Dashboard
-          </Link>
-        )}
-        {role === 'client' && (
-          <Link 
-            to="/client-dashboard" 
-            style={{ 
-              color: 'var(--text-primary)', 
-              textDecoration: 'none' 
-            }}
-          >
-            My Projects
-          </Link>
-        )}
-        <ThemeToggle />
         <button 
           onClick={handleLogout}
           className="btn btn-outline-secondary"

@@ -148,19 +148,9 @@ select.form-control::-ms-expand {
   font-weight: 600;
 }
 
-.badge-website {
-  color: #fff;
-  background-color: #4e73df;  /* Blue */
-}
-
-.badge-app {
-  color: #fff;
-  background-color: #36b9cc;  /* Teal */
-}
-
 .badge-branding {
   color: #fff;
-  background-color: #1cc88a;  /* Green */
+  background-color: #1cc88a;
 }
 
 /* Update existing styles to use variables */
@@ -257,22 +247,16 @@ button.btn.btn-sm.btn-danger {
     margin: 0;
 }
 .file-thumb {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 10px 5px;
-    border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 .expanded-section .file-preview p {
     display: none;
 }
-.dark-mode .suggestion-item:hover {
-  background-color: rgba(255,255,255,0.1);
-}
-.dark-mode .upload-zone {
-    color: #333;
-}
-.dark-mode .upload-section .container {
-    color: #fff;
-    background: #2a2c3d;
+.dark-mode .file-thumb {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-link {
@@ -289,4 +273,31 @@ button.btn.btn-sm.btn-danger {
 
 .dark-mode .btn-link:hover {
   color: var(--text-secondary);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.modal {
+  z-index: 1050;
+}
+
+.dark-mode .modal-content {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.dark-mode .modal-header {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .modal-footer {
+  border-top-color: var(--border-color);
 }

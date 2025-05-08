@@ -1,13 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.90d3a8da.css",
-    "main.js": "/static/js/main.ce83c021.js",
+    "main.css": "/static/css/main.ef5a8b20.css",
+    "main.js": "/static/js/main.aea97004.js",
     "index.html": "/index.html",
-    "main.90d3a8da.css.map": "/static/css/main.90d3a8da.css.map",
-    "main.ce83c021.js.map": "/static/js/main.ce83c021.js.map"
+    "static/media/brandEZ_logo.svg": "/static/media/brandEZ_logo.167b5375cff1ebd3729c9c1fd8e6df3d.svg",
+    "static/media/brandEZ_logo_white.svg": "/static/media/brandEZ_logo_white.88875732b019fdef90860920b497eb41.svg",
+    "main.ef5a8b20.css.map": "/static/css/main.ef5a8b20.css.map",
+    "main.aea97004.js.map": "/static/js/main.aea97004.js.map"
   },
   "entrypoints": [
-    "static/css/main.90d3a8da.css",
-    "static/js/main.ce83c021.js"
+    "static/css/main.ef5a8b20.css",
+    "static/js/main.aea97004.js"
   ]
 }

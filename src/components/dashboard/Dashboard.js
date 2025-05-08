@@ -144,29 +144,6 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-    <h2>Dashboard</h2>
-      <div className="d-flex justify-content-between align-items-left mb-4">
-        <div>
-          <button 
-            className="btn btn-primary me-2 mr-3" 
-            onClick={() => setShowAddClient(true)}
-          >
-            Add Client
-          </button>
-          <button 
-            className="btn btn-primary me-2 mr-3" 
-            onClick={() => setShowAddProject(true)}
-          >
-            Add Project
-          </button>
-          <button 
-            className="btn btn-primary" 
-            onClick={() => setShowNewQuestionnaire(true)}
-          >
-            Create New Questionnaire
-          </button>
-        </div>
-      </div>
 
       {notification.message && (
         <div className={`alert ${notification.type === 'success' ? 'alert-success' : 'alert-danger'}`}>
@@ -188,7 +165,7 @@ export default function Dashboard() {
                   Client: {getClientNameByRef(project.clientId)}
                 </h6>
                 <span className={`badge badge-${project.type}`}>
-                  {project.type.charAt(0).toUpperCase() + project.type.slice(1)} Project - {project.status}
+                  {project.status}
                 </span>
               </div>
               <div className="card-body">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { defaultQuestions, websiteQuestions, appQuestions } from '../data/defaultQuestions';
+import { defaultQuestions } from '../data/defaultQuestions';
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase/config';
 import { questionSuggestions } from '../data/questionSuggestions';
@@ -198,9 +198,8 @@ const QuestionGroup = React.memo(({ group, groupIndex, onQuestionChange, onQuest
                 type="text"
                 value={group.name}
                 onChange={(e) => onGroupNameChange(groupIndex, e.target.value)}
-                className="form-control"
+                className="form-control questionnaire-editor-input"
                 placeholder="Group Name"
-                style={{ minWidth: '500px' }}
               />
             </div>
             <span className="text-muted">
@@ -285,62 +284,92 @@ const QuestionnaireEditor = () => {
         const user = auth.currentUser;
         if (!user) throw new Error("No authenticated user");
 
-        // If we're creating a new template
+        // Clear expanded groups when loading new template
+        setExpandedGroups(new Set());
+
         if (templateId === 'create') {
-          if (baseTemplateId && baseTemplateId !== 'default') {
-            // Load the selected template as a starting point
-            const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", baseTemplateId);
+          const useDefaults = searchParams.get("useDefaults");
+          const empty = searchParams.get("empty");
+
+          if (empty === "true") {
+            const newGroup = {
+              id: `group-${Date.now()}`,
+              name: 'New Group',
+              questions: []
+            };
+            setGroups([newGroup]);
+            // Auto-expand the new group
+            setExpandedGroups(new Set([newGroup.id]));
+          } else if (useDefaults === "true") {
+            setGroups(defaultQuestions);
+            // Auto-expand all default groups
+            setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
+          } else if (baseTemplateId && baseTemplateId !== 'default') {
+            const templateRef = doc(db, "questionnaireTemplates", baseTemplateId);
             const templateDoc = await getDoc(templateRef);
             
             if (templateDoc.exists()) {
-              setGroups(templateDoc.data().groups);
-              return;
-            }
-          }
-          
-          // Load default questions for the type if no base template or if base template not found
-          switch (type) {
-            case 'website':
-              setGroups(websiteQuestions);
-              break;
-            case 'app':
-              setGroups(appQuestions);
-              break;
-            case 'branding':
-            default:
+              const data = templateDoc.data();
+              const loadedGroups = data.groups.map(group => ({
+                id: group.id || `group-${Date.now()}`,
+                name: group.name,
+                questions: group.questions.map(q => ({
+                  id: q.id || `question-${Date.now()}`,
+                  text: q.text,
+                  type: q.type || 'text',
+                  accept: q.accept,
+                  fileUrl: q.fileUrl
+                }))
+              }));
+              setGroups(loadedGroups);
+              // Auto-expand all loaded groups
+              setExpandedGroups(new Set(loadedGroups.map(g => g.id)));
+              setTemplateName(data.name);
+            } else {
               setGroups(defaultQuestions);
+              // Auto-expand all default groups
+              setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
+            }
           }
           return;
         }
 
-        // If we're editing an existing template
-        const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+        const templateRef = doc(db, "questionnaireTemplates", templateId);
         const templateDoc = await getDoc(templateRef);
         
         if (templateDoc.exists()) {
-          setGroups(templateDoc.data().groups);
+          const data = templateDoc.data();
+          const loadedGroups = data.groups.map(group => ({
+            id: group.id || `group-${Date.now()}`,
+            name: group.name,
+            questions: group.questions.map(q => ({
+              id: q.id || `question-${Date.now()}`,
+              text: q.text,
+              type: q.type || 'text',
+              accept: q.accept,
+              fileUrl: q.fileUrl
+            }))
+          }));
+          setGroups(loadedGroups);
+          // Auto-expand all loaded groups
+          setExpandedGroups(new Set(loadedGroups.map(g => g.id)));
+          setTemplateName(data.name);
         } else {
           console.error("Template not found");
-          // Load appropriate default questions based on type
-          switch (type) {
-            case 'website':
-              setGroups(websiteQuestions);
-              break;
-            case 'app':
-              setGroups(appQuestions);
-              break;
-            default:
-              setGroups(defaultQuestions);
-          }
+          setGroups(defaultQuestions);
+          // Auto-expand all default groups
+          setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
         }
       } catch (error) {
         console.error("Error loading template:", error);
         setGroups(defaultQuestions);
+        // Auto-expand all default groups
+        setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
       }
     };
 
     loadTemplate();
-  }, [templateId, type, baseTemplateId]);
+  }, [templateId, type, baseTemplateId, searchParams]);
 
   const handleSave = async (name = '') => {
     if (templateId === 'default' && !name) {
@@ -354,15 +383,27 @@ const QuestionnaireEditor = () => {
       if (!user) throw new Error("No authenticated user");
 
       const saveTemplateId = templateId === 'default' ? `template-${Date.now()}` : templateId;
-      const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", saveTemplateId);
+      const templateRef = doc(db, "questionnaireTemplates", saveTemplateId);
       
-      await setDoc(templateRef, {
+      const templateData = {
         name: name || templateName || 'Untitled Template',
-        groups,
+        groups: groups.map(group => ({
+          ...group,
+          questions: group.questions.map(q => ({
+            id: q.id,
+            text: q.text,
+            type: q.type,
+            accept: q.accept,
+            fileUrl: q.fileUrl
+          }))
+        })),
+        createdAt: new Date(),
         updatedAt: new Date(),
         type: 'branding',
-      }, { merge: true });
+        designerId: user.uid,
+      };
 
+      await setDoc(templateRef, templateData, { merge: true });
       navigate('/dashboard');
     } catch (error) {
       console.error("Error saving template:", error);
@@ -379,7 +420,6 @@ const QuestionnaireEditor = () => {
   };
 
   const handleDelete = async () => {
-    // Don't allow deletion of default template
     if (templateId === 'default') {
       alert("Cannot delete the default template");
       return;
@@ -393,9 +433,8 @@ const QuestionnaireEditor = () => {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
-      const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+      const templateRef = doc(db, "questionnaireTemplates", templateId);
       await deleteDoc(templateRef);
-
       navigate('/dashboard');
     } catch (error) {
       console.error("Error deleting template:", error);
@@ -506,7 +545,7 @@ const QuestionnaireEditor = () => {
 
   return (
     <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="mb-4">
         <h2>Edit Questions</h2>
         <div>
           <button 
