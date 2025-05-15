@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../firebase/config';
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle';
@@ -8,21 +8,29 @@ import Logo from '../shared/Logo';
 
 export default function NavBar() {
   const [role, setRole] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchRole = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      setRole(userDoc.data()?.role);
-    };
-
-    fetchRole();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+      if (user) {
+        getDoc(doc(db, 'users', user.uid)).then(userDoc => {
+          setRole(userDoc.data()?.role);
+        });
+      } else {
+        setRole(null);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleLogout = async () => {
     await signOut(auth);
+    navigate('/login');
+  };
+
+  const handleLogin = () => {
     navigate('/login');
   };
 
@@ -43,12 +51,21 @@ export default function NavBar() {
       </Link>
       
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button 
-          onClick={handleLogout}
-          className="btn btn-outline-secondary"
-        >
-          Log Out
-        </button>
+        {isLoggedIn ? (
+          <button 
+            onClick={handleLogout}
+            className="btn btn-outline-secondary"
+          >
+            Log Out
+          </button>
+        ) : (
+          <button 
+            onClick={handleLogin}
+            className="btn btn-outline-primary"
+          >
+            Log In
+          </button>
+        )}
       </div>
     </nav>
   );
