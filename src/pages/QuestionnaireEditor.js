@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { defaultQuestions } from '../data/defaultQuestions';
-import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase/config';
 import { questionSuggestions } from '../data/questionSuggestions';
 import AutocompleteInput from '../components/AutocompleteInput';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { saveTemplateToFirestore } from '../firebase/saveTemplate';
 
 const QuestionInput = ({ question, onChange, onFileUpload }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -305,65 +306,60 @@ const QuestionnaireEditor = () => {
             // Auto-expand all default groups
             setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
           } else if (baseTemplateId && baseTemplateId !== 'default') {
-            const templateRef = doc(db, "questionnaireTemplates", baseTemplateId);
+            const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", baseTemplateId);
             const templateDoc = await getDoc(templateRef);
             
             if (templateDoc.exists()) {
               const data = templateDoc.data();
-              const loadedGroups = data.groups.map(group => ({
+              const loadedGroups = (data.groups || []).map(group => ({
                 id: group.id || `group-${Date.now()}`,
-                name: group.name,
-                questions: group.questions.map(q => ({
+                name: group.name || 'Unnamed Group',
+                questions: (group.questions || []).map(q => ({
                   id: q.id || `question-${Date.now()}`,
-                  text: q.text,
+                  text: q.text || 'Unnamed Question',
                   type: q.type || 'text',
                   accept: q.accept,
                   fileUrl: q.fileUrl
                 }))
               }));
               setGroups(loadedGroups);
-              // Auto-expand all loaded groups
               setExpandedGroups(new Set(loadedGroups.map(g => g.id)));
               setTemplateName(data.name);
             } else {
               setGroups(defaultQuestions);
-              // Auto-expand all default groups
               setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
             }
           }
           return;
         }
 
-        const templateRef = doc(db, "questionnaireTemplates", templateId);
+        const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
         const templateDoc = await getDoc(templateRef);
         
         if (templateDoc.exists()) {
           const data = templateDoc.data();
-          const loadedGroups = data.groups.map(group => ({
+          const loadedGroups = (data.groups || []).map(group => ({
             id: group.id || `group-${Date.now()}`,
-            name: group.name,
-            questions: group.questions.map(q => ({
+            name: group.name || 'Unnamed Group',
+            questions: (group.questions || []).map(q => ({
               id: q.id || `question-${Date.now()}`,
-              text: q.text,
+              text: q.text || 'Unnamed Question',
               type: q.type || 'text',
               accept: q.accept,
               fileUrl: q.fileUrl
             }))
           }));
           setGroups(loadedGroups);
-          // Auto-expand all loaded groups
           setExpandedGroups(new Set(loadedGroups.map(g => g.id)));
           setTemplateName(data.name);
         } else {
           console.error("Template not found");
           setGroups(defaultQuestions);
-          // Auto-expand all default groups
           setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
         }
       } catch (error) {
         console.error("Error loading template:", error);
         setGroups(defaultQuestions);
-        // Auto-expand all default groups
         setExpandedGroups(new Set(defaultQuestions.map(g => g.id)));
       }
     };
@@ -382,41 +378,70 @@ const QuestionnaireEditor = () => {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
+      // Validate groups data
+      if (!Array.isArray(groups)) {
+        throw new Error("Invalid groups data");
+      }
+
+      // Generate a new template ID if needed
       const saveTemplateId = templateId === 'default' ? `template-${Date.now()}` : templateId;
-      const templateRef = doc(db, "questionnaireTemplates", saveTemplateId);
-      
+      const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", saveTemplateId);
+
+      // Clean up and validate the groups data before saving
+      const cleanGroups = groups.map((group, index) => {
+        if (!group) {
+          throw new Error(`Invalid group at index ${index}`);
+        }
+        
+        return {
+          id: group.id || `group-${Date.now()}-${index}`,
+          name: group.name || `Group ${index + 1}`,
+          questions: (group.questions || []).map((q, qIndex) => {
+            if (!q) {
+              throw new Error(`Invalid question at group ${index}, question ${qIndex}`);
+            }
+            
+            return {
+              id: q.id || `question-${Date.now()}-${qIndex}`,
+              text: q.text || `Question ${qIndex + 1}`,
+              type: q.type || 'text',
+              accept: q.type === 'file' ? 'image/*,.pdf' : undefined,
+              fileUrl: q.fileUrl || null
+            };
+          })
+        };
+      });
+
+      // Prepare the template data
       const templateData = {
         name: name || templateName || 'Untitled Template',
-        groups: groups.map(group => ({
-          ...group,
-          questions: group.questions.map(q => ({
-            id: q.id,
-            text: q.text,
-            type: q.type,
-            accept: q.accept,
-            fileUrl: q.fileUrl
-          }))
-        })),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        groups: cleanGroups,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
         type: 'branding',
         designerId: user.uid,
       };
 
-      await setDoc(templateRef, templateData, { merge: true });
+      console.log("Saving template data:", templateData);
+
+      // Save to Firestore
+      await saveTemplateToFirestore(templateData);
+      
+      // Navigate after successful save
       navigate('/dashboard');
     } catch (error) {
       console.error("Error saving template:", error);
-      alert("Failed to save template. Please try again.");
+      alert(`Failed to save template: ${error.message}`);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleNameSubmit = (e) => {
+  const handleNameSubmit = async (e) => {
     e.preventDefault();
+    if (!templateName.trim()) return;
+    await handleSave(templateName);
     setShowNameDialog(false);
-    handleSave(templateName);
   };
 
   const handleDelete = async () => {
@@ -433,7 +458,7 @@ const QuestionnaireEditor = () => {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
-      const templateRef = doc(db, "questionnaireTemplates", templateId);
+      const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
       await deleteDoc(templateRef);
       navigate('/dashboard');
     } catch (error) {
@@ -443,44 +468,52 @@ const QuestionnaireEditor = () => {
   };
 
   const onDragEnd = (result) => {
-    if (!result.destination) return;
+    if (!result.destination || !result.source) return;
 
     const { source, destination, type } = result;
 
-    if (type === "group") {
-      // Reorder groups
-      const reorderedGroups = Array.from(groups);
-      const [removed] = reorderedGroups.splice(source.index, 1);
-      reorderedGroups.splice(destination.index, 0, removed);
-      setGroups(reorderedGroups);
-      return;
+    try {
+      if (type === "group") {
+        // Reorder groups
+        const reorderedGroups = Array.from(groups);
+        const [removed] = reorderedGroups.splice(source.index, 1);
+        reorderedGroups.splice(destination.index, 0, removed);
+        setGroups(reorderedGroups);
+        return;
+      }
+
+      // Moving questions within or between groups
+      const sourceGroup = groups.find(g => g?.id === source.droppableId);
+      const destGroup = groups.find(g => g?.id === destination.droppableId);
+
+      if (!sourceGroup || !destGroup) return;
+
+      const newGroups = [...groups];
+      const sourceGroupIndex = groups.findIndex(g => g?.id === source.droppableId);
+      const destGroupIndex = groups.findIndex(g => g?.id === destination.droppableId);
+
+      if (sourceGroupIndex === -1 || destGroupIndex === -1) return;
+
+      if (source.droppableId === destination.droppableId) {
+        // Moving within the same group
+        const newQuestions = Array.from(sourceGroup.questions || []);
+        const [removed] = newQuestions.splice(source.index, 1);
+        newQuestions.splice(destination.index, 0, removed);
+        newGroups[sourceGroupIndex].questions = newQuestions;
+      } else {
+        // Moving between groups
+        const sourceQuestions = Array.from(sourceGroup.questions || []);
+        const destQuestions = Array.from(destGroup.questions || []);
+        const [removed] = sourceQuestions.splice(source.index, 1);
+        destQuestions.splice(destination.index, 0, removed);
+        newGroups[sourceGroupIndex].questions = sourceQuestions;
+        newGroups[destGroupIndex].questions = destQuestions;
+      }
+
+      setGroups(newGroups);
+    } catch (error) {
+      console.error('Error in drag and drop:', error);
     }
-
-    // Moving questions within or between groups
-    const sourceGroup = groups.find(g => g.id === source.droppableId);
-    const destGroup = groups.find(g => g.id === destination.droppableId);
-
-    const newGroups = [...groups];
-    const sourceGroupIndex = groups.findIndex(g => g.id === source.droppableId);
-    const destGroupIndex = groups.findIndex(g => g.id === destination.droppableId);
-
-    if (source.droppableId === destination.droppableId) {
-      // Moving within the same group
-      const newQuestions = Array.from(sourceGroup.questions);
-      const [removed] = newQuestions.splice(source.index, 1);
-      newQuestions.splice(destination.index, 0, removed);
-      newGroups[sourceGroupIndex].questions = newQuestions;
-    } else {
-      // Moving between groups
-      const sourceQuestions = Array.from(sourceGroup.questions);
-      const destQuestions = Array.from(destGroup.questions);
-      const [removed] = sourceQuestions.splice(source.index, 1);
-      destQuestions.splice(destination.index, 0, removed);
-      newGroups[sourceGroupIndex].questions = sourceQuestions;
-      newGroups[destGroupIndex].questions = destQuestions;
-    }
-
-    setGroups(newGroups);
   };
 
   const handleQuestionChange = (groupIndex, questionIndex, newText) => {

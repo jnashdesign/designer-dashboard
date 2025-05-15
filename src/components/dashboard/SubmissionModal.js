@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import '../../bootstrap.min.css';
 
 export default function SubmissionModal({ isOpen, onClose, brief }) {
+  useEffect(() => {
+    if (isOpen) {
+      console.log('SubmissionModal mounted');
+    }
+    return () => {
+      if (isOpen) {
+        console.log('SubmissionModal unmounted');
+      }
+    };
+  }, [isOpen]);
+
   if (!isOpen || !brief) return null;
 
   const { answers, type, createdAt } = brief;
+
+  // Use a dedicated modal root
+  const modalRoot = typeof document !== 'undefined' ? document.getElementById('modal-root') : null;
+  if (!modalRoot) {
+    console.warn('modal-root not found for portal');
+    return null;
+  }
 
   return createPortal(
     <div style={overlayStyle}>
@@ -34,7 +52,7 @@ export default function SubmissionModal({ isOpen, onClose, brief }) {
         )}
       </div>
     </div>,
-    document.body
+    modalRoot
   );
 }
 
@@ -48,7 +66,7 @@ const overlayStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: 1000
+  zIndex: 99999
 };
 
 const modalStyle = {

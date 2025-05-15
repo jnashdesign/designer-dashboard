@@ -1,4 +1,3 @@
-
 // saveFunctions.js
 import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -6,11 +5,12 @@ import { getAuth } from "firebase/auth";
 const db = getFirestore();
 const auth = getAuth();
 
-export async function createProject(clientId, type = "branding", status = "in-progress") {
+export async function createProject(clientId, name, type = "branding", status = "in-progress") {
   const authUser = auth.currentUser;
   await addDoc(collection(db, "projects"), {
     clientId: clientId,
     designerId: authUser.uid,
+    name,
     type,
     status,
     createdAt: serverTimestamp()

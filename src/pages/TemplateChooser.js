@@ -10,9 +10,10 @@ export default function TemplateChooser() {
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { type } = useParams();
+  const { type, clientId } = useParams();
   const [searchParams] = useSearchParams();
   const isWizard = searchParams.get('wizard') === 'true';
+  const projectId = searchParams.get('projectId');
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -46,14 +47,14 @@ export default function TemplateChooser() {
     };
 
     loadTemplates();
-  }, [type]);
+  }, [type, clientId]);
 
   const handleContinue = () => {
     if (!selectedTemplateId) return;
     
     if (isWizard) {
-      // If we're starting a wizard (creative brief)
-      navigate(`/wizard/${type}/${selectedTemplateId}`);
+      // Pass clientId as a search param
+      navigate(`/wizard/${type}/${selectedTemplateId}?projectId=${projectId}&clientId=${clientId || ''}`);
     } else {
       // If we're creating a new template based on selected template
       navigate(`/template/create/${type}?baseTemplate=${selectedTemplateId}`);
@@ -62,7 +63,7 @@ export default function TemplateChooser() {
 
   const handleStartWithDefault = () => {
     if (isWizard) {
-      navigate(`/wizard/${type}/default`);
+      navigate(`/wizard/${type}/default?projectId=${projectId}&clientId=${clientId || ''}`);
     } else {
       // Start with empty default template for the selected type
       navigate(`/template/create/${type}`);

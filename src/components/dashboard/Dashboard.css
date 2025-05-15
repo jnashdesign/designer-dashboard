@@ -70,6 +70,9 @@ h1, h2, h3, h4, h5, h6,
 .card-header i {
   margin-right: 10px;
 }
+.card-header .align-items-center {
+    width: calc(100% - 100px) !important;
+}
 .card-body {
   flex: 1 1 auto;
   min-height: 1px;
@@ -147,7 +150,10 @@ select.form-control::-ms-expand {
   font-size: 0.85rem;
   font-weight: 600;
 }
-
+.badge.bg-secondary {
+  background: #8395ca !important;
+  color: #fff;
+}
 .badge-branding {
   color: #fff;
   background-color: #1cc88a;

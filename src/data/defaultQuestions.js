@@ -6,7 +6,7 @@ export const defaultQuestions = [
       { 
         id: 'question-b1', 
         text: 'What is the name of your business or project?',
-        type: 'text',
+        type: 'textarea',
         accept: undefined,
         fileUrl: null
       },

@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { auth, db } from '../../firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { addProject } from '../../firebase/addProject';
-import { addClient } from '../../firebase/addClient';
+import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -82,8 +81,7 @@ const Sidebar = () => {
   const handleAddClient = async (e) => {
     e.preventDefault();
     try {
-      const designerId = auth.currentUser.uid;
-      await addClient(newClientName, newClientEmail, designerId);
+      await createClient(newClientName, newClientEmail);
       setShowAddClient(false);
       setNewClientName('');
       setNewClientEmail('');
@@ -97,8 +95,7 @@ const Sidebar = () => {
   const handleAddProject = async (e) => {
     e.preventDefault();
     try {
-      const designerId = auth.currentUser.uid;
-      await addProject(newProjectName, selectedClient, designerId);
+      await createProject(selectedClient, newProjectName, 'branding', 'in-progress');
       setShowAddProject(false);
       setNewProjectName('');
       setSelectedClient('');
@@ -130,7 +127,7 @@ const Sidebar = () => {
 
         {/* Navigation Links */}
         <div className="sidebar-links">
-          <Link to="/dashboard" className="sidebar-link">
+          <Link to="/" className="sidebar-link">
             <i className="fas fa-home" />
             {!isCollapsed && <span>Home</span>}
           </Link>
@@ -138,7 +135,7 @@ const Sidebar = () => {
             <i className="fas fa-project-diagram" />
             {!isCollapsed && <span>Projects</span>}
           </Link>
-          <Link to="#" className="sidebar-link">
+          <Link to="/my-assets" className="sidebar-link">
             <i className="fas fa-images" />
             {!isCollapsed && <span>Assets</span>}
           </Link>
@@ -325,24 +322,6 @@ const Sidebar = () => {
                   // Show options for new users
                   <div className="text-center">
                     
-                    <div className="card mb-3">
-                      <div className="card-body">
-                        <h5 className="card-title">
-                          <i className="fas fa-file-alt me-2 mr-2"></i>
-                          Start from Scratch
-                        </h5>
-                        <button 
-                          className="btn btn-outline-primary"
-                          onClick={() => {
-                            setShowNewQuestionnaire(false);
-                            navigate('/template/create/branding?empty=true');
-                          }}
-                        >
-                          Create Custom Template
-                        </button>
-                      </div>
-                    </div>
-
                     <div className="card">
                       <div className="card-body">
                         <h5 className="card-title">

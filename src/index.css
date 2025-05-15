@@ -19,7 +19,6 @@ select {
   background: #fff;
   border-radius: 8px;
 }
-
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -144,6 +143,23 @@ button.btn-close {
   width: 44px;
   height: 40px;
 }
+button.btn-close:before, button.delete-question {
+  content: 'x';
+}
+button:hover i::before,
+button.btn-primary i::before {
+  color: #fff;
+}
+button.mobile-menu-toggle:hover i::before {
+  color: #aaa;
+}
+.lead {
+  max-width: 400px;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  line-height: 1em;
+}
 .alert {
   padding: 1rem 4rem 1rem 1.25rem;
 }
@@ -171,6 +187,12 @@ button i::before {
 }
 .file-types {
   font-size: 0.8em;
+}
+td.text-truncate {
+  white-space: nowrap;
+  max-width: 300px;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 @media (max-width: 991px) {

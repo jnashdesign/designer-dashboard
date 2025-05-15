@@ -19,6 +19,7 @@ import ViewBrief from './pages/ViewBrief';
 import QuestionnaireBuilder from './pages/QuestionnaireBuilder';
 import QuestionnaireEditor from './pages/QuestionnaireEditor';
 import AssetRepository from './components/brand/AssetRepository';
+import AllAssets from './pages/AllAssets';
 
 function App() {
   return (
@@ -94,13 +95,7 @@ function App() {
             </RequireAuth>
           } />
 
-          <Route path="/view-brief/:briefId" element={
-            <RequireAuth role="designer">
-              <Layout>
-                <ViewBrief /> 
-              </Layout>
-            </RequireAuth>
-          } />
+          <Route path="/view-brief/:briefId" element={<ViewBrief />} />
 
           <Route path="/dashboard/create-draft" element={
             <RequireAuth role="designer">
@@ -141,6 +136,13 @@ function App() {
               </Layout>
             </RequireAuth>
           } />
+
+          <Route path="/my-assets" element={
+            <RequireAuth role="designer">
+            <Layout>
+            <AllAssets />
+            </Layout>
+          </RequireAuth>} />
           
         </Routes>      
       </Router>

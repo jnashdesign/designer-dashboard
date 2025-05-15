@@ -11,8 +11,9 @@ const Logo = () => {
       src={isDarkMode ? brandLogoDark : brandLogoLight}
       alt="BrandEZ Logo" 
       style={{ 
-        height: '40px',
-        width: 'auto'
+        height: '70px',
+        width: 'auto',
+        marginTop: '-15px'
       }} 
     />
   );

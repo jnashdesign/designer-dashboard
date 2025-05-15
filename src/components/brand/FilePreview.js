@@ -70,15 +70,6 @@ const FilePreview = ({ file, width = 50 }) => {
           />
         </div>
       )}
-      <p className="file-name mt-2" style={{
-        fontSize: '0.875rem',
-        maxWidth: `${width}px`,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-      }}>
-        {file.name}
-      </p>
     </div>
   );
 };

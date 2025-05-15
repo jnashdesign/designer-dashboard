@@ -7,9 +7,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import { defaultQuestions } from '../../data/defaultQuestions';
 
 export default function DynamicWizard() {
-  const { type, projectId } = useParams();
+  const { type, templateId } = useParams();
   const [searchParams] = useSearchParams();
-  const templateId = searchParams.get('templateId');
+  const projectId = searchParams.get('projectId');
+  const clientId = searchParams.get('clientId');
   const navigate = useNavigate();
 
   const [sections, setSections] = useState([]);
@@ -18,92 +19,62 @@ export default function DynamicWizard() {
   const [imagePreviews, setImagePreviews] = useState({});
   const [uploadErrors, setUploadErrors] = useState({});
   const [loading, setLoading] = useState(true);
-  const [questions, setQuestions] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadQuestions = async () => {
+      setLoading(true);
+      setError(null);
+      let groups = [];
       try {
-        let questions;
-        
-        if (templateId === 'default') {
-          // Use default questions
-          questions = defaultQuestions;
-        } else if (templateId) {
-          // Load questions from the selected template
+        if (templateId === 'default' || !templateId) {
+          groups = defaultQuestions;
+          console.log('Loaded default questions:', groups);
+        } else {
           const user = auth.currentUser;
           if (!user) throw new Error("No authenticated user found.");
-          
           const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
           const templateSnap = await getDoc(templateRef);
-          
           if (templateSnap.exists()) {
             const templateData = templateSnap.data();
-            // Flatten groups into a single array of questions
-            questions = templateData.groups.flatMap(group => group.questions);
+            groups = templateData.groups || [];
+            console.log('Loaded custom template groups:', groups);
           } else {
-            console.error("Template not found");
-            questions = defaultQuestions; // Fallback to default
+            throw new Error('Template not found, falling back to default questions.');
           }
         }
-
-        // Transform questions into wizard format
-        const wizardSection = {
-          title: `${type.charAt(0).toUpperCase() + type.slice(1)} Questionnaire`,
-          questions: questions.map(q => ({
-            name: q.id,
-            label: q.text,
-            type: 'text'  // You might want to add support for different question types
+        if (!Array.isArray(groups) || groups.length === 0) {
+          throw new Error('No groups found in template.');
+        }
+        // Map each group to a section
+        const wizardSections = groups.map(group => ({
+          title: group.name || 'Untitled Group',
+          questions: (group.questions || []).map(q => ({
+            name: q.id || `q-${Date.now()}`,
+            label: q.text || 'Unnamed Question',
+            type: q.type || 'text'
           }))
-        };
-
-        // Load the rest of the wizard sections from JSON
-        const response = await fetch('/wizardQuestions.json');
-        const data = await response.json();
-        const remainingSections = data[type]?.slice(1) || []; // Skip the first section
-
-        setSections([wizardSection, ...remainingSections]);
-      } catch (error) {
-        console.error("Error loading questions:", error);
-        // Fallback to JSON questions
-        const response = await fetch('/wizardQuestions.json');
-        const data = await response.json();
-        setSections(data[type] || []);
+        })).filter(section => section.questions.length > 0);
+        setSections(wizardSections);
+      } catch (err) {
+        console.error('Error loading questions:', err);
+        setError(err.message);
+        // Fallback to defaultQuestions
+        const fallbackSections = (defaultQuestions || []).map(group => ({
+          title: group.name || 'Untitled Group',
+          questions: (group.questions || []).map(q => ({
+            name: q.id || `q-${Date.now()}`,
+            label: q.text || 'Unnamed Question',
+            type: q.type || 'text'
+          }))
+        })).filter(section => section.questions.length > 0);
+        setSections(fallbackSections);
       } finally {
         setLoading(false);
       }
     };
-
     loadQuestions();
   }, [type, templateId]);
-
-  useEffect(() => {
-    const loadTemplate = async () => {
-      try {
-        if (templateId === 'default') {
-          setQuestions(defaultQuestions);
-          return;
-        }
-
-        const user = auth.currentUser;
-        if (!user) throw new Error("No authenticated user");
-
-        const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
-        const templateDoc = await getDoc(templateRef);
-        
-        if (templateDoc.exists()) {
-          setQuestions(templateDoc.data().groups);
-        } else {
-          console.error("Template not found");
-          setQuestions(defaultQuestions);
-        }
-      } catch (error) {
-        console.error("Error loading template:", error);
-        setQuestions(defaultQuestions);
-      }
-    };
-
-    loadTemplate();
-  }, [templateId]);
 
   const handleImageUpload = async (e, name, index) => {
     const file = e.target.files[0];
@@ -182,7 +153,33 @@ export default function DynamicWizard() {
     }
   };
 
-  if (!sections.length) return <p>Loading questions...</p>;
+  if (loading) {
+    return <div className="loading">Loading questions...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error Loading Questions</h2>
+        <p>{error}</p>
+        <button onClick={() => navigate('/dashboard')} className="btn btn-primary">
+          Return to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  if (!sections.length) {
+    return (
+      <div className="no-questions">
+        <h2>No Questions Available</h2>
+        <button onClick={() => navigate('/dashboard')} className="btn btn-primary">
+          Return to Dashboard
+        </button>
+      </div>
+    );
+  }
+
   if (sectionIndex >= sections.length) {
     return (
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
@@ -249,7 +246,7 @@ export default function DynamicWizard() {
           <button 
             onClick={async () => {
               try {
-                await saveWizardAnswers(projectId, formData, type);
+                await saveWizardAnswers(projectId, formData, type, clientId);
                 alert('Submission saved!');
                 navigate('/dashboard');
               } catch (err) {

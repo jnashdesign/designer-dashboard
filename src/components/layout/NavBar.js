@@ -29,6 +29,9 @@ export default function NavBar() {
   return (
     <nav style={{ 
       display: 'flex', 
+      position: 'fixed',
+      width: '100%',
+      zIndex: 1000,
       justifyContent: 'space-between', 
       alignItems: 'center', 
       padding: '1rem', 

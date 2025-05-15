@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { storage, db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 import { doc, getDoc, updateDoc, arrayRemove, setDoc } from 'firebase/firestore';
@@ -8,6 +8,7 @@ import FilePreview from './FilePreview';
 
 const AssetRepository = () => {
   const { projectId } = useParams();
+  const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: 'uploadedAt', direction: 'desc' });
 
@@ -110,7 +111,8 @@ const AssetRepository = () => {
   };
 
   return (
-    <div className="dashboard-container p-4">
+    <div className="container py-4">
+      <button className="btn btn-secondary mb-4" onClick={() => navigate('/dashboard')}>&larr; Back</button>
       <h2 className="mb-4">Brand Assets</h2>
 
       <div className="card mb-4">

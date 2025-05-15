@@ -1,6 +1,6 @@
 import { db } from './config';
 import { auth } from './config';
-import { collection, addDoc, doc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 /**
  * Save a custom questionnaire template for the current user.
@@ -12,7 +12,13 @@ export const saveTemplateToFirestore = async (templateData) => {
     throw new Error("No authenticated user found.");
   }
 
-  const templatesCollection = collection(doc(db, "users", user.uid), "questionnaireTemplates");
-
-  await addDoc(templatesCollection, templateData);
+  const templateId = `template-${Date.now()}`;
+  const templateRef = doc(db, "users", user.uid, "questionnaireTemplates", templateId);
+  const data = {
+    ...templateData,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  };
+  await setDoc(templateRef, data);
+  return templateId;
 };
