@@ -5,7 +5,7 @@
   --text-primary: #5a5c69;
   --text-secondary: #858796;
   --border-color: #e3e6f0;
-  --card-header-bg: #f8f9fc;
+  --card-header-bg: #e8ebf3;
   --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -58,6 +58,10 @@ h1, h2, h3, h4, h5, h6,
   border: 1px solid var(--border-color);
   border-radius: 0.35rem;
   margin-bottom: 20px;
+}
+
+.card.shadow-sm {
+  box-shadow: 2px 3px 7px rgba(0, 0, 0, 0.2);
 }
 
 .card-header {
@@ -279,6 +283,10 @@ button.btn.btn-sm.btn-danger {
 
 .dark-mode .btn-link:hover {
   color: var(--text-secondary);
+}
+.dark-mode .sidebar-link:hover {
+  background-color: #3d4052 !important;
+  color: #fff !important;
 }
 
 .modal-backdrop {

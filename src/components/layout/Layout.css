@@ -1,11 +1,22 @@
 .main-content {
+  padding: 85px 0;
+  margin-left: 60px;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.full {
   margin-left: 240px;
-  padding: 100px 20px 20px 20px;
+}
+
+.dashboard-container {
   transition: margin-left 0.3s ease;
 }
 
 @media (max-width: 991px) {
   .main-content {
+    margin-left: 0;
+  }
+  .main-content.full {
     margin-left: 0;
   }
 } 

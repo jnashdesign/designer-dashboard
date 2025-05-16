@@ -34,6 +34,10 @@ export default function NavBar() {
     navigate('/login');
   };
 
+  const handleSignup = () => {
+    navigate('/signup');
+  };
+
   return (
     <nav style={{ 
       display: 'flex', 
@@ -59,12 +63,18 @@ export default function NavBar() {
             Log Out
           </button>
         ) : (
-          <button 
-            onClick={handleLogin}
-            className="btn btn-outline-primary"
+          <>
+            <button 
+              onClick={handleLogin}
+              className="btn btn-primary"
           >
             Log In
           </button>
+          <a href="/signup"
+          >
+            Sign Up
+          </a>
+          </>
         )}
       </div>
     </nav>

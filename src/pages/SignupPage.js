@@ -48,7 +48,7 @@ export default function SignupPage() {
   };
 
   return (
-      <div className="row justify-content-center">
+      <div className="row justify-content-center signup-page">
         <div className="col-md-6">
           <div className="card shadow">
             <div className="card-body p-5">

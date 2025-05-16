@@ -6,7 +6,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onCollapse }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isDarkMode } = useTheme();
@@ -105,6 +105,17 @@ const Sidebar = () => {
     }
   };
 
+  const handleSidebarLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleToggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    onCollapse(newState);
+    console.log(newState);
+  };
+
   return (
     <>
       {/* Mobile Menu Toggle */}
@@ -120,22 +131,22 @@ const Sidebar = () => {
         {/* Toggle Button */}
         <button
           className="sidebar-toggle d-none d-lg-block"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={handleToggleCollapse}
         >
           <i className={`fas fa-chevron-${isCollapsed ? 'right' : 'left'}`} />
         </button>
 
         {/* Navigation Links */}
         <div className="sidebar-links">
-          <Link to="/" className="sidebar-link">
+          <Link to="/" className="sidebar-link" onClick={handleSidebarLinkClick}>
             <i className="fas fa-home" />
             {!isCollapsed && <span>Home</span>}
           </Link>
-          <Link to="#" className="sidebar-link">
+          <Link to="/dashboard" className="sidebar-link" onClick={handleSidebarLinkClick}>
             <i className="fas fa-project-diagram" />
             {!isCollapsed && <span>Projects</span>}
           </Link>
-          <Link to="/my-assets" className="sidebar-link">
+          <Link to="/my-assets" className="sidebar-link" onClick={handleSidebarLinkClick}>
             <i className="fas fa-images" />
             {!isCollapsed && <span>Assets</span>}
           </Link>

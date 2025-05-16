@@ -59,7 +59,7 @@ export default function LoginPage() {
                 </div>
                 <button 
                   type="submit" 
-                  className="btn btn-primary w-100"
+                  className="btn btn-primary w-100 mt-3"
                   disabled={loading}
                 >
                   {loading ? 'Logging in...' : 'Log In'}

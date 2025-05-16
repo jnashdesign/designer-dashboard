@@ -78,55 +78,56 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container p-4">
+      <h3 className="mb-4">Project Dashboard</h3>
       {projects.length === 0 ? (
         <div className="text-center mt-5">
           <h3>Welcome to BrandEZ!</h3>
           <p>Get started by adding your first project.</p>
         </div>
       ) : (
-        <div className="projects-grid">
+        <div className="row">
           {projects.map(project => (
-            <div key={project.id} className="card shadow-sm">
-              <div className="card-header d-flex justify-content-between align-items-center">
-                <div>
-                  <h5 className="mb-0">{project.name || project.projectName || 'Untitled Project'}</h5>
-                  <h6 className="mb-0 text-muted" style={{ fontWeight: 400 }}>{getClientNameByRef(project.clientId)}</h6>
-                </div>
-                <span className={`badge bg-${project.status === 'active' ? 'success' : 'secondary'}`}>
-                  {project.status}
-                </span>
-              </div>
-              <div className="card-body">
-                <div className="w-100">
-                  <button 
-                    className="btn btn-outline-primary w-100 mb-2"
-                    onClick={() => navigate(`/project/${project.id}/assets`)}
-                  >
-                    View Assets
-                  </button>
-                  <button 
-                    className="btn btn-primary w-100 mb-2"
-                    onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
-                  >
-                    Start A Brief
-                  </button>
-                </div>
-                {briefs[project.id]?.length > 0 && (
-                  <div className="mt-3">
-                    <h6>Submitted Briefs:</h6>
-                    <div className="list-group">
-                      {briefs[project.id].map(brief => (
-                        <button
-                          key={brief.id}
-                          className="list-group-item list-group-item-action mb-1"
-                          onClick={() => navigate(`/view-brief/${brief.id}`)}
-                        >
-                          {new Date(brief.createdAt?.toDate()).toLocaleDateString()}
-                        </button>
-                      ))}
-                    </div>
+            <div key={project.id} className="col-12 col-md-6 mb-4">
+              <div className="card shadow-sm">
+                <div className="card-header d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="mb-0">{project.name || project.projectName || 'Untitled Project'}</h5>
+                    <h6 className="mb-0 text-muted" style={{ fontWeight: 400 }}>{getClientNameByRef(project.clientId)}</h6>
                   </div>
-                )}
+                  <span className={`badge bg-${project.status === 'active' ? 'success' : 'secondary'}`}>{project.status}</span>
+                </div>
+                <div className="card-body">
+                  <div className="w-100">
+                    <button 
+                      className="btn btn-outline-primary w-100 mb-2"
+                      onClick={() => navigate(`/project/${project.id}/assets`)}
+                    >
+                      View Assets
+                    </button>
+                    <button 
+                      className="btn btn-primary w-100 mb-2"
+                      onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
+                    >
+                      Start A Brief
+                    </button>
+                  </div>
+                  {briefs[project.id]?.length > 0 && (
+                    <div className="mt-3">
+                      <h6>Submitted Briefs:</h6>
+                      <div className="list-group">
+                        {briefs[project.id].map(brief => (
+                          <button
+                            key={brief.id}
+                            className="list-group-item list-group-item-action mb-1"
+                            onClick={() => navigate(`/view-brief/${brief.id}`)}
+                          >
+                            {new Date(brief.createdAt?.toDate()).toLocaleDateString()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}

@@ -1,7 +1,7 @@
 .sidebar {
   position: fixed;
   left: 0;
-  top: 72px;
+  top: 87px;
   bottom: 0;
   width: 240px;
   background-color: var(--bg-card);
@@ -31,6 +31,7 @@
 }
 .sidebar-toggle:hover {
     background: #f0f0f0;
+    color: #333;
 }
 .mobile-menu-toggle {
     position: fixed;
@@ -55,7 +56,7 @@
 }
 
 .sidebar-link:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--card-header-bg);
     text-decoration: none;
 }
 
@@ -71,6 +72,10 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+}
+
+.collapsed-buttons button {
+  width: 45px !important;
 }
 
 @media (max-width: 991px) {

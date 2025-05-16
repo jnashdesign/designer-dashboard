@@ -14,7 +14,7 @@ select {
 }
 .container {
   max-width: 960px;
-  margin: auto;
+  margin: 20px auto 0;
   padding: 2rem;
   background: #fff;
   border-radius: 8px;
@@ -88,16 +88,19 @@ select {
 }
 .login-page input[type="email"],
 .login-page input[type="password"],
+.login-page select,
 .signup-page input[type="email"],
-.signup-page input[type="password"] {
-  width: 100%;
+.signup-page input[type="password"],
+.signup-page select {
+  width: 100% !important;
+  max-width: none !important;
 }
+
 .badge {
   padding: 0.75em;
   text-transform: capitalize;
 }
 .card {
-  max-width: 950px;
   border-radius: 10px;
 }
 button.btn.btn-light {
@@ -205,7 +208,9 @@ td.text-truncate {
   text-overflow: ellipsis;
   display: block;
 }
-
+.dark-mode {
+  background-color: #1a1c23
+}
 @media (max-width: 991px) {
   .nav-logo {
     margin-left: 50px;
