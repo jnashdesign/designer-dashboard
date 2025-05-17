@@ -11,7 +11,7 @@ export default function Welcome() {
         <p className="lead mt-3 mb-3">
         Streamline your brand asset management and client collaboration
       </p>
-      <button onClick={() => navigate('/dashboard')} className="btn btn-primary mt-3">Enter Dashboard</button>
+      <button onClick={() => navigate('/dashboard')} className="btn btn-primary mt-3">Go To Dashboard</button>
     </div>
     </div>
   );

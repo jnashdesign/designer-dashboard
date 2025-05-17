@@ -211,6 +211,28 @@ td.text-truncate {
 .dark-mode {
   background-color: #1a1c23
 }
+.chooser-options button {
+  background: #eee;
+  color: #333;
+  padding: 40px 20px;
+  border: 1px solid #ccc;
+  text-align: center;
+  min-height: 200px;
+  min-width: 200px;
+}
+.chooser-options button span {
+  display: block;
+  margin: 0 auto; 
+}
+.chooser-options button i {
+  font-size: 2rem;
+}
+.newFromSaved {
+  display: none;
+}
+.newFromSaved.show {
+  display: block;
+}
 @media (max-width: 991px) {
   .nav-logo {
     margin-left: 50px;

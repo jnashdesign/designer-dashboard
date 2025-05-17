@@ -3,7 +3,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { useNavigate, Link } from 'react-router-dom';
 import ForgotPasswordModal from '../components/auth/ForgotPasswordModal';
-
+import Logo_icon from '../components/shared/Logo_icon';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,8 +32,11 @@ export default function LoginPage() {
     <div className="dashboard-container login-page">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <div className="card shadow">
+          <div className="card shadow mt-3">
             <div className="card-body p-5">
+            <div className="text-center">
+              <Logo_icon />
+              </div>
               <h2 className="text-center mb-4">Log In</h2>
               {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleSubmit}>

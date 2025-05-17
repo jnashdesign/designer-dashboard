@@ -4,7 +4,7 @@
   transition: margin-left 0.3s ease;
 }
 
-.main-content.full {
+.main-content.open-sidebar {
   margin-left: 240px;
 }
 
@@ -16,7 +16,7 @@
   .main-content {
     margin-left: 0;
   }
-  .main-content.full {
+  .main-content.open-sidebar {
     margin-left: 0;
   }
 } 

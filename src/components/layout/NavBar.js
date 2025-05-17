@@ -30,13 +30,6 @@ export default function NavBar() {
     navigate('/login');
   };
 
-  const handleLogin = () => {
-    navigate('/login');
-  };
-
-  const handleSignup = () => {
-    navigate('/signup');
-  };
 
   return (
     <nav style={{ 
@@ -62,20 +55,7 @@ export default function NavBar() {
           >
             Log Out
           </button>
-        ) : (
-          <>
-            <button 
-              onClick={handleLogin}
-              className="btn btn-primary"
-          >
-            Log In
-          </button>
-          <a href="/signup"
-          >
-            Sign Up
-          </a>
-          </>
-        )}
+        ) : (<></>)}
       </div>
     </nav>
   );

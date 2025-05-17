@@ -77,7 +77,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="dashboard-container p-4">
+    <div className="dashboard-container container p-4">
       <h3 className="mb-4">Project Dashboard</h3>
       {projects.length === 0 ? (
         <div className="text-center mt-5">

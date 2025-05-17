@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/config';
 import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
-
+import Logo_icon from '../components/shared/Logo_icon';
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,10 +48,14 @@ export default function SignupPage() {
   };
 
   return (
-      <div className="row justify-content-center signup-page">
+    <div className="dashboard-container signup-page">
+      <div className="row justify-content-center">
         <div className="col-md-6">
-          <div className="card shadow">
-            <div className="card-body p-5">
+        <div className="card shadow mt-3">
+        <div className="card-body p-6">
+            <div className="text-center">
+            <Logo_icon />
+            </div>
               <h2 className="text-center mb-4">Sign Up</h2>
               {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleSubmit}>
@@ -111,5 +115,6 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+    </div>
   );
 }

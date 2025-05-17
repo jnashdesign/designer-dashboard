@@ -75,8 +75,7 @@ export default function AllAssets() {
 
   return (
     <div className="container py-4">
-      <button className="btn btn-secondary mb-4" onClick={() => navigate('/dashboard')}>&larr; Back</button>
-      <h2 className="mb-4">All My Assets</h2>
+      <h2 className="mb-4">All Assets</h2>
       {loading ? (
         <div>Loading assets...</div>
       ) : error ? (

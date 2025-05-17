@@ -269,7 +269,7 @@ const FileUploader = ({ projectId, onUploadComplete }) => {
             type="button" 
             className="btn-close float-end" 
             onClick={() => setUploadStatus(null)}
-          >X</button>
+          ></button>
         </div>
       )}
 
@@ -316,7 +316,7 @@ const FileUploader = ({ projectId, onUploadComplete }) => {
       {pendingUploads.length > 0 && (
         <div className="mt-4">
           <div className="mb-3">
-            <label htmlFor="fileCategory" className="form-label">Asset Category</label>
+            <label htmlFor="fileCategory" className="form-label mr-2">Asset Category</label>
             <select 
               id="fileCategory"
               className="form-select"
