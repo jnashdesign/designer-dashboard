@@ -156,10 +156,10 @@ const Sidebar = ({ onCollapse }) => {
         <div className="sidebar-buttons">
           {!isCollapsed ? (
             <>
-              <button className="btn btn-outline-primary" onClick={() => setShowAddClient(true)}>
+              <button className="btn btn-secondary" onClick={() => setShowAddClient(true)}>
                 Add Client
               </button>
-              <button className="btn btn-outline-primary" onClick={() => setShowAddProject(true)}>
+              <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
                 Add Project
               </button>
               <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>

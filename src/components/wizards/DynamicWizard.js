@@ -5,6 +5,7 @@ import { storage, db, auth } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, getDoc } from 'firebase/firestore';
 import { defaultQuestions } from '../../data/defaultQuestions';
+import ProgressBar from './ProgressBar';
 
 export default function DynamicWizard() {
   const { type, templateId } = useParams();
@@ -183,6 +184,7 @@ export default function DynamicWizard() {
   if (sectionIndex >= sections.length) {
     return (
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
+        <ProgressBar currentSection={sections.length - 1} totalSections={sections.length} />
         <h2 style={{ marginBottom: '0.5rem' }}>
           {type.charAt(0).toUpperCase() + type.slice(1)} Brief Review
         </h2>
@@ -266,6 +268,7 @@ export default function DynamicWizard() {
 
   return (
     <div className="container">
+      <ProgressBar currentSection={sectionIndex} totalSections={sections.length} />
       <h2>{section.title}</h2>
       {section.questions.map((q) => (
         <div key={q.name}>

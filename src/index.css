@@ -14,6 +14,7 @@ select {
 }
 .container {
   max-width: 960px;
+  width: calc(100% - 40px);
   margin: 20px auto 0;
   padding: 2rem;
   background: #fff;
@@ -191,6 +192,7 @@ button i::before {
 .draggable-item input, .draggable-item textarea {
   margin-left: 10px;
   width: calc(100% - 20px);
+  min-height: 5em;
 }
 
 .login-page input, .signup-page input {
@@ -210,6 +212,13 @@ td.text-truncate {
 }
 .dark-mode {
   background-color: #1a1c23
+}
+.dark-mode .container {
+  background-color: #373c4c;
+  color: #fff;
+}
+.dark-mode .progress-text {
+  color: #fff;
 }
 .chooser-options button {
   background: #eee;
