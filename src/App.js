@@ -20,13 +20,19 @@ import QuestionnaireBuilder from './pages/QuestionnaireBuilder';
 import QuestionnaireEditor from './pages/QuestionnaireEditor';
 import AssetRepository from './components/brand/AssetRepository';
 import AllAssets from './pages/AllAssets';
+import MarketingHome from './components/shared/MarketingHome';
 
 function App() {
   return (
     <ThemeProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Welcome />} />
+          <Route path="/" element={
+            <Layout>
+            <MarketingHome />
+            </Layout>} 
+          />
+
           <Route path="/signup" element={
             <Layout>
             <SignupPage />

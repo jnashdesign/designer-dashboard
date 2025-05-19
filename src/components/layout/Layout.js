@@ -6,12 +6,14 @@ import ThemeToggle from '../ThemeToggle';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import './Layout.css';
+// import { SidebarContext } from '../../context/SidebarContext';
 
 const Layout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -21,19 +23,24 @@ const Layout = ({ children }) => {
   }, []);
 
   const getMainContentClass = () => {
-    if (isAuthPage) return 'main-content';
+    if (isAuthPage || isHomePage) return 'main-content';
     return `main-content ${isSidebarCollapsed ? 'closed-sidebar' : 'open-sidebar'}`;
   };
 
+  // const collapseSidebar = () => setIsSidebarCollapsed(true);
+
   return (
-    <div>
-      <NavBar />
-      {isLoggedIn && <Sidebar onCollapse={setIsSidebarCollapsed} />}
-      <ThemeToggle />
-      <main className={getMainContentClass()}>
-        {children}
-      </main>
-    </div>
+    // <SidebarContext.Provider value={{ collapseSidebar }}>
+      <div>
+        <NavBar />
+        {/* Only show sidebar if not on homepage */}
+        {isLoggedIn && !isHomePage && <Sidebar onCollapse={setIsSidebarCollapsed} />}
+        <ThemeToggle />
+        <main className={getMainContentClass()}>
+          {children}
+        </main>
+      </div>
+    // </SidebarContext.Provider>
   );
 };
 
