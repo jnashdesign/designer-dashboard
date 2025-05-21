@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase/config';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import LoadingSpinner from '../LoadingSpinner';
 import './Dashboard.css';
 
@@ -11,6 +11,7 @@ export default function Dashboard() {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedBriefs, setExpandedBriefs] = useState({});
+  const [guidelines, setGuidelines] = useState({});
   const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
@@ -56,6 +57,17 @@ export default function Dashboard() {
         ...doc.data()
       }));
       setClients(clientsList);
+
+      // Check for existing guidelines for each project
+      const guidelinesData = {};
+      for (const project of projectsList) {
+        const guidelinesRef = doc(db, "projects", project.id, "brandGuidelines", "guidelines");
+        const guidelinesDoc = await getDoc(guidelinesRef);
+        if (guidelinesDoc.exists()) {
+          guidelinesData[project.id] = true;
+        }
+      }
+      setGuidelines(guidelinesData);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -108,6 +120,12 @@ export default function Dashboard() {
                       onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
                     >
                       Start A Brief
+                    </button>
+                    <button 
+                      className="btn btn-info w-100 mb-2"
+                      onClick={() => navigate(`/project/${project.id}/guidelines${guidelines[project.id] ? '' : '/edit'}`)}
+                    >
+                      {guidelines[project.id] ? 'View Guidelines' : 'Build Guidelines'}
                     </button>
                   </div>
                   {briefs[project.id]?.length > 0 && (

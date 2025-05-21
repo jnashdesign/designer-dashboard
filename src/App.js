@@ -21,6 +21,8 @@ import QuestionnaireEditor from './pages/QuestionnaireEditor';
 import AssetRepository from './components/brand/AssetRepository';
 import AllAssets from './pages/AllAssets';
 import MarketingHome from './components/shared/MarketingHome';
+import BrandGuidelinesBuilder from './pages/BrandGuidelinesBuilder';
+import ViewGuidelines from './pages/ViewGuidelines';
 
 function App() {
   return (
@@ -150,6 +152,22 @@ function App() {
             <AllAssets />
             </Layout>
           </RequireAuth>} />
+
+          <Route path="/project/:projectId/guidelines" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <ViewGuidelines />
+              </Layout>
+            </RequireAuth>
+          } />
+
+          <Route path="/project/:projectId/guidelines/edit" element={
+            <RequireAuth role="designer">
+              <Layout>
+                <BrandGuidelinesBuilder />
+              </Layout>
+            </RequireAuth>
+          } />
           
         </Routes>      
       </Router>

@@ -17,23 +17,13 @@ const features = [
   },
   {
     icon: 'fas fa-file-signature',
-    title: 'Creative Briefs',
-    desc: 'Send, customize, and collect creative briefs with grouped questions and file uploads.'
-  },
-  {
-    icon: 'fas fa-layer-group',
-    title: 'Custom Questionnaires',
-    desc: 'Create, edit, and reuse questionnaire templates for different project types.'
+    title: 'Customizable Questionnaires',
+    desc: 'Use our professionally curateddefault questionnaire or create your own.'
   },
   {
     icon: 'fas fa-images',
     title: 'Asset Management',
     desc: 'Upload, organize, and share brand assets with clients. Preview images and PDFs instantly.'
-  },
-  {
-    icon: 'fas fa-book',
-    title: 'Brand Guidelines',
-    desc: 'Add value to your offering by easily building online brand docs and style guides for clients.'
   }
 ];
 
@@ -61,8 +51,7 @@ const pricing = [
       'Unlimited projects',
       'Custom brief templates',
       'Advanced asset management',
-      'Client portal',
-      'Priority support'
+      'Client portal'
     ],
     cta: 'Start Pro Trial',
     highlight: false,
@@ -107,7 +96,7 @@ export default function MarketingHome() {
           <h2 className="text-center mb-5">Features for Designers & Their Clients</h2>
           <div className="row">
             {features.map((f, i) => (
-              <div className="col-12 col-md-4 mb-4 text-center" key={i}>
+              <div className="col-12 col-md-3 mb-4 text-center" key={i}>
                 <div className="feature-card p-4 h-100 shadow-sm bg-white rounded">
                   <i className={`${f.icon} fa-2x mb-3 text-primary`} />
                   <div className="feature-card-content">
