@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.1dd5ca48.css",
-    "main.js": "/static/js/main.b76f8f6c.js",
+    "main.css": "/static/css/main.0028101a.css",
+    "main.js": "/static/js/main.51f0f7c2.js",
     "static/media/OpenSans.ttf": "/static/media/OpenSans.19ba637387f1d6142f55.ttf",
     "static/media/brandEZ_logo_icon_3D.png": "/static/media/brandEZ_logo_icon_3D.b0f34161a3f20e0d0651.png",
     "static/media/heroIMG.jpg": "/static/media/heroIMG.af07509bd49574ca62e4.jpg",
@@ -9,14 +9,14 @@
     "static/media/brandEZ_logo_vert.png": "/static/media/brandEZ_logo_vert.fc32a9648ff3dd544aaf.png",
     "static/media/brandEZ_logo_white.svg": "/static/media/brandEZ_logo_white.60988ae2acc22b9878b40178dc9244cb.svg",
     "static/media/brandEZ_logo.svg": "/static/media/brandEZ_logo.8202a25df10a54df5457dd805eabf1b7.svg",
+    "index.html": "/index.html",
     "static/media/brandEZ_logo_icon.svg": "/static/media/brandEZ_logo_icon.2c47b24077ae4410797833f2cd7b8fed.svg",
     "static/media/brandEZ_logo_icon_white.svg": "/static/media/brandEZ_logo_icon_white.b155f82cc1105491eb692baab1d28c9b.svg",
-    "index.html": "/index.html",
-    "main.1dd5ca48.css.map": "/static/css/main.1dd5ca48.css.map",
-    "main.b76f8f6c.js.map": "/static/js/main.b76f8f6c.js.map"
+    "main.0028101a.css.map": "/static/css/main.0028101a.css.map",
+    "main.51f0f7c2.js.map": "/static/js/main.51f0f7c2.js.map"
   },
   "entrypoints": [
-    "static/css/main.1dd5ca48.css",
-    "static/js/main.b76f8f6c.js"
+    "static/css/main.0028101a.css",
+    "static/js/main.51f0f7c2.js"
   ]
 }

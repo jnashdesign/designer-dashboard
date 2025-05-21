@@ -10,6 +10,7 @@
 
 .marketing-home .hero .container {
   background: transparent;
+  padding: 100px 40px;
 }
 .hero .display-4 {
   color: #fff;
@@ -57,7 +58,7 @@
 }
 .pricing-card .card-price {
   font-size: 2.5rem;
-  font-weight: 500;
+  font-weight: bold;
   color: #4e73df;
 }
 .pricing-card .btn {
@@ -76,8 +77,15 @@
 }
 .features .container, .pricing .container {
   background-color: transparent !important;
+  width: 100% !important;
 }
 
+.contact-form-container {
+  background-color: #4e73df;
+}
+.contact-form-container .card {
+  margin: 20px !important;
+}
 .dark-mode .features {
   background-color: #1a1a1a;
   color: #fff;

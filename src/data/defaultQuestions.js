@@ -1,25 +1,59 @@
 export const defaultQuestions = [
   {
-    id: 'group-business',
-    name: 'Business Info',
+    id: 'group-brand-purpose',
+    name: 'Brand Core: Purpose',
     questions: [
       { 
-        id: 'question-b1', 
-        text: 'What is the name of your business or project?',
+        id: 'question-bc1', 
+        text: 'Why does your company exist?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-b2', 
-        text: 'Describe what your business/product/service does.',
+        id: 'question-bc2', 
+        text: 'What problem are you solving?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-b3', 
-        text: 'What problem are you solving for your customers or users?',
+        id: 'question-bc3', 
+        text: 'What inspired you to start this business?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      { 
+        id: 'question-bc4', 
+        text: 'What impact do you hope to make?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  },
+  {
+    id: 'group-brand-values',
+    name: 'Brand Core: Values',
+    questions: [
+      { 
+        id: 'question-bv1', 
+        text: 'What are your 3-5 core values?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      { 
+        id: 'question-bv2', 
+        text: 'How do these values influence your business decisions?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      { 
+        id: 'question-bv3', 
+        text: 'What behaviors reflect these values?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
@@ -27,59 +61,194 @@ export const defaultQuestions = [
     ]
   },
   {
-    id: 'group-goals-values',
-    name: 'Goals and Values',
+    id: 'group-target-audience',
+    name: 'Brand Positioning: Target Audience',
     questions: [
       { 
-        id: 'question-b4', 
-        text: 'What are your short and long-term goals for this project?',
+        id: 'question-ta1', 
+        text: 'Who is your ideal customer? (Age, gender, occupation, interests, tech-savviness, etc.)',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-b5', 
-        text: 'What does success look like for this project?',
-        type: 'textarea',
-        accept: undefined,
-        fileUrl: null
-      },
-      { 
-        id: 'question-b6', 
-        text: 'Do you have an established mission statement or core values?',
-        type: 'textarea',
-        accept: undefined,
-        fileUrl: null
-      },
-    ]
-  },
-  {
-    id: 'group-audience-competitors',
-    name: 'Audience and Competitors',
-    questions: [
-      { 
-        id: 'question-b7', 
-        text: 'Who is your primary target audience? (Age, gender, occupation, interests, tech-savviness, etc.)',
-        type: 'textarea',
-        accept: undefined,
-        fileUrl: null
-      },
-      { 
-        id: 'question-b8', 
-        text: 'Who are your competitors, and how do you differ from them?',
+        id: 'question-ta2', 
+        text: 'What are their needs, values, and pain points?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       {
-        id: 'question-b9',
-        text: 'Upload any reference materials or inspiration',
-        type: 'file',
-        accept: 'image/*,.pdf',
+        id: 'question-ta3',
+        text: 'What motivates them to buy?',
+        type: 'textarea',
+        accept: undefined,
         fileUrl: null
       }
     ]
-  }
+  },
+  {
+    id: 'group-market-research',
+    name: 'Brand Positioning: Market Research',
+    questions: [
+      { 
+        id: 'question-mr1', 
+        text: 'Who are your main competitors?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      { 
+        id: 'question-mr2', 
+        text: 'What makes you different?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-mr3',
+        text: 'What brands do you admire and why?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  },
+  {
+    id: 'group-goals',
+    name: 'Brand Positioning: Goals',
+    questions: [
+      {
+        id: 'question-g1', 
+        text: 'What are your short-term and long-term goals?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-g2',
+        text: 'What do you want people to say when they think of your brand?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-g3',
+        text: 'How do you want to be perceived?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  },
+  {
+    id: 'group-personality',
+    name: 'Brand Persona: Personality',
+    questions: [
+      {
+        id: 'question-p1', 
+        text: 'If your brand were a person, what kind of personality would it have?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-p2',
+        text: 'Is your tone more playful or professional?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-p3',
+        text: 'Which 3 adjectives best describe your brand?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  },
+  {
+    id: 'group-voice',
+    name: 'Brand Persona: Voice',
+    questions: [
+      {
+        id: 'question-v1', 
+        text: 'How do you communicate with your audience?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-v2',
+        text: 'Are there phrases or terminology you always use?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-p3',
+        text: 'Are there any you avoid?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  },
+  {
+    id: 'group-slogans-taglines',
+    name: 'Brand Persona: Slogans & Taglines',
+    questions: [
+      {
+        id: 'question-s1', 
+        text: 'Do you already have a tagline?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-s2',
+        text: 'If not, what\'s a short phrase that communicates your value?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-s3',
+        text: 'What emotions do you want it to evoke?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  },
+  {
+    id: 'group-visual-identity',
+    name: 'Visual Identity',
+    questions: [
+      {
+        id: 'question-vi1', 
+        text: 'Any nouns, symbols or ideas you definitely want included?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-vi2',
+        text: 'Do you have preferred colors or fonts?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      },
+      {
+        id: 'question-vi3',
+        text: 'What mood or tone should visuals convey?',
+        type: 'textarea',
+        accept: undefined,
+        fileUrl: null
+      }
+    ]
+  }  
 ];
 
 // Remove or update websiteQuestions and appQuestions since we're focusing on branding

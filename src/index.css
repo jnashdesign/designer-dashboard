@@ -68,7 +68,10 @@ button:hover {
   background-color: #0056b3;
 }
 
-.btn.btn-primary, .btn-outline-primary:hover {
+.btn.btn-primary, 
+.btn-outline-primary:hover,
+.btn-primary.disabled, 
+.btn-primary:disabled {
   color: #fff;
   background-color: #576fb5 !important;
   border-color: rgb(67, 98, 194);
@@ -116,7 +119,7 @@ textarea,
 select {
   padding: 10px;
   border: 1px solid #ddd;
-  width: calc(100% - 20px);
+  width: calc(100% - 20px) !important;
   margin-bottom: 10px;
 }
 
@@ -300,6 +303,10 @@ td.text-truncate {
 .newFromSaved.show {
   display: block;
 }
+.all-assets .table td {
+  border: none;
+  vertical-align: middle;
+}
 
 .all-assets .table td:nth-child(2) {
   font-weight: bold;
@@ -313,6 +320,9 @@ td.text-truncate {
 }
 
 @media (max-width: 767px) {
+  .row {
+    margin: 0 !important;
+  }
   .all-assets .table thead th {
     display: none;
   }
@@ -326,7 +336,7 @@ td.text-truncate {
 
   .all-assets .file-preview img {
     width: 100% !important;
-    min-height: 80px;
+    min-height: 200px;
   }
 
   .all-assets tbody tr {
