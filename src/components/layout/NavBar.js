@@ -6,7 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle';
 import Logo from '../shared/Logo';
 
-export default function NavBar() {
+export default function NavBar({ onMobileMenuClick }) {
   const [role, setRole] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -30,6 +30,9 @@ export default function NavBar() {
     navigate('/login');
   };
 
+  const handleLogIn = async () => {
+    navigate('/login');
+  };
 
   return (
     <nav style={{ 
@@ -43,10 +46,13 @@ export default function NavBar() {
       background: 'var(--bg-card)',
       borderBottom: '1px solid var(--border-color)'
     }}>
-      <Link to="/" className="nav-logo d-flex align-items-center text-decoration-none">
-        <Logo />
-      </Link>
-      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+             
+        <Link to="/" className="nav-logo d-flex align-items-center text-decoration-none">
+          <Logo />
+        </Link>
+
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         {isLoggedIn ? (
           <button 
@@ -55,7 +61,13 @@ export default function NavBar() {
           >
             Log Out
           </button>
-        ) : (<></>)}
+        ) : (
+          <button 
+          onClick={handleLogIn}
+          className="btn btn-outline-secondary"
+        >
+          Log In
+        </button>)}
       </div>
     </nav>
   );

@@ -1,6 +1,3 @@
-.marketing-home {
-  margin-left: -60px;
-}
 /* Hero Section */
 .hero {
   background-image: url('./heroIMG.jpg');
@@ -10,19 +7,11 @@
   position: relative;
   overflow: hidden;
 }
-.hero img {
-  height: 200% !important;
-  width: auto;
-  position: absolute;
-  top: -20%;
-  left: -10%;
-}
 
 .marketing-home .hero .container {
   background: transparent;
 }
 .hero .display-4 {
-  font-weight: 700;
   color: #fff;
 }
 .hero .lead {
@@ -42,6 +31,8 @@
   border: none;
   transition: transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
+  box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid #eee;
 }
 .feature-card:hover {
   transform: translateY(-4px) scale(1.03);
@@ -59,13 +50,14 @@
   border-radius: 1rem;
   border-width: 2px;
   transition: box-shadow 0.2s, border-color 0.2s;
+  overflow: hidden;
 }
-.pricing-card.border-primary {
-  border-color: #4e73df !important;
+.order-md-2 .pricing-card h5.card-title {
+  background-color: #4e73df;
 }
 .pricing-card .card-price {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 500;
   color: #4e73df;
 }
 .pricing-card .btn {
@@ -74,7 +66,38 @@
 .pricing-card .fa-check {
   color: #1cc88a;
 }
+.pricing-card h5.card-title {
+  background-color: #444;
+  padding: 20px;
+  color: #fff;
+  margin: -20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.features .container, .pricing .container {
+  background-color: transparent !important;
+}
 
+.dark-mode .features {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+.dark-mode .pricing {
+  background-color: #2b2d34 !important;
+  color: #fff;
+}
+.dark-mode .feature-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color);
+}
+.dark-mode .feature-card .text-primary {
+  color: #fff !important;
+}
+@media (min-width: 992px) {
+  .marketing-home {
+    margin-left: -60px;
+  }
+}
 @media (max-width: 767px) {
   .feature-card, .pricing-card {
     margin-bottom: 1.5rem;

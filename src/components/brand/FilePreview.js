@@ -38,6 +38,7 @@ const FilePreview = ({ file, width = 50 }) => {
   return (
     <div className="file-preview">
       {isPreviewable ? (
+        <a href={file.url} target="_blank" rel="noopener noreferrer">
         <img 
           src={file.url} 
           alt={file.name}
@@ -48,6 +49,7 @@ const FilePreview = ({ file, width = 50 }) => {
             borderRadius: '4px'
           }}
         />
+        </a>
       ) : (
         <div className="file-icon" style={{
           width: `${width}px`,

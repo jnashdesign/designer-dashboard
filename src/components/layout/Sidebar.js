@@ -6,9 +6,11 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
 import './Sidebar.css';
 
-const Sidebar = ({ onCollapse }) => {
+const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobileMenuOpen: propSetMobileMenuOpen }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
+  const isMobileMenuOpen = typeof propMobileMenuOpen === 'boolean' ? propMobileMenuOpen : internalMobileMenuOpen;
+  const setIsMobileMenuOpen = propSetMobileMenuOpen || setInternalMobileMenuOpen;
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
 
@@ -113,12 +115,12 @@ const Sidebar = ({ onCollapse }) => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     onCollapse(newState);
-    console.log(newState);
   };
 
   return (
     <>
       {/* Mobile Menu Toggle */}
+      
       <button
         className="mobile-menu-toggle d-lg-none"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -163,7 +165,7 @@ const Sidebar = ({ onCollapse }) => {
                 Add Project
               </button>
               <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
-                Create New Questionnaire
+                Create Questionnaire
               </button>
             </>
           ) : (

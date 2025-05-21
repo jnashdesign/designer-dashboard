@@ -11,9 +11,9 @@ import './Layout.css';
 const Layout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
-  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -23,18 +23,24 @@ const Layout = ({ children }) => {
   }, []);
 
   const getMainContentClass = () => {
-    if (isAuthPage || isHomePage) return 'main-content';
+    if (isAuthPage) return 'main-content';
     return `main-content ${isSidebarCollapsed ? 'closed-sidebar' : 'open-sidebar'}`;
   };
 
-  // const collapseSidebar = () => setIsSidebarCollapsed(true);
+  const toggleMobileSidebar = () => setIsMobileMenuOpen((open) => !open);
 
   return (
     // <SidebarContext.Provider value={{ collapseSidebar }}>
       <div>
-        <NavBar />
-        {/* Only show sidebar if not on homepage */}
-        {isLoggedIn && !isHomePage && <Sidebar onCollapse={setIsSidebarCollapsed} />}
+        <NavBar onMobileMenuClick={toggleMobileSidebar} />
+        {/* Sidebar logic: on homepage, only show if mobile menu is open; on other pages, show as before */}
+        {isLoggedIn && (
+          <Sidebar 
+            onCollapse={setIsSidebarCollapsed}
+            isMobileMenuOpen={isMobileMenuOpen}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+          />
+        )}
         <ThemeToggle />
         <main className={getMainContentClass()}>
           {children}

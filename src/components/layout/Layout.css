@@ -12,6 +12,10 @@
   transition: margin-left 0.3s ease;
 }
 
+nav button.btn.btn-outline-secondary {
+  margin-top: -5px;
+}
+
 @media (max-width: 991px) {
   .main-content {
     margin-left: 0;

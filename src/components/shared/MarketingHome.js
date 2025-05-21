@@ -87,20 +87,15 @@ export default function MarketingHome() {
   return (
     <div className="marketing-home">
       {/* Hero Section */}
-      <section className="row hero text-center py-5 bg-light">
-      <div className="col-7 flex-column">
+      <section className="hero text-center py-5 bg-light">
       <div className="container">
-          <h1 className="display-4 mb-3">Effortlessly Manage Branding Projects</h1>
+          <h1 className="display-4 mb-3">Effortlessly Manage Branding&nbsp;Projects</h1>
           <p className="lead mb-4">
             The all-in-one platform for brand designers and their clients.
           </p>
           <div className="d-flex justify-content-center gap-3 mb-2">
             <Link to="/signup" className="btn btn-primary btn-lg mr-2">Get Started Free</Link>
           </div>
-        </div>
-        </div>
-        <div className="col-5 flex-column">
-        <Logo_icon_3D className="logo-icon-3d" />
         </div>
       </section>
 
@@ -113,8 +108,10 @@ export default function MarketingHome() {
               <div className="col-12 col-md-4 mb-4 text-center" key={i}>
                 <div className="feature-card p-4 h-100 shadow-sm bg-white rounded">
                   <i className={`${f.icon} fa-2x mb-3 text-primary`} />
-                  <h5>{f.title}</h5>
-                  <p className="text-muted">{f.desc}</p>
+                  <div className="feature-card-content">
+                    <h5>{f.title}</h5>
+                    <p className="text-muted">{f.desc}</p>
+                  </div>
                 </div>
               </div>
             ))}

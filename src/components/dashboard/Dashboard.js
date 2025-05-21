@@ -94,7 +94,6 @@ export default function Dashboard() {
                     <h5 className="mb-0">{project.name || project.projectName || 'Untitled Project'}</h5>
                     <h6 className="mb-0 text-muted" style={{ fontWeight: 400 }}>{getClientNameByRef(project.clientId)}</h6>
                   </div>
-                  <span className={`badge bg-${project.status === 'active' ? 'success' : 'secondary'}`}>{project.status}</span>
                 </div>
                 <div className="card-body">
                   <div className="w-100">

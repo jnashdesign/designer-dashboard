@@ -30,7 +30,8 @@ function App() {
           <Route path="/" element={
             <Layout>
             <MarketingHome />
-            </Layout>} 
+            </Layout>
+          } 
           />
 
           <Route path="/signup" element={

@@ -1,9 +1,22 @@
+@font-face {
+  font-family: "OpenSans";
+  src:
+    url('./components/shared/OpenSans.ttf') format("truetype"),
+    url('./components/shared/OpenSans.woff') format("woff");
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "OpenSans", sans-serif;
+  font-weight: 400;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   color: #333;
 }
+
 select {
   border: 1px solid #ddd;
   padding: 10px !important;
@@ -12,6 +25,7 @@ select {
   max-width: 500px;
 
 }
+
 .container {
   max-width: 960px;
   width: calc(100% - 40px);
@@ -20,6 +34,7 @@ select {
   background: #fff;
   border-radius: 8px;
 }
+
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -38,6 +53,7 @@ select {
   background-color: #e74a3b;
   border-color: #e74a3b;
 }
+
 button {
   padding: 10px 20px;
   border: none;
@@ -47,35 +63,51 @@ button {
   cursor: pointer;
   border-radius: 4px;
 }
+
 button:hover {
   background-color: #0056b3;
 }
-button.btn-primary {
+
+.btn.btn-primary, .btn-outline-primary:hover {
   color: #fff;
-  background-color: #4e73df;
-  border-color: #4e73df;
+  background-color: #576fb5 !important;
+  border-color: rgb(67, 98, 194);
 }
+
 button.btn-secondary {
   background: #6c757d;
+  border-radius: 30px;
 }
+
+.btn-primary, .btn-outline-primary,
+.btn-secondary, .btn-outline-secondary {
+  border-radius: 30px;
+  padding: 10px 30px;
+}
+
 button:focus {
   outline: none;
 }
+
 .cursor-pointer {
   cursor: pointer;
 }
+
 .brief-toggle.text-primary.cursor-pointer {
   background: rgba(0, 0, 0, 0.05);
   padding: 10px;
 }
+
 .briefs-container {
   padding: 10px;
 }
+
 .brief-toggle.text-primary.cursor-pointer, .briefs-container {
   border: 1px solid #e3e6f0;
   width: 100%;
   text-align: left;
 }
+
 input[type="email"],
 input[type="tel"],
 input[type="text"],
@@ -87,6 +119,7 @@ select {
   width: calc(100% - 20px);
   margin-bottom: 10px;
 }
+
 .login-page input[type="email"],
 .login-page input[type="password"],
 .login-page select,
@@ -101,28 +134,36 @@ select {
   padding: 0.75em;
   text-transform: capitalize;
 }
+
 .card {
   border-radius: 10px;
 }
+
 button.btn.btn-light {
   background: rgba(0, 0, 0, 0.075);
   color: #595959;
 }
+
 button.btn.btn-light:hover {
   background: rgba(0, 0, 0, 0.1);
 }
+
 .action-buttons {
   margin-bottom: 20px;
 }
+
 .projects-container .card-body {
   margin: 0 -10px;
 }
+
 .projects-container .briefs-container {
   margin-top: -1px !important;
 }
+
 .project-info .action-buttons {
   margin-bottom: 0px;
 }
+
 .project-info.col-6 {
   margin-top: -20px;
 }
@@ -155,19 +196,23 @@ button.btn-close {
   color: #333;
   border: none;
   border-radius: 50%;
-  width: 44px;
+  width: 42px;
   height: 40px;
 }
+
 button.btn-close:before, button.delete-question {
   content: 'x';
 }
+
 button:hover i::before,
 button.btn-primary i::before {
   color: #fff;
 }
+
 button.mobile-menu-toggle:hover i::before {
   color: #aaa;
 }
+
 .lead {
   max-width: 400px;
   text-align: center;
@@ -175,9 +220,11 @@ button.mobile-menu-toggle:hover i::before {
   margin: 0 auto;
   line-height: 1em;
 }
+
 .alert {
   padding: 1rem 4rem 1rem 1.25rem;
 }
+
 .alert button.btn-close {
   position: absolute;
   top: 15px;
@@ -198,28 +245,35 @@ button i::before {
 .login-page input, .signup-page input {
   max-width: 500px;
 }
+
 .login-page .col-12, .signup-page .col-12 {
   padding-left: 0;
 }
+
 .file-types {
   font-size: 0.8em;
 }
+
 td.text-truncate {
   white-space: nowrap;
   max-width: 300px;
   text-overflow: ellipsis;
   display: block;
 }
+
 .dark-mode {
   background-color: #1a1c23
 }
+
 .dark-mode .container {
   background-color: #373c4c;
   color: #fff;
 }
+
 .dark-mode .progress-text {
   color: #fff;
 }
+
 .chooser-options button {
   background: #eee;
   color: #333;
@@ -229,28 +283,90 @@ td.text-truncate {
   min-height: 200px;
   min-width: 200px;
 }
+
 .chooser-options button span {
   display: block;
-  margin: 0 auto; 
+  margin: 0 auto;
 }
+
 .chooser-options button i {
   font-size: 2rem;
 }
+
 .newFromSaved {
   display: none;
 }
+
 .newFromSaved.show {
   display: block;
 }
+
+.all-assets .table td:nth-child(2) {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 @media (max-width: 991px) {
   .nav-logo {
     margin-left: 50px;
   }
 }
-  @media (min-width: 576px) {
-    .questionnaire-types button {
-      width: 100%;
-      display: block;
-      margin-bottom: 10px;
-    }
+
+@media (max-width: 767px) {
+  .all-assets .table thead th {
+    display: none;
+  }
+
+  .all-assets .table td {
+    display: table;
+    border: none;
+    height: auto;
+    width: 100% !important;
+  }
+
+  .all-assets .file-preview img {
+    width: 100% !important;
+    min-height: 80px;
+  }
+
+  .all-assets tbody tr {
+    background: rgba(0, 0, 0, 0.05);
+    margin: 0 5px 5px 0;
+    display: inline-block;
+    padding: 5px;
+    font-size: 0.9em;
+    border-radius: 5px;
+  }
+  .feature-card {
+    margin-bottom: -2px;
+    padding: 0 !important;
+  }
+  .feature-card i, .feature-card .feature-card-content {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+  }
+  .feature-card i {
+    background: #444;
+    padding: 40px;
+    color: #fff !important;
+  }
+  .feature-card:hover i {
+    background-color: #576fb5;
+  }
+}
+
+@media (max-width: 575px) {
+  .all-assets tbody tr {
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+  .questionnaire-types button {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+  }
 }

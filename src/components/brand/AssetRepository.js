@@ -111,7 +111,7 @@ const AssetRepository = () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 all-assets">
       <button className="btn btn-secondary mb-4" onClick={() => navigate('/dashboard')}>&larr; Back</button>
       <h2 className="mb-4">Brand Assets</h2>
 

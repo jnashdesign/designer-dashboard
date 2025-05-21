@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/config';
 import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
 import Logo_icon from '../components/shared/Logo_icon';
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -46,6 +47,17 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate('/dashboard');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
 
   return (
     <div className="dashboard-container signup-page">
