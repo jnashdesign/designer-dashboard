@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.a11b09fb.css",
-    "main.js": "/static/js/main.243bd70d.js",
+    "main.css": "/static/css/main.885c84d1.css",
+    "main.js": "/static/js/main.a21f23ed.js",
     "static/media/OpenSans.ttf": "/static/media/OpenSans.19ba637387f1d6142f55.ttf",
     "static/media/brandEZ_logo_icon_3D.png": "/static/media/brandEZ_logo_icon_3D.b0f34161a3f20e0d0651.png",
     "static/media/heroIMG.jpg": "/static/media/heroIMG.af07509bd49574ca62e4.jpg",
@@ -12,11 +12,11 @@
     "static/media/brandEZ_logo.svg": "/static/media/brandEZ_logo.8202a25df10a54df5457dd805eabf1b7.svg",
     "static/media/brandEZ_logo_icon.svg": "/static/media/brandEZ_logo_icon.2c47b24077ae4410797833f2cd7b8fed.svg",
     "static/media/brandEZ_logo_icon_white.svg": "/static/media/brandEZ_logo_icon_white.b155f82cc1105491eb692baab1d28c9b.svg",
-    "main.a11b09fb.css.map": "/static/css/main.a11b09fb.css.map",
-    "main.243bd70d.js.map": "/static/js/main.243bd70d.js.map"
+    "main.885c84d1.css.map": "/static/css/main.885c84d1.css.map",
+    "main.a21f23ed.js.map": "/static/js/main.a21f23ed.js.map"
   },
   "entrypoints": [
-    "static/css/main.a11b09fb.css",
-    "static/js/main.243bd70d.js"
+    "static/css/main.885c84d1.css",
+    "static/js/main.a21f23ed.js"
   ]
 }

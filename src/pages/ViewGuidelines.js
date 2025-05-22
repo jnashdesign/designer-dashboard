@@ -91,43 +91,43 @@ export default function ViewGuidelines() {
   }
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 brand-guidelines">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Brand Guidelines</h2>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 action-buttons">
           <button
             onClick={() => navigate(`/project/${projectId}/guidelines/edit`)}
-            className="btn btn-primary"
+            style={{ borderRadius: '50%',padding: '8px 13px' }}
           >
-            Edit Guidelines
+          <i className="fas fa-pencil-alt" style={{ color: '#fff' }}/>
           </button>
           <button
             onClick={handleDelete}
-            className="btn btn-danger"
+            className="btn btn-close"
+            style={{ marginTop: '0' }}
             disabled={deleting}
           >
-            {deleting ? 'Deleting...' : 'Delete Guidelines'}
           </button>
         </div>
       </div>
 
       <div className="row">
-        <div className="col-md-8">
+        <div className="col-md-12">
           {/* Primary Logo */}
           {guidelines.logoUrl && (
-            <div className="card mb-4">
+            <div className="card mb-4 logo-card">
               <div className="card-body">
-                <h5 className="card-title">Primary Logo</h5>
-                <img src={guidelines.logoUrl} alt="Primary Logo" className="img-fluid" style={{ maxHeight: '200px' }} />
+                <h3 className="card-title">Primary Logo</h3>
+                <img src={guidelines.logoUrl} alt="Primary Logo" className="img-fluid" style={{ width: '100%' }} />
               </div>
             </div>
           )}
 
           {/* Logo Variations */}
           {guidelines.logoVariations?.length > 0 && (
-            <div className="card mb-4">
+            <div className="card mb-3 logo-variations-card">
               <div className="card-body">
-                <h5 className="card-title">Logo Variations</h5>
+                <h3 className="card-title">Logo Variations</h3>
                 <div className="row">
                   {guidelines.logoVariations.map((variation, index) => (
                     variation.url && (
@@ -144,28 +144,65 @@ export default function ViewGuidelines() {
 
           {/* Color Palette */}
           {guidelines.colorPaletteUrl && (
-            <div className="card mb-4">
+            <div className="card mb-4 color-palette-card">
               <div className="card-body">
-                <h5 className="card-title">Color Palette</h5>
+                <h3 className="card-title">Color Palette</h3>
                 <img src={guidelines.colorPaletteUrl} alt="Color Palette" className="img-fluid" style={{ maxHeight: '200px' }} />
               </div>
             </div>
           )}
 
           {/* Typography */}
-          {guidelines.typographyUrl && (
-            <div className="card mb-4">
-              <div className="card-body">
-                <h5 className="card-title">Typography</h5>
-                <img src={guidelines.typographyUrl} alt="Typography" className="img-fluid" style={{ maxHeight: '200px' }} />
-              </div>
+          <div className="card col-md-12 mb-12 typography-card">
+            <div className="card-body">
+              <h3 className="card-title">Typography</h3>
+              {/* Primary Font */}
+              {guidelines.primaryFontPreview && (
+                <div className="mb-3 col-md-12 ">
+                  <label className="form-label">Primary Font</label>
+                  {guidelines.primaryFontMetadata && (
+                    <div>
+                      <h2><strong>{guidelines.primaryFontMetadata.familyName}</strong></h2>
+                      <div className="typography-weight">{guidelines.primaryFontMetadata.subFamilyName}</div>
+                    </div>
+                  )}
+                  <div className="mb-2">
+                  <img
+                    src={guidelines.primaryFontPreview}
+                    alt="Primary font preview"
+                    style={{ background: '#fff' }}
+                  />
+                </div>
+
+                </div>
+              )}
+              {/* Secondary Font */}
+              {guidelines.secondaryFontPreview && (
+                <div className="mb-3 col-md-12 secondary-font">
+                  <label className="form-label">Secondary Font</label>
+                  {guidelines.secondaryFontMetadata && (
+                    <div>
+                      <h2><strong>{guidelines.secondaryFontMetadata.familyName}</strong></h2>
+                      <div className="typography-weight">{guidelines.secondaryFontMetadata.subFamilyName}</div>
+                    </div>
+                  )}
+                  <div className="mb-2">
+                  <img
+                    src={guidelines.secondaryFontPreview}
+                    alt="Secondary font preview"
+                    style={{ background: '#fff' }}
+                  />
+                </div>
+
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Brand Content */}
           <div className="card mb-4">
             <div className="card-body">
-              <h5 className="card-title">Brand Content</h5>
+              <h3 className="card-title">Brand Content</h3>
               
               {guidelines.brandStory && (
                 <div className="mb-4">

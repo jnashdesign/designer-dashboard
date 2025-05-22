@@ -312,7 +312,24 @@ td.text-truncate {
   font-weight: bold;
   margin-top: 10px;
 }
-
+.typography-card label {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  margin-top: 40px;
+  display: block;
+  padding-top: 20px;
+}
+.typography-card .secondary-font {
+  border-top: 2px solid #aaa;
+  margin-top: 60px;
+}
+.typography-card .typography-weight {
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+.brand-guidelines .action-buttons i:before {
+  color: #fff;
+}
 @media (max-width: 991px) {
   .nav-logo {
     margin-left: 50px;
