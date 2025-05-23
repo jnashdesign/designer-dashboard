@@ -63,14 +63,18 @@ const FileUploader = ({ projectId, onUploadComplete }) => {
         'image/svg+xml',
         'application/eps',
         'image/png',
-        'application/pdf'
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg'
       ],
       brandmarks: [
         'application/illustrator',
         'image/svg+xml',
         'application/eps',
         'image/png',
-        'application/pdf'
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg'
       ],
       typography: [
         'application/x-font-ttf',
@@ -83,6 +87,7 @@ const FileUploader = ({ projectId, onUploadComplete }) => {
         'application/pdf',
         'image/png',
         'image/jpeg',
+        'image/jpg',
         'application/illustrator'
       ],
       guidelines: [
@@ -101,7 +106,8 @@ const FileUploader = ({ projectId, onUploadComplete }) => {
         'image/svg+xml',
         'application/eps',
         'image/png',
-        'image/jpeg'
+        'image/jpeg',
+        'image/jpg'
       ]
     };
 

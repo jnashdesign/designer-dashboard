@@ -11,9 +11,9 @@ const features = [
     desc: 'Easily manage all your branding projects, clients, and timelines in one place.'
   },
   {
-    icon: 'fas fa-users',
-    title: 'Client Collaboration',
-    desc: 'Invite clients, assign projects, and keep everyone in sync with real-time updates.'
+    icon: 'fas fa-file-alt',
+    title: 'Brand Guidelines Builder',
+    desc: 'Create brand guidelines for your clients with our easy-to-use builder.'
   },
   {
     icon: 'fas fa-file-signature',

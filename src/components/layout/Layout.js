@@ -24,6 +24,7 @@ const Layout = ({ children, onProjectCreated }) => {
 
   const getMainContentClass = () => {
     if (isAuthPage) return 'main-content';
+    if (!isLoggedIn && location.pathname === '/') return 'main-content closed-sidebar';
     return `main-content ${isSidebarCollapsed ? 'closed-sidebar' : 'open-sidebar'}`;
   };
 
