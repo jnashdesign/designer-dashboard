@@ -8,7 +8,7 @@ import { auth } from '../../firebase/config';
 import './Layout.css';
 // import { SidebarContext } from '../../context/SidebarContext';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, onProjectCreated }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,6 +39,7 @@ const Layout = ({ children }) => {
             onCollapse={setIsSidebarCollapsed}
             isMobileMenuOpen={isMobileMenuOpen}
             setIsMobileMenuOpen={setIsMobileMenuOpen}
+            onProjectCreated={onProjectCreated}
           />
         )}
         <ThemeToggle />

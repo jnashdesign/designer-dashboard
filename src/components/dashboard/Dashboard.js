@@ -5,7 +5,7 @@ import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firesto
 import LoadingSpinner from '../LoadingSpinner';
 import './Dashboard.css';
 
-export default function Dashboard() {
+export default function Dashboard({ setFetchDataRef }) {
   const [projects, setProjects] = useState([]);
   const [briefs, setBriefs] = useState({});
   const [clients, setClients] = useState([]);
@@ -76,8 +76,9 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    if (setFetchDataRef) setFetchDataRef(fetchData);
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, setFetchDataRef]);
 
   const getClientNameByRef = useCallback((clientId) => {
     const client = clients.find(c => c.id === clientId);

@@ -108,10 +108,10 @@ export default function BrandGuidelinesBuilder() {
     logoUrl: '',
     logoVariations: [],
     colorPalette: [
-      { hex: '#000000' },
-      { hex: '#FFFFFF' },
-      { hex: '#FF0000' },
-      { hex: '#00FF00' }
+      { hex: '#000000', name: '' },
+      { hex: '#FFFFFF', name: '' },
+      { hex: '#FF0000', name: '' },
+      { hex: '#00FF00', name: '' }
     ],
     primaryFontUrl: '',
     primaryFontMetadata: null,
@@ -147,15 +147,17 @@ export default function BrandGuidelinesBuilder() {
         setFormData(prev => ({
           ...prev,
           ...data,
-          colorPalette: data.colorPalette && Array.isArray(data.colorPalette) && data.colorPalette.length === 4
-            ? data.colorPalette
-            : prev.colorPalette
+          colorPalette: (data.colorPalette && Array.isArray(data.colorPalette) && data.colorPalette.length === 4)
+            ? data.colorPalette.map(c => ({ hex: c.hex, name: c.name || '' }))
+            : prev.colorPalette,
+          primaryFontMetadata: data.primaryFontMetadata || prev.primaryFontMetadata,
+          secondaryFontMetadata: data.secondaryFontMetadata || prev.secondaryFontMetadata
         }));
         setPreviews(prev => ({
           ...prev,
           logo: data.logoUrl,
-          primaryFont: data.primaryFontUrl,
-          secondaryFont: data.secondaryFontUrl
+          primaryFont: data.primaryFontPreview || prev.primaryFont,
+          secondaryFont: data.secondaryFontPreview || prev.secondaryFont
         }));
       }
     } catch (error) {
@@ -290,8 +292,8 @@ export default function BrandGuidelinesBuilder() {
       const guidelinesRef = doc(db, "projects", projectId, "brandGuidelines", "guidelines");
       await setDoc(guidelinesRef, {
         ...formData,
-        primaryFontPreview: previews.primaryFont || '',
-        secondaryFontPreview: previews.secondaryFont || '',
+        primaryFontPreview: previews.primaryFont || formData.primaryFontPreview || '',
+        secondaryFontPreview: previews.secondaryFont || formData.secondaryFontPreview || '',
         updatedAt: new Date(),
         designerId: user.uid
       }, { merge: true });
@@ -358,14 +360,22 @@ export default function BrandGuidelinesBuilder() {
     }
   };
 
+  const handleColorNameChange = (index, name) => {
+    setFormData(prev => {
+      const updated = [...prev.colorPalette];
+      updated[index] = { ...updated[index], name };
+      return { ...prev, colorPalette: updated };
+    });
+  };
+
   if (loading) {
     return <LoadingSpinner message="Loading guidelines..." />;
   }
 
   return (
-    <div className="container py-4">
+    <div className="container py-4 brand-guidelines">
       <div className="row">
-        <div className="col-md-8">
+        <div className="col-md-12">
           <h2 className="mb-4">Brand Guidelines Builder</h2>
           
           {/* Primary Logo Section */}
@@ -395,16 +405,15 @@ export default function BrandGuidelinesBuilder() {
               <h5 className="card-title">Logo Variations</h5>
               {formData.logoVariations.map((variation, index) => (
                 <div key={index} className="mb-3 p-3 border rounded">
-                  <div className="row">
-                    <div className="col-md-4">
-                      <input
+                  <input
                         type="text"
                         value={variation.name}
                         onChange={(e) => handleLogoVariationChange(index, 'name', e.target.value)}
                         placeholder="Variation name"
                         className="form-control"
                       />
-                    </div>
+                    <div className="row">
+
                     <div className="col-md-6">
                       <input
                         type="file"
@@ -416,9 +425,9 @@ export default function BrandGuidelinesBuilder() {
                     <div className="col-md-2">
                       <button
                         onClick={() => handleLogoVariationRemove(index)}
-                        className="btn btn-danger"
+                        className="btn btn-close"
+                        style={{ marginTop: 0 }}
                       >
-                        Remove
                       </button>
                     </div>
                   </div>
@@ -447,26 +456,37 @@ export default function BrandGuidelinesBuilder() {
                   const rgb = hexToRgb(color.hex || '#000000');
                   const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
                   return (
-                    <div className="col-md-6 mb-3" key={idx}>
+                    <div className="col-md-6 mb-3 mt-2 mb-4" key={idx}>
+                    <div className="color-name-input">
+                    <input
+                    type="text"
+                    value={color.name || ''}
+                    onChange={e => handleColorNameChange(idx, e.target.value)}
+                    className="form-control"
+                    style={{ width: 'calc(100% - 12px) !important' }}
+                    placeholder="Color name"
+                  />
+
+                    </div>
                       <div className="d-flex align-items-center mb-2">
                         <input
                           type="color"
                           value={color.hex || '#000000'}
                           onChange={e => handleColorChange(idx, e.target.value)}
-                          style={{ width: 40, height: 40, border: 'none', background: 'none', marginRight: 12 }}
+                          style={{ cursor: 'pointer', width: 80, height: 40, border: '1px solid #eee', borderRadius: '0 !important', background: 'none', marginTop: -10, marginRight: 5 }}
                         />
                         <input
                           type="text"
                           value={color.hex || ''}
                           onChange={e => handleHexInput(idx, e.target.value)}
                           className="form-control"
-                          style={{ width: 100, marginRight: 12 }}
+                          style={{ marginRight: 20 }}
                           maxLength={7}
                         />
                       </div>
                       <div style={{ fontSize: '0.95em', color: '#555' }}>
-                        <div>RGB: {rgb.r}, {rgb.g}, {rgb.b}</div>
-                        <div>CMYK: {cmyk.c}, {cmyk.m}, {cmyk.y}, {cmyk.k}</div>
+                        <div><strong>RGB:</strong> {rgb.r}, {rgb.g}, {rgb.b}</div>
+                        <div><strong>CMYK:</strong> {cmyk.c}, {cmyk.m}, {cmyk.y}, {cmyk.k}</div>
                       </div>
                     </div>
                   );
@@ -504,7 +524,7 @@ export default function BrandGuidelinesBuilder() {
                     <img 
                       src={previews.primaryFont} 
                       alt="Primary Font preview" 
-                      className="img-fluid border rounded"
+                      className="img-fluid"
                       style={{ maxWidth: '100%', background: '#fff' }}
                     />
                   </div>
@@ -540,7 +560,7 @@ export default function BrandGuidelinesBuilder() {
                     <img 
                       src={previews.secondaryFont} 
                       alt="Secondary Font preview" 
-                      className="img-fluid border rounded"
+                      className="img-fluid"
                       style={{ maxWidth: '100%', background: '#fff' }}
                     />
                   </div>
@@ -596,7 +616,7 @@ export default function BrandGuidelinesBuilder() {
           <div className="d-flex gap-2">
             <button
               onClick={() => navigate('/dashboard')}
-              className="btn btn-secondary"
+              className="btn btn-secondary mr-2"
               disabled={saving}
             >
               Cancel

@@ -131,9 +131,9 @@ export default function ViewGuidelines() {
                 <div className="row">
                   {guidelines.logoVariations.map((variation, index) => (
                     variation.url && (
-                      <div key={index} className="col-md-6 mb-3">
-                        <h6 className="text-muted">{variation.name}</h6>
+                      <div key={index} className="col-md-4 mb-3">
                         <img src={variation.url} alt={variation.name} className="img-fluid" style={{ maxHeight: '150px' }} />
+                        <h6 className="text-muted mt-2">{variation.name}</h6>
                       </div>
                     )
                   ))}
@@ -170,7 +170,7 @@ export default function ViewGuidelines() {
                   <img
                     src={guidelines.primaryFontPreview}
                     alt="Primary font preview"
-                    style={{ background: '#fff' }}
+                    style={{ background: '#fff', maxWidth: '100%' }}
                   />
                 </div>
 
@@ -190,7 +190,7 @@ export default function ViewGuidelines() {
                   <img
                     src={guidelines.secondaryFontPreview}
                     alt="Secondary font preview"
-                    style={{ background: '#fff' }}
+                    style={{ background: '#fff', maxWidth: '100%' }}
                   />
                 </div>
 

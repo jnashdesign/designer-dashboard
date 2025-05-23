@@ -6,7 +6,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
 import './Sidebar.css';
 
-const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobileMenuOpen: propSetMobileMenuOpen }) => {
+const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobileMenuOpen: propSetMobileMenuOpen, onProjectCreated }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
   const isMobileMenuOpen = typeof propMobileMenuOpen === 'boolean' ? propMobileMenuOpen : internalMobileMenuOpen;
@@ -98,10 +98,10 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
     e.preventDefault();
     try {
       await createProject(selectedClient, newProjectName, 'branding', 'in-progress');
+      if (onProjectCreated) onProjectCreated();
       setShowAddProject(false);
       setNewProjectName('');
       setSelectedClient('');
-      // You might want to add a callback here to refresh the projects list in the Dashboard
     } catch (error) {
       console.error('Error adding project:', error);
     }

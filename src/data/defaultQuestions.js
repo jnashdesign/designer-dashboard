@@ -1,31 +1,31 @@
 export const defaultQuestions = [
   {
     id: 'group-brand-purpose',
-    name: 'Brand Core: Purpose',
+    name: 'Purpose',
     questions: [
       { 
-        id: 'question-bc1', 
+        id: 'question-pu1', 
         text: 'Why does your company exist?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-bc2', 
+        id: 'question-pu2', 
         text: 'What problem are you solving?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-bc3', 
+        id: 'question-pu3', 
         text: 'What inspired you to start this business?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-bc4', 
+        id: 'question-pu4', 
         text: 'What impact do you hope to make?',
         type: 'textarea',
         accept: undefined,
@@ -35,24 +35,24 @@ export const defaultQuestions = [
   },
   {
     id: 'group-brand-values',
-    name: 'Brand Core: Values',
+    name: 'Values',
     questions: [
       { 
-        id: 'question-bv1', 
+        id: 'question-v1', 
         text: 'What are your 3-5 core values?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-bv2', 
+        id: 'question-v2', 
         text: 'How do these values influence your business decisions?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       { 
-        id: 'question-bv3', 
+        id: 'question-v3', 
         text: 'What behaviors reflect these values?',
         type: 'textarea',
         accept: undefined,
@@ -62,7 +62,7 @@ export const defaultQuestions = [
   },
   {
     id: 'group-target-audience',
-    name: 'Brand Positioning: Target Audience',
+    name: 'Target Audience',
     questions: [
       { 
         id: 'question-ta1', 
@@ -89,7 +89,7 @@ export const defaultQuestions = [
   },
   {
     id: 'group-market-research',
-    name: 'Brand Positioning: Market Research',
+    name: 'Market Research',
     questions: [
       { 
         id: 'question-mr1', 
@@ -116,7 +116,7 @@ export const defaultQuestions = [
   },
   {
     id: 'group-goals',
-    name: 'Brand Positioning: Goals',
+    name: 'Goals',
     questions: [
       {
         id: 'question-g1', 
@@ -143,24 +143,24 @@ export const defaultQuestions = [
   },
   {
     id: 'group-personality',
-    name: 'Brand Persona: Personality',
+    name: 'Personality',
     questions: [
       {
-        id: 'question-p1', 
+        id: 'question-pe1', 
         text: 'If your brand were a person, what kind of personality would it have?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       {
-        id: 'question-p2',
+        id: 'question-pe2',
         text: 'Is your tone more playful or professional?',
         type: 'textarea',
         accept: undefined,
         fileUrl: null
       },
       {
-        id: 'question-p3',
+        id: 'question-pe3',
         text: 'Which 3 adjectives best describe your brand?',
         type: 'textarea',
         accept: undefined,
@@ -170,7 +170,7 @@ export const defaultQuestions = [
   },
   {
     id: 'group-voice',
-    name: 'Brand Persona: Voice',
+    name: 'Brand Voice',
     questions: [
       {
         id: 'question-v1', 
@@ -197,7 +197,7 @@ export const defaultQuestions = [
   },
   {
     id: 'group-slogans-taglines',
-    name: 'Brand Persona: Slogans & Taglines',
+    name: 'Slogans & Taglines',
     questions: [
       {
         id: 'question-s1', 

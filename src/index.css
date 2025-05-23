@@ -83,7 +83,8 @@ button.btn-secondary {
 }
 
 .btn-primary, .btn-outline-primary,
-.btn-secondary, .btn-outline-secondary {
+.btn-secondary, .btn-outline-secondary,
+.btn-info {
   border-radius: 30px;
   padding: 10px 30px;
 }
@@ -211,7 +212,9 @@ button:hover i::before,
 button.btn-primary i::before {
   color: #fff;
 }
-
+button.mobile-menu-toggle:hover {
+  background: none;
+}
 button.mobile-menu-toggle:hover i::before {
   color: #aaa;
 }
@@ -256,7 +259,9 @@ button i::before {
 .file-types {
   font-size: 0.8em;
 }
-
+input[type="color"] {
+  border-radius: 0 !important;
+}
 td.text-truncate {
   white-space: nowrap;
   max-width: 300px;
@@ -270,6 +275,10 @@ td.text-truncate {
 
 .dark-mode .container {
   background-color: #373c4c;
+  color: #fff;
+}
+
+.dark-mode .sidebar-link i, .dark-mode .sidebar-link {
   color: #fff;
 }
 
@@ -340,6 +349,10 @@ td.text-truncate {
   .row {
     margin: 0 !important;
   }
+  .container {
+    padding: 20px;
+    width: 100%;
+  }
   .all-assets .table thead th {
     display: none;
   }
@@ -382,6 +395,13 @@ td.text-truncate {
   .feature-card:hover i {
     background-color: #576fb5;
   }
+
+  .brand-guidelines .color-name-input input[type="text"] {
+    width: calc(100% - 12px) !important;
+}
+.brand-guidelines textarea.form-control {
+  min-height: 100px;
+}
 }
 
 @media (max-width: 575px) {

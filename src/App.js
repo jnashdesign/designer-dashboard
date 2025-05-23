@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from './context/ThemeContext';
 import '../src/bootstrap.min.css';
@@ -23,6 +23,18 @@ import AllAssets from './pages/AllAssets';
 import MarketingHome from './components/shared/MarketingHome';
 import BrandGuidelinesBuilder from './pages/BrandGuidelinesBuilder';
 import ViewGuidelines from './pages/ViewGuidelines';
+
+function DashboardWrapper() {
+  const fetchDataRef = useRef();
+  const handleProjectCreated = () => {
+    if (fetchDataRef.current) fetchDataRef.current();
+  };
+  return (
+    <Layout onProjectCreated={handleProjectCreated}>
+      <Dashboard setFetchDataRef={ref => (fetchDataRef.current = ref)} />
+    </Layout>
+  );
+}
 
 function App() {
   return (
@@ -52,9 +64,7 @@ function App() {
             path="/dashboard"
             element={
               <RequireAuth role="designer">
-                <Layout>
-                  <Dashboard />
-                </Layout>
+                <DashboardWrapper />
               </RequireAuth>
             } />
 
