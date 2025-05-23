@@ -93,6 +93,10 @@ button:focus {
   outline: none;
 }
 
+.fw-600 {
+  font-weight: 600;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -376,24 +380,6 @@ td.text-truncate {
     padding: 5px;
     font-size: 0.9em;
     border-radius: 5px;
-  }
-  .feature-card {
-    margin-bottom: -2px;
-    padding: 0 !important;
-  }
-  .feature-card i, .feature-card .feature-card-content {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    padding: 10px;
-  }
-  .feature-card i {
-    background: #444;
-    padding: 40px;
-    color: #fff !important;
-  }
-  .feature-card:hover i {
-    background-color: #576fb5;
   }
 
   .brand-guidelines .color-name-input input[type="text"] {

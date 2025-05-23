@@ -32,8 +32,10 @@
   border: none;
   transition: transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
-  box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.2);
-  border: 2px solid #eee;
+  border-left: 1px solid #eee !important;
+}
+.row .col-12:first-child .feature-card:first-child {
+  border-left: none !important;
 }
 .feature-card:hover {
   transform: translateY(-4px) scale(1.03);
@@ -43,6 +45,21 @@
   color: #4e73df;
 }
 
+.features-details img {
+  max-width: 350px;
+}
+
+.features-details h5 {
+  font-weight: 600;
+}
+
+.features-details .row ul {
+  padding: 0 0 0 20px !important;
+}
+.features-details .row ul li {
+  line-height: 1.5em;
+  margin-bottom: 10px;
+}
 /* Pricing Section */
 .pricing {
   background: #f8fafc;
@@ -87,6 +104,13 @@
 .contact-form-container .card {
   margin: 20px !important;
 }
+.container.full {
+  padding: 0 !important;
+}
+.features .container.full .row .col-12 {
+  padding: 2px;
+}
+
 .dark-mode .features {
   background-color: #1a1a1a;
   color: #fff;
@@ -113,5 +137,24 @@
   }
   .hero .display-4 {
     font-size: 2rem;
+  }
+
+  .feature-card {
+    margin-bottom: -2px;
+    padding: 0 !important;
+  }
+  .feature-card i, .feature-card .feature-card-content {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+  }
+  .feature-card i {
+    background: #444;
+    padding: 40px;
+    color: #fff !important;
+  }
+  .feature-card:hover i {
+    background-color: #576fb5;
   }
 } 

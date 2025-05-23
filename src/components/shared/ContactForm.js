@@ -47,7 +47,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="contact-form-container">
+    <div className="contact-form-container pt-5 pb-5">
         <div className="row justify-content-center">
           <div className="col-md-8">
             <div className="card shadow-sm">
