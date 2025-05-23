@@ -18,8 +18,16 @@ const Layout = ({ children, onProjectCreated }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
+      if (user) {
+        document.body.classList.add('isLoggedIn');
+      } else {
+        document.body.classList.remove('isLoggedIn');
+      }
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      document.body.classList.remove('isLoggedIn');
+    };
   }, []);
 
   const getMainContentClass = () => {

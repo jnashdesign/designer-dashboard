@@ -104,9 +104,12 @@
 .contact-form-container .card {
   margin: 20px !important;
 }
-.container.full {
+.cta-section {
+  padding: 0 5rem;
+} 
+/* .container.full {
   padding: 0 !important;
-}
+} */
 .features .container.full .row .col-12 {
   padding: 2px;
 }
@@ -127,16 +130,27 @@
   color: #fff !important;
 }
 @media (min-width: 992px) {
-  .marketing-home {
-    margin-left: -60px;
+  body:not(.isLoggedIn) .marketing-home {
+    margin-right: -60px;
+    margin-left: -130px;
+  }
+}
+
+@media (max-width: 990px) {
+  .features-details img {
+    max-width: 50% !important;
+    display: block;
+    margin: 0 auto;
+}
+}
+@media (max-width: 990px) {
+  body:not(.isLoggedIn) .marketing-home {
+    margin-left: -20px;
   }
 }
 @media (max-width: 767px) {
   .reverse-on-mobile {
     flex-direction: column-reverse;
-  }
-  .features-details img {
-    max-width: 100% !important;
   }
   .features .row .col-12 {
     margin: 5px 20px !important;

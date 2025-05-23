@@ -29,47 +29,65 @@ const features = [
 
 const pricing = [
   {
-    name: "Free",
-    price: "$0",
+    name: "Starter",
+    price: "$29",
     period: "/mo",
     features: [
-      "1 active project",
+      "3 active projects",
       "Unlimited clients",
-      "Default creative brief",
-      "Basic asset uploads",
+      "Default creative briefs",
+      "Basic asset management",
       "Email support",
+      "Brand guidelines builder",
+      "Font preview & metadata"
     ],
-    cta: "Get Started",
+    cta: "Start 14-Day Trial",
     highlight: false,
     link: "/signup",
   },
   {
-    name: "Pro",
-    price: "$19",
+    name: "Professional",
+    price: "$79",
     period: "/mo",
     features: [
       "Unlimited projects",
       "Custom brief templates",
-      "Advanced asset management",
-      "Client portal",
+      "Advanced asset management:",
+      "• Version control & history",
+      "• Custom asset categories",
+      "• Batch upload & download",
+      "• Asset preview gallery",
+      "Client portal access",
+      "Priority support",
+      "Custom color palettes",
+      "Team collaboration (2 users)",
+      "Export guidelines as PDF"
     ],
-    cta: "Start Pro Trial",
-    highlight: false,
+    cta: "Start 14-Day Trial",
+    highlight: true,
     link: "/signup",
   },
   {
     name: "Agency",
-    price: "$49",
+    price: "$199",
     period: "/mo",
     features: [
-      "Everything in Pro",
-      "Team collaboration",
+      "Everything in Professional",
+      "Enterprise asset management:",
+      "• Advanced version control",
+      "• Custom metadata fields",
+      "• Bulk asset organization",
+      "• Asset usage analytics",
+      "• Automated backups",
+      "Unlimited team members",
       "White-label client portal",
-      "Bulk asset uploads",
-      "Dedicated support",
+      "Dedicated account manager",
+      "Custom integrations",
+      "Advanced analytics",
+      "API access"
     ],
     cta: "Contact Sales",
-    highlight: true,
+    highlight: false,
     link: "/signup",
   },
 ];
@@ -108,7 +126,7 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      <div className="text-center mb-4 pt-5 pb-3">
+      <div className="text-center mb-4 pt-5 pb-3 cta-section">
         <h4>Ready to level up your branding workflow?</h4>
         <Link to="/signup" className="btn btn-lg btn-primary mt-2">
           Try BrandEZ Free
@@ -146,11 +164,14 @@ export default function MarketingHome() {
               <h5>Effortless Project Management</h5>
               <ul>
                 <li>
+                  Easily add clients, projects, and tasks to your dashboard.
+                </li>
+                <li>
                   Instantly create, organize, and track all your branding
                   projects in a single dashboard.
                 </li>
                 <li>
-                  Add, edit, and delete projects with just a click—no clutter,
+                  Add, edit, and delete projects with just a click — no clutter,
                   no confusion.
                 </li>
               </ul>
@@ -173,11 +194,10 @@ export default function MarketingHome() {
               <h5>Smart Creative Briefs</h5>
               <ul>
                 <li>
-                  Use one of our professionally curated questionnaires to capture your
-                  client's vision, values, and goals.
+                  Use one of our professionally curated questionnaires to capture your client's vision, values, and goals.
                 </li>
                 <li>
-                Use our brief builder to create your own briefs to fit your exact needs.
+                Use our brief builder to create your own briefs to fit your  exact needs.
               </li>
   
                 <li>
@@ -245,6 +265,7 @@ export default function MarketingHome() {
       <section className="pricing bg-light pt-3">
         <div className="container">
           <h2 className="text-center mb-5 fw-600">Simple, Transparent Pricing</h2>
+          <p className="text-center mb-4">Try any plan free for 14 days. No credit card required.</p>
           <div className="justify-content-center row">
             {pricing.map((tier, i) => (
               <div
@@ -285,7 +306,7 @@ export default function MarketingHome() {
             ))}
           </div>
           <p className="text-center text-muted mt-4">
-            No credit card required. Cancel anytime.
+            All plans include a 14-day free trial. Cancel anytime.
           </p>
         </div>
       </section>

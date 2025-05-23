@@ -15,6 +15,7 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   color: #333;
+  overflow-x: hidden;
 }
 
 select {
@@ -354,7 +355,6 @@ td.text-truncate {
     margin: 0 !important;
   }
   .container {
-    padding: 20px;
     width: 100%;
   }
   .all-assets .table thead th {

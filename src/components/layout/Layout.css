@@ -18,8 +18,9 @@ nav button.btn.btn-outline-secondary {
 
 @media (max-width: 991px) {
   .main-content {
-    margin-left: 0;
-  }
+    margin-left: 20px;
+    margin-right: -20px;
+}
   .main-content.open-sidebar {
     margin-left: 0;
   }
