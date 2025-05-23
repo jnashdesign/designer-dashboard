@@ -132,11 +132,30 @@
   }
 }
 @media (max-width: 767px) {
+  .reverse-on-mobile {
+    flex-direction: column-reverse;
+  }
+  .features-details img {
+    max-width: 100% !important;
+  }
+  .features .row .col-12 {
+    margin: 5px 20px !important;
+  }
+  .features .row .col-12 .feature-card {
+    border: 1px solid #eee;
+    width: calc(100% - 40px) !important;
+  }
+  .features {
+    padding-bottom: 40px !important;
+  }
+  .features .row .col-12 .feature-card i {
+    width: 120px;
+  }
   .feature-card, .pricing-card {
     margin-bottom: 1.5rem;
   }
   .hero .display-4 {
-    font-size: 2rem;
+    font-size: 2.75rem;
   }
 
   .feature-card {

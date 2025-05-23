@@ -162,7 +162,7 @@ export default function MarketingHome() {
               />
             </div>
             </div>
-            <div className="row mb-4">
+            <div className="row mb-4 reverse-on-mobile">
             <div className="col-md-6 mb-4 text-left">
               <img
                 src={require("../../components/shared/icons_briefs.png")}
@@ -212,7 +212,7 @@ export default function MarketingHome() {
               />
             </div>
             </div>
-            <div className="row mb-4">
+            <div className="row mb-4 reverse-on-mobile">
             <div className="col-md-6 mb-4 text-left">
               <img
                 src={require("../../components/shared/icons_assets.png")}
