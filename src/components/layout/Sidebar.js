@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { auth, db } from '../../firebase/config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -13,6 +13,7 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
   const setIsMobileMenuOpen = propSetMobileMenuOpen || setInternalMobileMenuOpen;
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Modal states
   const [showAddClient, setShowAddClient] = useState(false);
@@ -140,15 +141,15 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
 
         {/* Navigation Links */}
         <div className="sidebar-links">
-          <Link to="/" className="sidebar-link" onClick={handleSidebarLinkClick}>
+          <Link to="/" className={`sidebar-link${location.pathname === '/' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
             <i className="fas fa-home" />
             {!isCollapsed && <span>Home</span>}
           </Link>
-          <Link to="/dashboard" className="sidebar-link" onClick={handleSidebarLinkClick}>
+          <Link to="/dashboard" className={`sidebar-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
             <i className="fas fa-project-diagram" />
             {!isCollapsed && <span>Projects</span>}
           </Link>
-          <Link to="/my-assets" className="sidebar-link" onClick={handleSidebarLinkClick}>
+          <Link to="/my-assets" className={`sidebar-link${location.pathname === '/my-assets' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
             <i className="fas fa-images" />
             {!isCollapsed && <span>Assets</span>}
           </Link>

@@ -35,7 +35,9 @@
   transition: background-color 0.2s;
 }
 
-.sidebar-link:hover {
+.sidebar-link:hover,
+.sidebar-link.active,
+.sidebar-link.active:hover {
   background-color: #576fb5;
   color: #fff;
   text-decoration: none;
