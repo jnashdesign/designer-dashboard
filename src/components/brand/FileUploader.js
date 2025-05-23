@@ -231,11 +231,15 @@ const FileUploader = ({ projectId, onUploadComplete }) => {
         uploadedAt: new Date().toISOString()
       }));
 
+      // Sanitize to remove undefined values
+      const sanitize = obj => JSON.parse(JSON.stringify(obj));
+      const sanitizedFiles = newFiles.map(sanitize);
+
       const assetDoc = await getDoc(assetRef);
       const existingFiles = assetDoc.exists() ? assetDoc.data().files || [] : [];
 
       await setDoc(assetRef, {
-        files: [...existingFiles, ...newFiles]
+        files: [...existingFiles, ...sanitizedFiles]
       }, { merge: true });
 
       onUploadComplete(newFiles);
