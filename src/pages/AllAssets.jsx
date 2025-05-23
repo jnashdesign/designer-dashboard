@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/config';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
+import FullPageSpinner from '../components/FullPageSpinner';
 import FilePreview from '../components/brand/FilePreview';
 import '../bootstrap.min.css';
 
@@ -77,7 +78,7 @@ export default function AllAssets() {
     <div className="container py-4 all-assets">
       <h2 className="mb-4">All Assets</h2>
       {loading ? (
-        <div>Loading assets...</div>
+        <FullPageSpinner message="Loading Assets..." />
       ) : error ? (
         <div className="text-danger">{error}</div>
       ) : assets.length === 0 ? (

@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase/config';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import LoadingSpinner from '../LoadingSpinner';
+import FullPageSpinner from '../FullPageSpinner';
 import './Dashboard.css';
 
 export default function Dashboard({ setFetchDataRef }) {
@@ -85,8 +86,23 @@ export default function Dashboard({ setFetchDataRef }) {
     return client ? client.name : 'Unknown Client';
   }, [clients]);
 
+  // Add project delete handler
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await deleteDoc(doc(db, 'projects', projectId));
+      setProjects(prev => prev.filter(p => p.id !== projectId));
+      // Optionally, also remove from briefs/guidelines state if needed
+    } catch (error) {
+      alert('Failed to delete project.');
+      console.error('Error deleting project:', error);
+    }
+  };
+
   if (loading) {
-    return <LoadingSpinner message="Loading dashboard..." />;
+    return <FullPageSpinner message="Loading dashboard..." />;
   }
 
   return (
@@ -107,6 +123,12 @@ export default function Dashboard({ setFetchDataRef }) {
                     <h5 className="mb-0">{project.name || project.projectName || 'Untitled Project'}</h5>
                     <h6 className="mb-0 text-muted" style={{ fontWeight: 400 }}>{getClientNameByRef(project.clientId)}</h6>
                   </div>
+                  <button
+                    className="btn-close"
+                    aria-label="Delete"
+                    onClick={() => handleDeleteProject(project.id)}
+                    style={{ marginLeft: 8 }}
+                  ></button>
                 </div>
                 <div className="card-body">
                   <div className="w-100">
