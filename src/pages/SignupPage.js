@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import Logo_icon from '../components/shared/Logo_icon';
 export default function SignupPage() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,13 +25,19 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
+    if (!name.trim()) {
+      setError('Please enter your name');
+      setLoading(false);
+      return;
+    }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Create user document with role
+      // Create user document with role and name
       await setDoc(doc(db, 'users', user.uid), {
+        name: name.trim(),
         email: user.email,
         role: role,
         createdAt: new Date()
@@ -71,6 +78,16 @@ export default function SignupPage() {
               <h2 className="text-center mb-4">Sign Up</h2>
               {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
                 <div className="mb-3">
                   <label className="form-label">Email</label>
                   <input

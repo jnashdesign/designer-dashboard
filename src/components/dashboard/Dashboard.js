@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase/config';
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import LoadingSpinner from '../LoadingSpinner';
 import FullPageSpinner from '../FullPageSpinner';
 import './Dashboard.css';
@@ -47,7 +48,7 @@ export default function Dashboard({ setFetchDataRef }) {
       });
       setBriefs(briefsData);
 
-      // Fetch clients
+      // Fetch clients and update their photo URLs
       const clientQuery = query(
         collection(db, 'clients'), 
         where('designerId', '==', user.uid)
@@ -57,6 +58,48 @@ export default function Dashboard({ setFetchDataRef }) {
         id: doc.id,
         ...doc.data()
       }));
+
+      // Update client photo URLs from auth
+      for (const client of clientsList) {
+        if (client.email) {
+          console.log('Checking client:', client.name, 'Email:', client.email);
+          const signInMethods = await fetchSignInMethodsForEmail(auth, client.email);
+          console.log('Sign in methods:', signInMethods);
+          
+          if (signInMethods.length > 0) {
+            // Get user data from users collection
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("email", "==", client.email));
+            const querySnapshot = await getDocs(q);
+            
+            let photoURL = null;
+            
+            if (!querySnapshot.empty) {
+              const userData = querySnapshot.docs[0].data();
+              console.log('User document for client:', userData);
+              photoURL = userData.photoURL;
+              console.log('Found photo URL:', photoURL);
+            }
+            
+            if (photoURL) {
+              // Update client document with new photo URL
+              const clientRef = doc(db, "clients", client.id);
+              await updateDoc(clientRef, {
+                photoURL: photoURL
+              });
+              // Update local state
+              client.photoURL = photoURL;
+              console.log('Updated client photo URL:', client.photoURL);
+            } else {
+              console.log('No photo URL found in user data');
+            }
+          } else {
+            console.log('No sign in methods found for email');
+          }
+        }
+      }
+
+      console.log('Final clients list:', clientsList);
       setClients(clientsList);
 
       // Check for existing guidelines for each project
@@ -83,6 +126,7 @@ export default function Dashboard({ setFetchDataRef }) {
 
   const getClientNameByRef = useCallback((clientId) => {
     const client = clients.find(c => c.id === clientId);
+    console.log('Getting name for client:', clientId, 'Client data:', client);
     return client ? client.name : 'Unknown Client';
   }, [clients]);
 
@@ -121,7 +165,9 @@ export default function Dashboard({ setFetchDataRef }) {
                 <div className="card-header d-flex justify-content-between align-items-center">
                   <div>
                     <h5 className="mb-0">{project.name || project.projectName || 'Untitled Project'}</h5>
-                    <h6 className="mb-0 text-muted" style={{ fontWeight: 400 }}>{getClientNameByRef(project.clientId)}</h6>
+                    <h6 className="mb-0 text-muted" style={{ fontWeight: 400 }}>
+                      {getClientNameByRef(project.clientId)}
+                    </h6>
                   </div>
                   <button
                     className="btn-close"
@@ -142,7 +188,7 @@ export default function Dashboard({ setFetchDataRef }) {
                       className="btn btn-primary w-100 mb-2"
                       onClick={() => navigate(`/choose-template/${project.type}?projectId=${project.id}&wizard=true`)}
                     >
-                      Start A Brief
+                      Start Questionnaire
                     </button>
                     <button 
                       className="btn btn-info w-100 mb-2"

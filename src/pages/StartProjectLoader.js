@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase/config';
-import defaultQuestions from '../data/defaultQuestions.json';
+import { defaultQuestions } from '../data/defaultQuestions';
 import DynamicWizard from '../components/wizards/DynamicWizard';
 
 export default function StartProjectLoader() {
@@ -15,7 +15,7 @@ export default function StartProjectLoader() {
     const loadQuestions = async () => {
       try {
         if (templateId === "default") {
-          setQuestions(defaultQuestions[type] || []);
+          setQuestions(defaultQuestions || []);
         } else {
           const user = auth.currentUser;
           if (!user) throw new Error("No user authenticated.");

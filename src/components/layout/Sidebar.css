@@ -7,7 +7,6 @@
   border-right: 1px solid var(--border-color);
   z-index: 1000;
   transition: all 0.3s ease;
-  padding-top: 4rem;
 }
 
 .sidebar.collapsed {
@@ -19,10 +18,8 @@
 }
 
 .sidebar-links {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  display:block;
+  position: relative;
 }
 
 .sidebar-link {

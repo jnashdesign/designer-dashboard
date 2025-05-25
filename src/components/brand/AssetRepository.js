@@ -5,12 +5,27 @@ import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebas
 import { doc, getDoc, updateDoc, arrayRemove, setDoc } from 'firebase/firestore';
 import FileUploader from './FileUploader';
 import FilePreview from './FilePreview';
+import { auth } from '../../firebase/config';
 
 const AssetRepository = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: 'uploadedAt', direction: 'desc' });
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setUserRole(userSnap.data().role);
+      }
+    };
+    fetchRole();
+  }, []);
 
   useEffect(() => {
     const loadAssets = async () => {
@@ -72,6 +87,7 @@ const AssetRepository = () => {
   };
 
   const handleDelete = async (file) => {
+    if (userRole === 'client') return; // Prevent delete for clients
     // Show confirmation dialog
     if (!window.confirm(`Are you sure you want to delete "${file.name}"? This action cannot be undone.`)) {
       return; // Exit if user clicks Cancel
@@ -110,20 +126,24 @@ const AssetRepository = () => {
     }
   };
 
+  // Route for back button
+  const backRoute = userRole === 'designer' ? '/dashboard' : '/client-dashboard';
+
   return (
     <div className="container py-4 all-assets">
-      <button className="btn btn-secondary mb-4" onClick={() => navigate('/dashboard')}>&larr; Back</button>
+      <button className="btn btn-secondary mb-4" onClick={() => navigate(backRoute)}>&larr; Back</button>
       <h2 className="mb-4">Brand Assets</h2>
 
       <div className="card mb-4">
         <div className="card-body">
-          <FileUploader 
-            projectId={projectId}
-            onUploadComplete={(newFiles) => {
-              setFiles(prev => [...prev, ...newFiles]);
-            }}
-          />
-          
+          {userRole !== 'client' && (
+            <FileUploader 
+              projectId={projectId}
+              onUploadComplete={(newFiles) => {
+                setFiles(prev => [...prev, ...newFiles]);
+              }}
+            />
+          )}
           <div className="table-responsive mt-4">
             <table className="table">
               <thead>
@@ -142,26 +162,36 @@ const AssetRepository = () => {
                 </tr>
               </thead>
               <tbody>
-                {getSortedFiles().map((file, index) => (
-                  <tr key={index}>
-                    <td>
-                      <FilePreview file={file} width={50} />
-                    </td>
-                    <td className="align-middle">{file.name}</td>
-                    <td className="align-middle">{file.fileType}</td>
-                    <td className="align-middle">
-                      {new Date(file.uploadedAt).toLocaleDateString()}
-                    </td>
-                    <td className="align-middle text-end">
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(file)}
-                      >
-                        X
-                      </button>
+                {getSortedFiles().length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center text-muted py-4">
+                      No assets yet.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  getSortedFiles().map((file, index) => (
+                    <tr key={index}>
+                      <td>
+                        <FilePreview file={file} width={50} />
+                      </td>
+                      <td className="align-middle">{file.name}</td>
+                      <td className="align-middle">{file.fileType}</td>
+                      <td className="align-middle">
+                        {new Date(file.uploadedAt).toLocaleDateString()}
+                      </td>
+                      <td className="align-middle text-end">
+                        {userRole !== 'client' && (
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleDelete(file)}
+                          >
+                            X
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

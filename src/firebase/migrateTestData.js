@@ -1,6 +1,5 @@
-
 // migrateTestData.js
-import { getFirestore, collection, getDocs, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 
 const db = getFirestore();
 
@@ -16,6 +15,31 @@ export async function migrateProjects() {
         clientId: data.clientId.id
       });
       console.log(`Updated project ${project.id}`);
+    }
+  }
+}
+
+export async function migrateClientEmails() {
+  const projectsRef = collection(db, "projects");
+  const snapshot = await getDocs(projectsRef);
+
+  for (const project of snapshot.docs) {
+    const data = project.data();
+    if (!data.clientEmail && data.clientId) {
+      try {
+        // Get client's email from clients collection
+        const clientRef = doc(db, "clients", data.clientId);
+        const clientDoc = await getDoc(clientRef);
+        if (clientDoc.exists()) {
+          const clientEmail = clientDoc.data().email;
+          await updateDoc(project.ref, {
+            clientEmail: clientEmail
+          });
+          console.log(`Updated project ${project.id} with client email`);
+        }
+      } catch (error) {
+        console.error(`Error updating project ${project.id}:`, error);
+      }
     }
   }
 }

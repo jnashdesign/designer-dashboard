@@ -23,6 +23,7 @@ import AllAssets from './pages/AllAssets';
 import MarketingHome from './components/shared/MarketingHome';
 import BrandGuidelinesBuilder from './pages/BrandGuidelinesBuilder';
 import ViewGuidelines from './pages/ViewGuidelines';
+import UserSettings from "./pages/UserSettings";
 
 function DashboardWrapper() {
   const fetchDataRef = useRef();
@@ -149,7 +150,7 @@ function App() {
           } />
 
           <Route path="/project/:projectId/assets" element={
-            <RequireAuth role="designer">
+            <RequireAuth>
               <Layout>
                 <AssetRepository />
               </Layout>
@@ -164,7 +165,7 @@ function App() {
           </RequireAuth>} />
 
           <Route path="/project/:projectId/guidelines" element={
-            <RequireAuth role="designer">
+            <RequireAuth>
               <Layout>
                 <ViewGuidelines />
               </Layout>
@@ -178,6 +179,28 @@ function App() {
               </Layout>
             </RequireAuth>
           } />
+
+          <Route
+            path="/client-settings"
+            element={
+              <RequireAuth role="client">
+                <Layout>
+                  <UserSettings />
+                </Layout>
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/designer-settings"
+            element={
+              <RequireAuth role="designer">
+                <Layout>
+                  <UserSettings />
+                </Layout>
+              </RequireAuth>
+            }
+          />
           
         </Routes>      
       </Router>

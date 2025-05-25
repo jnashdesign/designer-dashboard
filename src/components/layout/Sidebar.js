@@ -2,11 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { auth, db } from '../../firebase/config';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
 import './Sidebar.css';
 
-const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobileMenuOpen: propSetMobileMenuOpen, onProjectCreated }) => {
+const DefaultAvatar = ({ size = 64 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 64 64"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{
+      borderRadius: '50%',
+      border: '1px solid #ccc',
+      background: '#f3f3f3',
+      display: 'block',
+      margin: '12px auto 0'
+    }}
+  >
+    <circle cx="32" cy="32" r="32" fill="#f3f3f3" />
+    <circle cx="32" cy="26" r="14" fill="#d1d5db" />
+    <ellipse cx="32" cy="50" rx="18" ry="10" fill="#d1d5db" />
+  </svg>
+);
+
+const Sidebar = ({
+  onCollapse,
+  isMobileMenuOpen: propMobileMenuOpen,
+  setIsMobileMenuOpen: propSetMobileMenuOpen,
+  onProjectCreated,
+  userRole
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
   const isMobileMenuOpen = typeof propMobileMenuOpen === 'boolean' ? propMobileMenuOpen : internalMobileMenuOpen;
@@ -15,98 +42,90 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Modal states
+  // User info
+  const [userName, setUserName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
+
+  // Designer-only states
   const [showAddClient, setShowAddClient] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
   const [showNewQuestionnaire, setShowNewQuestionnaire] = useState(false);
   const [newClientName, setNewClientName] = useState('');
   const [newClientEmail, setNewClientEmail] = useState('');
   const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectDescription, setNewProjectDescription] = useState('');
   const [selectedClient, setSelectedClient] = useState('');
   const [clients, setClients] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [addingNewClient, setAddingNewClient] = useState(false);
 
-  // Add fetchClients function
-  const fetchClients = async () => {
-    try {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const clientQuery = query(
-        collection(db, 'clients'), 
-        where('designerId', '==', user.uid)
-      );
-      const clientsSnapshot = await getDocs(clientQuery);
-      const clientsList = clientsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setClients(clientsList);
-    } catch (error) {
-      console.error('Error fetching clients:', error);
-    }
-  };
-
-  // Add fetchTemplates function
-  const fetchTemplates = async () => {
-    setLoadingTemplates(true);
-    try {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const templatesQuery = query(
-        collection(db, 'questionnaireTemplates'),
-        where('type', '==', 'branding'),
-        where('designerId', '==', user.uid)
-      );
-      
-      const templatesSnapshot = await getDocs(templatesQuery);
-      const templatesList = templatesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setTemplates(templatesList);
-    } catch (error) {
-      console.error('Error fetching templates:', error);
-    } finally {
-      setLoadingTemplates(false);
-    }
-  };
-
-  // Add useEffect to fetch clients and templates when component mounts
   useEffect(() => {
-    fetchClients();
-    fetchTemplates();
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setUserName(userSnap.data().name || '');
+        setPhotoURL(userSnap.data().photoURL || '');
+      }
+    };
+    fetchUserData();
+    // Listen for profile photo updates
+    const handler = () => fetchUserData();
+    window.addEventListener('profilePhotoUpdated', handler);
+    return () => {
+      window.removeEventListener('profilePhotoUpdated', handler);
+    };
   }, []);
 
-  // Add Client Handler
-  const handleAddClient = async (e) => {
-    e.preventDefault();
-    try {
-      await createClient(newClientName, newClientEmail);
-      setShowAddClient(false);
-      setNewClientName('');
-      setNewClientEmail('');
-      await fetchClients(); // Refresh clients list
-    } catch (error) {
-      console.error('Error adding client:', error);
-    }
-  };
-
-  // Add Project Handler
-  const handleAddProject = async (e) => {
-    e.preventDefault();
-    try {
-      await createProject(selectedClient, newProjectName, 'branding', 'in-progress');
-      if (onProjectCreated) onProjectCreated();
-      setShowAddProject(false);
-      setNewProjectName('');
-      setSelectedClient('');
-    } catch (error) {
-      console.error('Error adding project:', error);
-    }
-  };
+  // Designer-only: fetch clients and templates
+  useEffect(() => {
+    if (userRole !== 'designer') return;
+    const fetchClients = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        const clientQuery = query(
+          collection(db, 'clients'),
+          where('designerId', '==', user.uid)
+        );
+        const clientsSnapshot = await getDocs(clientQuery);
+        const clientsList = clientsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setClients(clientsList);
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+      }
+    };
+    const fetchTemplates = async () => {
+      setLoadingTemplates(true);
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        const templatesQuery = query(
+          collection(db, 'questionnaireTemplates'),
+          where('type', '==', 'branding'),
+          where('designerId', '==', user.uid)
+        );
+        const templatesSnapshot = await getDocs(templatesQuery);
+        const templatesList = templatesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setTemplates(templatesList);
+      } catch (error) {
+        console.error('Error fetching templates:', error);
+      } finally {
+        setLoadingTemplates(false);
+      }
+    };
+    fetchClients();
+    fetchTemplates();
+  }, [userRole]);
 
   const handleSidebarLinkClick = () => {
     setIsMobileMenuOpen(false);
@@ -115,22 +134,75 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
   const handleToggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    onCollapse(newState);
+    if (onCollapse) onCollapse(newState);
   };
+
+  // Designer-only handlers (no-op for client)
+  const handleAddClient = async (e) => {
+    e.preventDefault();
+    // ... implementation ...
+  };
+  const handleAddProject = async (e) => {
+    e.preventDefault();
+    if (addingNewClient) {
+      if (!newClientName || !newClientEmail || !newProjectName) return;
+      try {
+        // Create the client first
+        const clientRef = await createClient(newClientName, newClientEmail);
+        // Fetch the new client ID
+        const user = auth.currentUser;
+        const clientQuery = query(
+          collection(db, 'clients'),
+          where('designerId', '==', user.uid),
+          where('email', '==', newClientEmail)
+        );
+        const snapshot = await getDocs(clientQuery);
+        let clientId = '';
+        if (!snapshot.empty) {
+          clientId = snapshot.docs[0].id;
+        }
+        await createProject(clientId, newProjectName, 'branding', 'in-progress', newProjectDescription);
+        setShowAddProject(false);
+        setNewProjectName('');
+        setNewProjectDescription('');
+        setSelectedClient('');
+        setNewClientName('');
+        setNewClientEmail('');
+        setAddingNewClient(false);
+        if (onProjectCreated) onProjectCreated();
+      } catch (error) {
+        // handle error
+      }
+    } else {
+      if (!selectedClient || !newProjectName) return;
+      try {
+        await createProject(selectedClient, newProjectName, 'branding', 'in-progress', newProjectDescription);
+        setShowAddProject(false);
+        setNewProjectName('');
+        setNewProjectDescription('');
+        setSelectedClient('');
+        if (onProjectCreated) onProjectCreated();
+      } catch (error) {
+        // handle error
+      }
+    }
+  };
+
+  // Route logic
+  const projectsLink = userRole === 'designer' ? '/dashboard' : '/client-dashboard';
+  const settingsLink = userRole === 'designer' ? '/designer-settings' : '/client-settings';
 
   return (
     <>
       {/* Mobile Menu Toggle */}
-      
       <button
         className="mobile-menu-toggle d-lg-none"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`} />
       </button>
-
       {/* Sidebar */}
-      <div className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+      <div className={`sidebar${isCollapsed ? ' collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         {/* Toggle Button */}
         <button
           className="sidebar-toggle d-none d-lg-block"
@@ -138,99 +210,70 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
         >
           <i className={`fas fa-chevron-${isCollapsed ? 'right' : 'left'}`} />
         </button>
-
-        {/* Navigation Links */}
+        <div className="sidebar-header text-center py-4">
+          <h5 style={{ display: isCollapsed ? 'none' : 'block' }}>{userName}</h5>
+          {photoURL ? (
+            <img
+              src={photoURL}
+              alt="Profile"
+              style={{
+                width: isCollapsed ? 32 : 100,
+                height: isCollapsed ? 32 : 100,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '1px solid #ccc',
+                margin: '12px auto 0',
+                display: 'block'
+              }}
+            />
+          ) : (
+            <DefaultAvatar size={isCollapsed ? 32 : 64} />
+          )}
+        </div>
         <div className="sidebar-links">
-          <Link to="/" className={`sidebar-link${location.pathname === '/' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
-            <i className="fas fa-home" />
-            {!isCollapsed && <span>Home</span>}
-          </Link>
-          <Link to="/dashboard" className={`sidebar-link${location.pathname === '/dashboard' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
+          <Link to={projectsLink} className={`sidebar-link${location.pathname === projectsLink ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
             <i className="fas fa-project-diagram" />
             {!isCollapsed && <span>Projects</span>}
           </Link>
-          <Link to="/my-assets" className={`sidebar-link${location.pathname === '/my-assets' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
-            <i className="fas fa-images" />
-            {!isCollapsed && <span>Assets</span>}
+          {userRole === 'designer' && (
+            <Link to="/my-assets" className={`sidebar-link${location.pathname === '/my-assets' ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
+              <i className="fas fa-images" />
+              {!isCollapsed && <span>Assets</span>}
+            </Link>
+          )}
+          <Link to={settingsLink} className={`sidebar-link${location.pathname === settingsLink ? ' active' : ''}`} onClick={handleSidebarLinkClick}>
+            <i className="fas fa-cog" />
+            {!isCollapsed && <span>Settings</span>}
           </Link>
         </div>
-
-        {/* Bottom Buttons */}
-        <div className="sidebar-buttons">
-          {!isCollapsed ? (
-            <>
-              <button className="btn btn-secondary" onClick={() => setShowAddClient(true)}>
-                Add Client
-              </button>
-              <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
-                Add Project
-              </button>
-              <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
-                Create Questionnaire
-              </button>
-            </>
-          ) : (
-            <div className="collapsed-buttons">
-              <button className="btn btn-sm btn-outline-primary" title="Add Client" onClick={() => setShowAddClient(true)}>
-                <i className="fas fa-user-plus" />
-              </button>
-              <button className="btn btn-sm btn-outline-primary" title="Add Project" onClick={() => setShowAddProject(true)}>
-                <i className="fas fa-plus" />
-              </button>
-              <button className="btn btn-sm btn-primary" title="Create New Questionnaire" onClick={() => setShowNewQuestionnaire(true)}>
-                <i className="fas fa-file-alt" />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Add Client Modal */}
-      {showAddClient && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Add New Client</h5>
-                <button type="button" className="btn-close" onClick={() => setShowAddClient(false)}></button>
+        {/* Designer-only action buttons */}
+        {userRole === 'designer' && (
+          <div className="sidebar-buttons">
+            {!isCollapsed ? (
+              <>
+                <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
+                  Add Project
+                </button>
+                <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
+                  New Questionnaire
+                </button>
+              </>
+            ) : (
+              <div className="collapsed-buttons">
+                <button className="btn btn-sm btn-outline-primary" title="Add Client" onClick={() => setShowAddClient(true)}>
+                  <i className="fas fa-user-plus" />
+                </button>
+                <button className="btn btn-sm btn-outline-primary" title="Add Project" onClick={() => setShowAddProject(true)}>
+                  <i className="fas fa-plus" />
+                </button>
+                <button className="btn btn-sm btn-primary" title="Create New Questionnaire" onClick={() => setShowNewQuestionnaire(true)}>
+                  <i className="fas fa-file-alt" />
+                </button>
               </div>
-              <form onSubmit={handleAddClient}>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label">Client Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newClientName}
-                      onChange={(e) => setNewClientName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Client Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={newClientEmail}
-                      onChange={(e) => setNewClientEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowAddClient(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Add Client
-                  </button>
-                </div>
-              </form>
-            </div>
+            )}
           </div>
-        </div>
-      )}
-
+        )}
+      </div>
       {/* Add Project Modal */}
       {showAddProject && (
         <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
@@ -253,12 +296,30 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
                     />
                   </div>
                   <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      className="form-control"
+                      value={newProjectDescription}
+                      onChange={(e) => setNewProjectDescription(e.target.value)}
+                      rows={2}
+                      placeholder="Describe this project (optional)"
+                    />
+                  </div>
+                  <div className="mb-3">
                     <label className="form-label">Select Client</label>
-                    <select 
+                    <select
                       className="form-select"
-                      value={selectedClient}
-                      onChange={(e) => setSelectedClient(e.target.value)}
-                      required
+                      value={addingNewClient ? 'new' : selectedClient}
+                      onChange={e => {
+                        if (e.target.value === 'new') {
+                          setAddingNewClient(true);
+                          setSelectedClient('');
+                        } else {
+                          setAddingNewClient(false);
+                          setSelectedClient(e.target.value);
+                        }
+                      }}
+                      required={!addingNewClient}
                     >
                       <option value="">Select a client</option>
                       {clients.map(client => (
@@ -266,11 +327,39 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
                           {client.name}
                         </option>
                       ))}
+                      <option value="new">Add New Client...</option>
                     </select>
                   </div>
+                  {addingNewClient && (
+                    <>
+                      <div className="mb-3">
+                        <label className="form-label">Client Name</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={newClientName}
+                          onChange={e => setNewClientName(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="mb-3">
+                        <label className="form-label">Client Email</label>
+                        <input
+                          type="email"
+                          className="form-control"
+                          value={newClientEmail}
+                          onChange={e => setNewClientEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowAddProject(false)}>
+                  <button type="button" className="btn btn-secondary" onClick={() => {
+                    setShowAddProject(false);
+                    setAddingNewClient(false);
+                  }}>
                     Cancel
                   </button>
                   <button type="submit" className="btn btn-primary">
@@ -282,86 +371,8 @@ const Sidebar = ({ onCollapse, isMobileMenuOpen: propMobileMenuOpen, setIsMobile
           </div>
         </div>
       )}
-
-      {/* Create New Questionnaire Modal */}
-      {showNewQuestionnaire && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Create New Questionnaire</h5>
-                <button type="button" className="btn-close" onClick={() => setShowNewQuestionnaire(false)}></button>
-              </div>
-              <div className="modal-body">
-                {loadingTemplates ? (
-                  <div className="text-center py-3">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  </div>
-                ) : templates.length > 0 ? (
-                  // Show saved templates list
-                  <div className="mb-4">
-                    <button 
-                      className="btn btn-primary w-100 mb-4"
-                      onClick={() => {
-                        setShowNewQuestionnaire(false);
-                        navigate('/template/create/branding?empty=true');
-                      }}
-                    >
-                      Create New Template
-                    </button>
-                    <h6 className="mb-3">Or start from a template:</h6>
-                    <div className="list-group">
-                      {templates.map(template => (
-                        <button
-                          key={template.id}
-                          className="list-group-item list-group-item-action"
-                          onClick={() => {
-                            setShowNewQuestionnaire(false);
-                            navigate(`/choose-template/branding?templateId=${template.id}`);
-                          }}
-                        >
-                          <div className="d-flex justify-content-between align-items-center">
-                            <span>{template.name}</span>
-                            <small className="text-muted">
-                              {new Date(template.createdAt?.toDate()).toLocaleDateString()}
-                            </small>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  // Show options for new users
-                  <div className="text-center">
-                    
-                    <div className="card">
-                      <div className="card-body">
-                        <h5 className="card-title">
-                          <i className="fas fa-magic me-2 mr-2"></i>
-                          Start with Default Questions
-                        </h5>
-                        <button 
-                          className="btn btn-primary"
-                          onClick={() => {
-                            setShowNewQuestionnaire(false);
-                            navigate('/template/create/branding?useDefaults=true');
-                          }}
-                        >
-                          Use Default Template
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
 
-export default Sidebar; 
+export default Sidebar;
