@@ -4,6 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { auth, db } from '../../firebase/config';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
+import AddProjectModal from '../projects/AddProjectModal';
 import './Sidebar.css';
 
 const DefaultAvatar = ({ size = 64 }) => (
@@ -252,10 +253,10 @@ const Sidebar = ({
             {!isCollapsed ? (
               <>
                 <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
-                <i className="fas fa-folder-plus" /> Add Project
+                  <i className="fas fa-folder-plus" /> Add Project
                 </button>
                 <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
-                <i className="fas fa-file-alt" /> New Questionnaire
+                  <i className="fas fa-file-alt" /> New Questionnaire
                 </button>
               </>
             ) : (
@@ -271,103 +272,13 @@ const Sidebar = ({
           </div>
         )}
       </div>
-      {/* Add Project Modal */}
-      {showAddProject && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Add New Project</h5>
-                <button type="button" className="btn-close" onClick={() => setShowAddProject(false)}></button>
-              </div>
-              <form onSubmit={handleAddProject}>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label">Project Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newProjectName}
-                      onChange={(e) => setNewProjectName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Description</label>
-                    <textarea
-                      className="form-control"
-                      value={newProjectDescription}
-                      onChange={(e) => setNewProjectDescription(e.target.value)}
-                      rows={2}
-                      placeholder="Describe this project (optional)"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Select Client</label>
-                    <select
-                      className="form-select"
-                      value={addingNewClient ? 'new' : selectedClient}
-                      onChange={e => {
-                        if (e.target.value === 'new') {
-                          setAddingNewClient(true);
-                          setSelectedClient('');
-                        } else {
-                          setAddingNewClient(false);
-                          setSelectedClient(e.target.value);
-                        }
-                      }}
-                      required={!addingNewClient}
-                    >
-                      <option value="">Select a client</option>
-                      {clients.map(client => (
-                        <option key={client.id} value={client.id}>
-                          {client.name}
-                        </option>
-                      ))}
-                      <option value="new">Add New Client...</option>
-                    </select>
-                  </div>
-                  {addingNewClient && (
-                    <>
-                      <div className="mb-3">
-                        <label className="form-label">Client Name</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={newClientName}
-                          onChange={e => setNewClientName(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">Client Email</label>
-                        <input
-                          type="email"
-                          className="form-control"
-                          value={newClientEmail}
-                          onChange={e => setNewClientEmail(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => {
-                    setShowAddProject(false);
-                    setAddingNewClient(false);
-                  }}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    Add Project
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+
+      <AddProjectModal
+        show={showAddProject}
+        onHide={() => setShowAddProject(false)}
+        onProjectCreated={onProjectCreated}
+        clients={clients}
+      />
     </>
   );
 };

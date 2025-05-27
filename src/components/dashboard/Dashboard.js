@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase/config';
 import { collection, query, where, getDocs, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
+import { createClient, createProject } from '../../firebase/saveFunctions';
 import LoadingSpinner from '../LoadingSpinner';
 import FullPageSpinner from '../FullPageSpinner';
+import AddProjectModal from '../projects/AddProjectModal';
 import './Dashboard.css';
 
 export default function Dashboard({ setFetchDataRef }) {
@@ -15,6 +17,13 @@ export default function Dashboard({ setFetchDataRef }) {
   const [expandedBriefs, setExpandedBriefs] = useState({});
   const [guidelines, setGuidelines] = useState({});
   const [emailStatus, setEmailStatus] = useState(null);
+  const [showAddProject, setShowAddProject] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectDescription, setNewProjectDescription] = useState('');
+  const [selectedClient, setSelectedClient] = useState('');
+  const [addingNewClient, setAddingNewClient] = useState(false);
+  const [newClientName, setNewClientName] = useState('');
+  const [newClientEmail, setNewClientEmail] = useState('');
   const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
@@ -146,49 +155,53 @@ export default function Dashboard({ setFetchDataRef }) {
     }
   };
 
-  // const handleSendTestEmail = async () => {
-  //   setEmailStatus(null);
-  //   try {
-  //     const res = await fetch('/api/send-client-email', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({
-  //         to: 'jnashdesign@gmail.com', // <-- replace with your test email
-  //         subject: 'Test Email from BrandEZ',
-  //         message: 'This is a test email sent from the BrandEZ app.'
-  //       })
-  //     });
-  //     const data = await res.json();
-  //     console.log(data);
-  //     if (res.ok) {
-  //       setEmailStatus('success');
-  //       alert('Test email sent successfully!');
-  //     } else {
-  //       setEmailStatus('error');
-  //       alert('Failed to send test email: ' + (data.error || 'Unknown error'));
-  //     }
-  //   } catch (err) {
-  //     setEmailStatus('error');
-  //     alert('Failed to send test email: ' + err.message);
-  //   }
-  // };
-
-  // const sendEmail = async () => {
-  //   const functions = getFunctions();
-  //   const sendEmailFn = httpsCallable(functions, 'sendEmail');
-  
-  //   try {
-  //     const result = await sendEmailFn({
-  //       to: "jnashdesign@gmail.com",
-  //       subject: "Test Email",
-  //       text: "This is a test email.",
-  //       html: "<p>This is a test email.</p>"
-  //     });
-  //     console.log("Email sent:", result.data);
-  //   } catch (error) {
-  //     console.error("Error sending email:", error);
-  //   }
-  // };
+  const handleAddProject = async (e) => {
+    e.preventDefault();
+    if (addingNewClient) {
+      if (!newClientName || !newClientEmail || !newProjectName) return;
+      try {
+        // Create the client first
+        const clientRef = await createClient(newClientName, newClientEmail);
+        // Fetch the new client ID
+        const user = auth.currentUser;
+        const clientQuery = query(
+          collection(db, 'clients'),
+          where('designerId', '==', user.uid),
+          where('email', '==', newClientEmail)
+        );
+        const snapshot = await getDocs(clientQuery);
+        let clientId = '';
+        if (!snapshot.empty) {
+          clientId = snapshot.docs[0].id;
+        }
+        await createProject(clientId, newProjectName, 'branding', 'in-progress', newProjectDescription);
+        setShowAddProject(false);
+        setNewProjectName('');
+        setNewProjectDescription('');
+        setSelectedClient('');
+        setNewClientName('');
+        setNewClientEmail('');
+        setAddingNewClient(false);
+        fetchData(); // Refresh the projects list
+      } catch (error) {
+        console.error('Error creating project:', error);
+        alert('Failed to create project. Please try again.');
+      }
+    } else {
+      if (!selectedClient || !newProjectName) return;
+      try {
+        await createProject(selectedClient, newProjectName, 'branding', 'in-progress', newProjectDescription);
+        setShowAddProject(false);
+        setNewProjectName('');
+        setNewProjectDescription('');
+        setSelectedClient('');
+        fetchData(); // Refresh the projects list
+      } catch (error) {
+        console.error('Error creating project:', error);
+        alert('Failed to create project. Please try again.');
+      }
+    }
+  };
 
   if (loading) {
     return <FullPageSpinner message="Loading dashboard..." />;
@@ -201,6 +214,12 @@ export default function Dashboard({ setFetchDataRef }) {
         <div className="text-center mt-5">
           <h3>Welcome to BrandEZ!</h3>
           <p>Get started by adding your first project.</p>
+          <button 
+            className="btn btn-primary mt-3"
+            onClick={() => setShowAddProject(true)}
+          >
+            Add Your First Project
+          </button>
         </div>
       ) : (
         <div className="row">
@@ -264,6 +283,13 @@ export default function Dashboard({ setFetchDataRef }) {
           ))}
         </div>
       )}
+
+      <AddProjectModal
+        show={showAddProject}
+        onHide={() => setShowAddProject(false)}
+        onProjectCreated={fetchData}
+        clients={clients}
+      />
     </div>
   );
 }
