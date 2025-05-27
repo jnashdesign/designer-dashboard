@@ -252,7 +252,7 @@ const Sidebar = ({
             {!isCollapsed ? (
               <>
                 <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
-                <i className="fas fa-plus" /> Add Project
+                <i className="fas fa-folder-plus" /> Add Project
                 </button>
                 <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
                 <i className="fas fa-file-alt" /> New Questionnaire

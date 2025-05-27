@@ -84,11 +84,18 @@ button.btn-secondary {
   color: #576fb5;
   border-radius: 30px;
 }
+button.btn.btn-secondary i:before {
+  color: #576fb5 !important;
+}
 
 button.btn-secondary:hover {
   background: #6883d5;
   border: 2px solid #576fb5;
   color: #fff;
+}
+
+button.btn.btn-secondary:hover i:before {
+  color: #fff !important;
 }
 
 .btn-primary, .btn-outline-primary,
@@ -321,13 +328,8 @@ td.text-truncate {
 }
 .dark-mode .sidebar h5, .dark-mode button.btn-secondary,
 .dark-mode button.btn-outline-secondary,
-.dark-mode button.btn-outline-primary {
-  color: #fff;
-}
-.dark-mode .sidebar-link i, .dark-mode .sidebar-link {
-  color: #fff;
-}
-
+.dark-mode button.btn-outline-primary,
+.dark-mode .sidebar-link i, .dark-mode .sidebar-link,
 .dark-mode .progress-text {
   color: #fff;
 }
@@ -384,6 +386,10 @@ td.text-truncate {
 }
 .brand-guidelines .action-buttons i:before {
   color: #fff;
+}
+
+.color-palette-card .col-md-3.mb-3 {
+  padding: 1px;
 }
 @media (max-width: 991px) {
   .nav-logo {

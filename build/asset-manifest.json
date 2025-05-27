@@ -1,26 +1,34 @@
 {
   "files": {
-    "main.css": "/static/css/main.9ce4889c.css",
-    "main.js": "/static/js/main.c6bc778b.js",
+    "main.css": "/static/css/main.0d62822a.css",
+    "main.js": "/static/js/main.3cbd6bb8.js",
     "static/media/OpenSans.ttf": "/static/media/OpenSans.19ba637387f1d6142f55.ttf",
+    "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2582b0e4bcf85eceead0.ttf",
     "static/media/brandEZ_logo_icon_3D.png": "/static/media/brandEZ_logo_icon_3D.b0f34161a3f20e0d0651.png",
     "static/media/heroIMG.jpg": "/static/media/heroIMG.af07509bd49574ca62e4.jpg",
+    "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.1815e00441357e01619e.ttf",
+    "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.2463b90d9a316e4e5294.woff2",
+    "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.c210719e60948b211a12.woff2",
     "static/media/OpenSans.woff": "/static/media/OpenSans.019e1a030442b2613d7e.woff",
+    "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.914997e1bdfc990d0897.ttf",
     "static/media/icons_guidelines.png": "/static/media/icons_guidelines.cea6524b222d9dbb16f0.png",
     "static/media/icons_pm.png": "/static/media/icons_pm.6f6ade5f45d3c0f7a3cb.png",
     "static/media/icons_briefs.png": "/static/media/icons_briefs.4286c1c059e848657e3d.png",
     "static/media/icons_assets.png": "/static/media/icons_assets.0824797b8d65ff2a80ca.png",
     "static/media/brandEZ_logo_vert.png": "/static/media/brandEZ_logo_vert.fc32a9648ff3dd544aaf.png",
+    "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.89999bdf5d835c012025.woff2",
+    "static/media/fa-v4compatibility.ttf": "/static/media/fa-v4compatibility.da94ef451f4969af06e6.ttf",
+    "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.ea8f94e1d22e0d35ccd4.woff2",
     "static/media/brandEZ_logo_white.svg": "/static/media/brandEZ_logo_white.60988ae2acc22b9878b40178dc9244cb.svg",
     "static/media/brandEZ_logo.svg": "/static/media/brandEZ_logo.8202a25df10a54df5457dd805eabf1b7.svg",
     "static/media/brandEZ_logo_icon.svg": "/static/media/brandEZ_logo_icon.ff704d1426e2d2988f6966649242ff39.svg",
     "static/media/brandEZ_logo_icon_white.svg": "/static/media/brandEZ_logo_icon_white.7c34088eef623fc30eed3d6aa04aa209.svg",
     "index.html": "/index.html",
-    "main.9ce4889c.css.map": "/static/css/main.9ce4889c.css.map",
-    "main.c6bc778b.js.map": "/static/js/main.c6bc778b.js.map"
+    "main.0d62822a.css.map": "/static/css/main.0d62822a.css.map",
+    "main.3cbd6bb8.js.map": "/static/js/main.3cbd6bb8.js.map"
   },
   "entrypoints": [
-    "static/css/main.9ce4889c.css",
-    "static/js/main.c6bc778b.js"
+    "static/css/main.0d62822a.css",
+    "static/js/main.3cbd6bb8.js"
   ]
 }

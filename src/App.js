@@ -24,6 +24,7 @@ import MarketingHome from './components/shared/MarketingHome';
 import BrandGuidelinesBuilder from './pages/BrandGuidelinesBuilder';
 import ViewGuidelines from './pages/ViewGuidelines';
 import UserSettings from "./pages/UserSettings";
+import PublicGuidelines from './pages/PublicGuidelines';
 
 function DashboardWrapper() {
   const fetchDataRef = useRef();
@@ -201,6 +202,10 @@ function App() {
               </RequireAuth>
             }
           />
+
+          <Route path="/public/guidelines/:projectId" element={
+              <PublicGuidelines />
+          } />
           
         </Routes>      
       </Router>

@@ -38,6 +38,7 @@ export default function NavBar({ onMobileMenuClick }) {
     <nav style={{ 
       display: 'flex', 
       position: 'fixed',
+      top: 0,
       width: '100%',
       zIndex: 1000,
       justifyContent: 'space-between', 

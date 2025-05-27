@@ -147,8 +147,13 @@ export default function BrandGuidelinesBuilder() {
         setFormData(prev => ({
           ...prev,
           ...data,
-          colorPalette: (data.colorPalette && Array.isArray(data.colorPalette) && data.colorPalette.length === 4)
-            ? data.colorPalette.map(c => ({ hex: c.hex, name: c.name || '' }))
+          colorPalette: (data.colorPalette && Array.isArray(data.colorPalette))
+            ? data.colorPalette.map(c => {
+                const hex = c.hex || '#000000';
+                const rgb = c.rgb || hexToRgb(hex);
+                const cmyk = c.cmyk || rgbToCmyk(rgb.r, rgb.g, rgb.b);
+                return { hex, name: c.name || '', rgb, cmyk };
+              })
             : prev.colorPalette,
           primaryFontMetadata: data.primaryFontMetadata || prev.primaryFontMetadata,
           secondaryFontMetadata: data.secondaryFontMetadata || prev.secondaryFontMetadata
@@ -283,6 +288,13 @@ export default function BrandGuidelinesBuilder() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const ensureColorFields = (color) => {
+    const hex = color.hex || '#000000';
+    const rgb = color.rgb || hexToRgb(hex);
+    const cmyk = color.cmyk || rgbToCmyk(rgb.r, rgb.g, rgb.b);
+    return { ...color, rgb, cmyk };
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -290,8 +302,11 @@ export default function BrandGuidelinesBuilder() {
       if (!user) throw new Error("No authenticated user");
 
       const guidelinesRef = doc(db, "projects", projectId, "brandGuidelines", "guidelines");
+      const colorPaletteWithFields = formData.colorPalette.map(ensureColorFields);
+      console.log('Saving colorPalette:', colorPaletteWithFields);
       await setDoc(guidelinesRef, {
         ...formData,
+        colorPalette: colorPaletteWithFields,
         primaryFontPreview: previews.primaryFont || formData.primaryFontPreview || '',
         secondaryFontPreview: previews.secondaryFont || formData.secondaryFontPreview || '',
         updatedAt: new Date(),
@@ -338,23 +353,23 @@ export default function BrandGuidelinesBuilder() {
   }
 
   const handleColorChange = (index, hex) => {
+    const rgb = hexToRgb(hex);
+    const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
     setFormData(prev => {
       const updated = [...prev.colorPalette];
-      updated[index] = { hex };
+      updated[index] = { ...updated[index], hex, rgb, cmyk };
       return { ...prev, colorPalette: updated };
     });
   };
 
   const handleHexInput = (index, value) => {
-    // Accept only valid hex
     let hex = value.startsWith('#') ? value : '#' + value;
     if (/^#([0-9A-Fa-f]{3}){1,2}$/.test(hex)) {
       handleColorChange(index, hex);
     } else {
-      // Just update the text, don't update color
       setFormData(prev => {
         const updated = [...prev.colorPalette];
-        updated[index] = { hex: value };
+        updated[index] = { ...updated[index], hex: value };
         return { ...prev, colorPalette: updated };
       });
     }
@@ -363,7 +378,10 @@ export default function BrandGuidelinesBuilder() {
   const handleColorNameChange = (index, name) => {
     setFormData(prev => {
       const updated = [...prev.colorPalette];
-      updated[index] = { ...updated[index], name };
+      const hex = updated[index].hex || '#000000';
+      const rgb = hexToRgb(hex);
+      const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
+      updated[index] = { ...updated[index], name, rgb, cmyk };
       return { ...prev, colorPalette: updated };
     });
   };
@@ -453,21 +471,18 @@ export default function BrandGuidelinesBuilder() {
               <h5 className="card-title">Color Palette</h5>
               <div className="row">
                 {formData.colorPalette.map((color, idx) => {
-                  const rgb = hexToRgb(color.hex || '#000000');
-                  const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
                   return (
                     <div className="col-md-6 mb-3 mt-2 mb-4" key={idx}>
-                    <div className="color-name-input">
-                    <input
-                    type="text"
-                    value={color.name || ''}
-                    onChange={e => handleColorNameChange(idx, e.target.value)}
-                    className="form-control"
-                    style={{ width: 'calc(100% - 12px) !important' }}
-                    placeholder="Color name"
-                  />
-
-                    </div>
+                      <div className="color-name-input">
+                        <input
+                          type="text"
+                          value={color.name || ''}
+                          onChange={e => handleColorNameChange(idx, e.target.value)}
+                          className="form-control"
+                          style={{ width: 'calc(100% - 12px) !important' }}
+                          placeholder="Color name"
+                        />
+                      </div>
                       <div className="d-flex align-items-center mb-2">
                         <input
                           type="color"
@@ -485,8 +500,18 @@ export default function BrandGuidelinesBuilder() {
                         />
                       </div>
                       <div style={{ fontSize: '0.95em', color: '#555' }}>
-                        <div><strong>RGB:</strong> {rgb.r}, {rgb.g}, {rgb.b}</div>
-                        <div><strong>CMYK:</strong> {cmyk.c}, {cmyk.m}, {cmyk.y}, {cmyk.k}</div>
+                        <input
+                          type="text"
+                          value={`RGB: ${color.rgb?.r ?? ''}, ${color.rgb?.g ?? ''}, ${color.rgb?.b ?? ''}`}
+                          className="form-control mb-1"
+                          disabled
+                        />
+                        <input
+                          type="text"
+                          value={`CMYK: ${color.cmyk?.c ?? ''}, ${color.cmyk?.m ?? ''}, ${color.cmyk?.y ?? ''}, ${color.cmyk?.k ?? ''}`}
+                          className="form-control"
+                          disabled
+                        />
                       </div>
                     </div>
                   );
