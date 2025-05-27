@@ -17,8 +17,13 @@ export function ThemeProvider({ children }) {
     setIsDarkMode(prev => !prev);
   };
 
+  // Allow setting theme directly (for loading from Firestore)
+  const setTheme = (theme) => {
+    setIsDarkMode(theme === 'dark');
+  };
+
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar';
-import ThemeToggle from '../ThemeToggle';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../../firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
@@ -63,7 +62,6 @@ const Layout = ({ children, onProjectCreated }) => {
             userRole={userRole}
           />
         )}
-        <ThemeToggle />
         <main className={getMainContentClass()}>
           {children}
         </main>

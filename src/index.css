@@ -282,6 +282,35 @@ td.text-truncate {
   display: block;
 }
 
+/* Custom Dark Mode Toggle */
+.custom-toggle {
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  background: #e0e0e0;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-block;
+  vertical-align: middle;
+}
+.custom-toggle.on {
+  background: #4e73df;
+}
+.custom-toggle .toggle-circle {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  transition: left 0.2s;
+}
+.custom-toggle.on .toggle-circle {
+  left: 23px;
+} 
 .dark-mode {
   background-color: #1a1c23
 }
@@ -290,7 +319,11 @@ td.text-truncate {
   background-color: #373c4c;
   color: #fff;
 }
-
+.dark-mode .sidebar h5, .dark-mode button.btn-secondary,
+.dark-mode button.btn-outline-secondary,
+.dark-mode button.btn-outline-primary {
+  color: #fff;
+}
 .dark-mode .sidebar-link i, .dark-mode .sidebar-link {
   color: #fff;
 }

@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { updatePassword } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Cropper from 'react-easy-crop';
+import { useTheme } from '../context/ThemeContext';
 
 // Correct cropping function using croppedAreaPixels
 function getCroppedImg(imageSrc, croppedAreaPixels) {
@@ -55,6 +56,9 @@ export default function UserSettings() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
 
+  const { isDarkMode, toggleDarkMode } = useTheme();
+  const [themeLoading, setThemeLoading] = useState(false);
+
   useEffect(() => {
     const fetchUser = async () => {
       const user = auth.currentUser;
@@ -64,10 +68,13 @@ export default function UserSettings() {
       if (userSnap.exists()) {
         setName(userSnap.data().name || '');
         setPhotoURL(userSnap.data().photoURL || '');
+        // Set theme from Firestore if present
+        if (userSnap.data().theme === 'dark' && !isDarkMode) toggleDarkMode();
+        if (userSnap.data().theme === 'light' && isDarkMode) toggleDarkMode();
       }
     };
     fetchUser();
-  }, []);
+  }, []); // Only run on mount
 
   const handleNameUpdate = async (e) => {
     e.preventDefault();
@@ -158,6 +165,23 @@ export default function UserSettings() {
     setImageSrc(null);
   };
 
+  const handleThemeChange = async () => {
+    setThemeLoading(true);
+    const user = auth.currentUser;
+    if (!user) return;
+    const userRef = doc(db, 'users', user.uid);
+    const newTheme = !isDarkMode ? 'dark' : 'light';
+    try {
+      await updateDoc(userRef, { theme: newTheme });
+      toggleDarkMode();
+      setStatus('Theme updated!');
+    } catch (err) {
+      setStatus('Failed to update theme.');
+    } finally {
+      setThemeLoading(false);
+    }
+  };
+
   return (
     <div className="container p-4">
       <h2 className="mb-4">Settings</h2>
@@ -190,7 +214,7 @@ export default function UserSettings() {
           {uploadError && <div className="text-danger mt-2">{uploadError}</div>}
         </div>
         <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? 'Saving...' : 'Update Name'}
+          {loading ? 'Saving...' : 'Update Name and Photo'}
         </button>
       </form>
       <form onSubmit={handlePasswordUpdate}>
@@ -218,6 +242,24 @@ export default function UserSettings() {
           {loading ? 'Saving...' : 'Update Password'}
         </button>
       </form>
+      <div className="mb-4 col-12 col-md-6 mt-4">
+      <label className="form-label mr-3" htmlFor="themeSwitch">Dark Mode</label>
+      <div
+        className={`custom-toggle${isDarkMode ? ' on' : ''}`}
+        id="themeSwitch"
+        tabIndex={0}
+        role="button"
+        aria-pressed={isDarkMode}
+        onClick={themeLoading ? undefined : handleThemeChange}
+        onKeyDown={e => {
+          if (!themeLoading && (e.key === ' ' || e.key === 'Enter')) handleThemeChange();
+        }}
+        style={{ outline: 'none', }}
+      >
+        <div className="toggle-circle"></div>
+      </div>
+    </div>
+
       <div className="mt-4 text-muted">
         <small>Email address cannot be changed. Contact support if you need help.</small>
       </div>
@@ -250,7 +292,7 @@ export default function UserSettings() {
               />
             </div>
             <div className="d-flex gap-2 mt-3">
-              <button className="btn btn-primary" onClick={handleCropSave} disabled={uploading}>
+              <button className="btn btn-primary mr-3" onClick={handleCropSave} disabled={uploading}>
                 {uploading ? 'Uploading...' : 'Save'}
               </button>
               <button className="btn btn-secondary" onClick={handleCropCancel} disabled={uploading}>
