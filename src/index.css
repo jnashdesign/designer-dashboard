@@ -79,8 +79,16 @@ button:hover {
 }
 
 button.btn-secondary {
-  background: #6c757d;
+  background: transparent;
+  border: 2px solid #576fb5;
+  color: #576fb5;
   border-radius: 30px;
+}
+
+button.btn-secondary:hover {
+  background: #6883d5;
+  border: 2px solid #576fb5;
+  color: #fff;
 }
 
 .btn-primary, .btn-outline-primary,
@@ -154,7 +162,7 @@ button.btn.btn-light {
 }
 
 button.btn.btn-light:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: 576fb5
 }
 
 .action-buttons {

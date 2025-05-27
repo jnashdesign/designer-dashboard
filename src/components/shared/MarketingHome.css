@@ -104,6 +104,11 @@
 .contact-form-container .card {
   margin: 20px !important;
 }
+.contact-form-container form {
+  max-width: 500px;
+  display: block;
+  margin: 0 auto;
+}
 .cta-section {
   padding: 0 5rem;
 } 

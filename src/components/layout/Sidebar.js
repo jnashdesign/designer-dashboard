@@ -252,17 +252,14 @@ const Sidebar = ({
             {!isCollapsed ? (
               <>
                 <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
-                  Add Project
+                <i className="fas fa-plus" /> Add Project
                 </button>
                 <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
-                  New Questionnaire
+                <i className="fas fa-file-alt" /> New Questionnaire
                 </button>
               </>
             ) : (
               <div className="collapsed-buttons">
-                <button className="btn btn-sm btn-outline-primary" title="Add Client" onClick={() => setShowAddClient(true)}>
-                  <i className="fas fa-user-plus" />
-                </button>
                 <button className="btn btn-sm btn-outline-primary" title="Add Project" onClick={() => setShowAddProject(true)}>
                   <i className="fas fa-plus" />
                 </button>

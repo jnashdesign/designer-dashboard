@@ -14,6 +14,7 @@ export default function Dashboard({ setFetchDataRef }) {
   const [loading, setLoading] = useState(true);
   const [expandedBriefs, setExpandedBriefs] = useState({});
   const [guidelines, setGuidelines] = useState({});
+  const [emailStatus, setEmailStatus] = useState(null);
   const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
@@ -144,6 +145,50 @@ export default function Dashboard({ setFetchDataRef }) {
       console.error('Error deleting project:', error);
     }
   };
+
+  // const handleSendTestEmail = async () => {
+  //   setEmailStatus(null);
+  //   try {
+  //     const res = await fetch('/api/send-client-email', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         to: 'jnashdesign@gmail.com', // <-- replace with your test email
+  //         subject: 'Test Email from BrandEZ',
+  //         message: 'This is a test email sent from the BrandEZ app.'
+  //       })
+  //     });
+  //     const data = await res.json();
+  //     console.log(data);
+  //     if (res.ok) {
+  //       setEmailStatus('success');
+  //       alert('Test email sent successfully!');
+  //     } else {
+  //       setEmailStatus('error');
+  //       alert('Failed to send test email: ' + (data.error || 'Unknown error'));
+  //     }
+  //   } catch (err) {
+  //     setEmailStatus('error');
+  //     alert('Failed to send test email: ' + err.message);
+  //   }
+  // };
+
+  // const sendEmail = async () => {
+  //   const functions = getFunctions();
+  //   const sendEmailFn = httpsCallable(functions, 'sendEmail');
+  
+  //   try {
+  //     const result = await sendEmailFn({
+  //       to: "jnashdesign@gmail.com",
+  //       subject: "Test Email",
+  //       text: "This is a test email.",
+  //       html: "<p>This is a test email.</p>"
+  //     });
+  //     console.log("Email sent:", result.data);
+  //   } catch (error) {
+  //     console.error("Error sending email:", error);
+  //   }
+  // };
 
   if (loading) {
     return <FullPageSpinner message="Loading dashboard..." />;
