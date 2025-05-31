@@ -145,18 +145,11 @@ const AssetRepository = () => {
             />
           )}
           <div className="table-responsive mt-4">
-            <table className="table">
+            <table className="table asset-table">
               <thead>
                 <tr>
-                  <th style={{ width: '80px' }}></th>
                   <th onClick={() => sortFiles('name')} style={{ cursor: 'pointer' }}>
                     File Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th onClick={() => sortFiles('fileType')} style={{ cursor: 'pointer' }}>
-                    Asset Category {sortConfig.key === 'fileType' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
-                  </th>
-                  <th onClick={() => sortFiles('uploadedAt')} style={{ cursor: 'pointer' }}>
-                    Upload Date {sortConfig.key === 'uploadedAt' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
                   </th>
                   <th style={{ width: '50px' }}></th>
                 </tr>
@@ -171,14 +164,7 @@ const AssetRepository = () => {
                 ) : (
                   getSortedFiles().map((file, index) => (
                     <tr key={index}>
-                      <td>
-                        <FilePreview file={file} width={50} />
-                      </td>
-                      <td className="align-middle">{file.name}</td>
-                      <td className="align-middle">{file.fileType}</td>
-                      <td className="align-middle">
-                        {new Date(file.uploadedAt).toLocaleDateString()}
-                      </td>
+                      <td className="align-middle mr-2"><FilePreview file={file} width={50} /><div className="fileDetails">{file.name}<br/><small>{new Date(file.uploadedAt).toLocaleDateString()} | {file.fileType}</small></div></td>
                       <td className="align-middle text-end">
                         {userRole !== 'client' && (
                           <button

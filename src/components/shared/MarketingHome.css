@@ -29,14 +29,11 @@
   background: #fff;
 }
 .feature-card {
-  border: none;
   transition: transform 0.15s, box-shadow 0.15s;
   cursor: pointer;
-  border-left: 1px solid #eee !important;
+  border: 1px solid rgba(0,0,0,0.1);
 }
-.row .col-12:first-child .feature-card:first-child {
-  border-left: none !important;
-}
+
 .feature-card:hover {
   transform: translateY(-4px) scale(1.03);
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
@@ -85,7 +82,7 @@
   color: #1cc88a;
 }
 .pricing-card h5.card-title {
-  background-color: #444;
+  background-color: rgba(0,0,0,0.75);
   padding: 20px;
   color: #fff;
   margin: -20px;
@@ -110,13 +107,17 @@
   margin: 0 auto;
 }
 .cta-section {
-  padding: 0 5rem;
+  padding: 0 2rem;
 } 
 /* .container.full {
   padding: 0 !important;
 } */
 .features .container.full .row .col-12 {
   padding: 2px;
+}
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4, .dark-mode h5, .dark-mode h6, 
+.dark-mode .h1, .dark-mode .h2, .dark-mode .h3, .dark-mode .h4, .dark-mode .h5, .dark-mode .h6 {
+  color: #fff;
 }
 
 .dark-mode .features {
@@ -129,7 +130,6 @@
 }
 .dark-mode .feature-card {
   background: var(--bg-card) !important;
-  border-color: var(--border-color);
 }
 .dark-mode .feature-card .text-primary {
   color: #fff !important;
@@ -148,11 +148,7 @@
     margin: 0 auto;
 }
 }
-@media (max-width: 990px) {
-  body:not(.isLoggedIn) .marketing-home {
-    margin-left: -20px;
-  }
-}
+
 @media (max-width: 767px) {
   .reverse-on-mobile {
     flex-direction: column-reverse;
@@ -161,7 +157,6 @@
     margin: 5px 20px !important;
   }
   .features .row .col-12 .feature-card {
-    border: 1px solid #eee;
     width: calc(100% - 40px) !important;
   }
   .features {
@@ -179,20 +174,14 @@
 
   .feature-card {
     margin-bottom: -2px;
-    padding: 0 !important;
+    padding: 10px !important;
   }
   .feature-card i, .feature-card .feature-card-content {
-    display: table-cell;
-    vertical-align: middle;
     text-align: center;
     padding: 10px;
   }
   .feature-card i {
-    background: #444;
-    padding: 40px;
-    color: #fff !important;
-  }
-  .feature-card:hover i {
-    background-color: #576fb5;
+    padding: 20px 0 0 0 !important;
+    margin: 0 !important;
   }
 } 

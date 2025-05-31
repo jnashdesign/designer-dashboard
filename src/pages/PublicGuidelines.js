@@ -9,46 +9,44 @@ export default function PublicGuidelines() {
   const { projectId } = useParams();
   const [loading, setLoading] = useState(true);
   const [guidelines, setGuidelines] = useState(null);
-  const [error, setError] = useState(null);
+  const [projectName, setProjectName] = useState('');
 
   useEffect(() => {
-    loadGuidelines();
-  }, [projectId]);
+    const fetchData = async () => {
+      try {
+        // Fetch project name
+        const projectRef = doc(db, "projects", projectId);
+        const projectDoc = await getDoc(projectRef);
+        if (projectDoc.exists()) {
+          setProjectName(projectDoc.data().name || 'Untitled Project');
+        }
 
-  const loadGuidelines = async () => {
-    try {
-      const guidelinesRef = doc(db, "projects", projectId, "brandGuidelines", "guidelines");
-      const guidelinesDoc = await getDoc(guidelinesRef);
-
-      if (guidelinesDoc.exists()) {
-        setGuidelines(guidelinesDoc.data());
-      } else {
-        setError("No guidelines found for this project");
+        // Fetch guidelines
+        const guidelinesRef = doc(db, "projects", projectId, "brandGuidelines", "guidelines");
+        const guidelinesDoc = await getDoc(guidelinesRef);
+        if (guidelinesDoc.exists()) {
+          setGuidelines(guidelinesDoc.data());
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error loading guidelines:", error);
-      setError("Failed to load guidelines");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchData();
+  }, [projectId]);
 
   if (loading) {
     return <LoadingSpinner message="Loading guidelines..." />;
   }
 
-  if (error) {
-    return (
-      <div className="container py-4">
-        <div className="alert alert-danger">{error}</div>
-      </div>
-    );
-  }
-
   if (!guidelines) {
     return (
-      <div className="container py-4">
-        <div className="alert alert-info">No guidelines found for this project.</div>
+      <div className="container p-4" style={{ marginTop: '100px' }}>
+        <div className="alert alert-warning">
+          No brand guidelines found for this project.
+        </div>
       </div>
     );
   }
@@ -73,11 +71,10 @@ export default function PublicGuidelines() {
           </Link>
         </div>
       </nav>
-      <div className="container p-4" style={{ marginTop: '120px', marginLeft: '-40px', marginRight: '-40px', width: 'calc(100% + 80px)' }}>
-        <div className="container py-4 brand-guidelines">
-          <h2>Brand Guidelines</h2>
+      <div className="container p-4" style={{ marginTop: '100px' }}>
+        <div className="brand-guidelines">
+          <h2>{projectName} | Brand&nbsp;Guidelines</h2>
           <div className="row">
-            <div className="col-md-12">
               {/* Primary Logo */}
               {guidelines.logoUrl && (
                 <div className="card mb-4 logo-card">
@@ -119,7 +116,7 @@ export default function PublicGuidelines() {
                           <div style={{ height: '100px', backgroundColor: color.hex, border: '1px solid #ccc' }}></div>
                           <h6 className="text-muted mt-2">{color.name || `Color ${index + 1}`}</h6>
                           {color.hex && (
-                            <div style={{ fontSize: '0.95em', color: '#555' }}>
+                            <div style={{ fontSize: '0.95em' }}>
                             <div><strong>HEX:</strong> {color.hex}</div>
                             <div><strong>RGB:</strong> {color.rgb.r}, {color.rgb.g}, {color.rgb.b}</div>
                               <div><strong>CMYK:</strong> {color.cmyk.c}, {color.cmyk.m}, {color.cmyk.y}, {color.cmyk.k}</div>
@@ -211,6 +208,5 @@ export default function PublicGuidelines() {
           </div>
         </div>
       </div>
-    </div>
   );
 } 

@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from './context/ThemeContext';
-import '../src/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Dashboard from "./components/dashboard/Dashboard";
 import WizardRunner from "./components/wizards/WizardRunner";

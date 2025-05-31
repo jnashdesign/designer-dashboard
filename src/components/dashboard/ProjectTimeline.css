@@ -1,0 +1,38 @@
+.project-timeline {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  margin: 20px 0;
+  padding: 0 10px;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #e0e0e0;
+  transform: translateY(-50%);
+}
+
+.timeline-dot {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.timeline-dot.completed {
+  background-color: #4e73df;
+  box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.2);
+}
+
+.timeline-dot:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+} 

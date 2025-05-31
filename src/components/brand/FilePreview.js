@@ -36,7 +36,7 @@ const FilePreview = ({ file, width = 50 }) => {
     (file.type !== 'image/svg+xml');
 
   return (
-    <div className="file-preview">
+    <div className="file-preview" style={{display: 'inline'}}>
       {isPreviewable ? (
         <a href={file.url} target="_blank" rel="noopener noreferrer">
         <img 
@@ -54,7 +54,7 @@ const FilePreview = ({ file, width = 50 }) => {
         <div className="file-icon" style={{
           width: `${width}px`,
           height: `${width}px`,
-          display: 'flex',
+          display: 'inline',
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#f8f9fa',

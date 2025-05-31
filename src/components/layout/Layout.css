@@ -1,6 +1,7 @@
 .main-content {
-  padding: 85px 0 0;
-  margin-left: 60px;
+  padding: 35px 0 0;
+  margin: 60px auto;
+  max-width: 100% !important;
   transition: margin-left 0.3s ease;
 }
 
@@ -15,7 +16,9 @@
 nav button.btn.btn-outline-secondary {
   margin-top: -5px;
 }
-
+.modal {
+  top: 80px;
+}
 @media (max-width: 991px) {
   .main-content {
     margin-left: 20px;

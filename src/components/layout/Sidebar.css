@@ -139,6 +139,9 @@
   .main-content {
     margin-left: 250px;
     transition: margin-left 0.3s ease;
+    min-height: calc(100vh - 87px);
+    position: relative;
+    z-index: 1;
   }
 
   .main-content.closed-sidebar {

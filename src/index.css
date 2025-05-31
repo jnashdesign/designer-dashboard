@@ -28,11 +28,10 @@ select {
 }
 
 .container {
-  max-width: 960px;
   width: calc(100% - 40px);
+  max-width: 900px !important;
   margin: 20px auto 0;
   padding: 2rem;
-  background: #fff;
   border-radius: 8px;
 }
 
@@ -220,7 +219,7 @@ button.btn-close {
   color: #fff;
   border: none;
   border-radius: 50%;
-  width: 30px;
+  width: 12px;
   height: 30px;
 }
 
@@ -247,6 +246,9 @@ button.mobile-menu-toggle:hover i::before {
   line-height: 1em;
 }
 
+.dark-bg {
+  background-color: rgba(0,0,0,0.3);
+}
 .alert {
   padding: 1rem 4rem 1rem 1.25rem;
 }
@@ -318,12 +320,16 @@ td.text-truncate {
 .custom-toggle.on .toggle-circle {
   left: 23px;
 } 
+
+.sidebar-header.text-center.py-4 {
+  margin-top: -15px !important;
+}
+
 .dark-mode {
   background-color: #1a1c23
 }
 
 .dark-mode .container {
-  background-color: #373c4c;
   color: #fff;
 }
 .dark-mode .sidebar h5, .dark-mode button.btn-secondary,
@@ -332,6 +338,10 @@ td.text-truncate {
 .dark-mode .sidebar-link i, .dark-mode .sidebar-link,
 .dark-mode .progress-text {
   color: #fff;
+}
+
+input.form-control[disabled] {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .chooser-options button {
@@ -372,25 +382,49 @@ td.text-truncate {
 .typography-card label {
   margin-bottom: 20px;
   font-size: 1.5em;
-  margin-top: 40px;
   display: block;
   padding-top: 20px;
 }
 .typography-card .secondary-font {
   border-top: 2px solid #aaa;
-  margin-top: 60px;
 }
 .typography-card .typography-weight {
   margin-top: -10px;
   margin-bottom: 20px;
 }
+.brand-guidelines .logo-card img {
+  max-width: 700px;
+}
+
 .brand-guidelines .action-buttons i:before {
   color: #fff;
 }
-
-.color-palette-card .col-md-3.mb-3 {
-  padding: 1px;
+.brand-guidelines .card {
+  width: 100%;
 }
+
+.brand-guidelines .card-title {
+  margin-bottom: .75rem;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+.color-palette-card .col-md-3.mb-3 {
+  padding: 10px;
+}
+.asset-table td {
+  position: relative;
+  border-bottom: 1px solid #dfdfdf !important;
+}
+.asset-table td .fileDetails {
+  position: absolute;
+  top: 10px;
+  left: 75px;
+}
+
+.dark-mode button.btn.btn-secondary i:before {
+  color: #fff !important;
+}
+
 @media (max-width: 991px) {
   .nav-logo {
     margin-left: 50px;
@@ -403,12 +437,13 @@ td.text-truncate {
   }
   .container {
     width: 100%;
+    margin-left: -10px !important;
   }
   .all-assets .table thead th {
     display: none;
   }
 
-  .all-assets .table td {
+  /* .all-assets .table td {
     display: table;
     border: none;
     height: auto;
@@ -427,7 +462,7 @@ td.text-truncate {
     padding: 5px;
     font-size: 0.9em;
     border-radius: 5px;
-  }
+  } */
 
   .brand-guidelines .color-name-input input[type="text"] {
     width: calc(100% - 12px) !important;

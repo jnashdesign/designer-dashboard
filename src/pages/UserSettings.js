@@ -201,14 +201,14 @@ export default function UserSettings() {
           <label className="form-label">Profile Photo</label>
           <div className="d-flex align-items-center gap-3">
             {photoURL && (
-              <img src={photoURL} alt="Profile" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '1px solid #ccc' }} />
+              <img className="mr-3"src={photoURL} alt="Profile" style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '1px solid #ccc' }} />
             )}
             <input
               type="file"
               accept="image/*"
               onChange={handlePhotoChange}
               disabled={uploading}
-              style={{ maxWidth: 200 }}
+              style={{ maxWidth: 260 }}
             />
           </div>
           {uploadError && <div className="text-danger mt-2">{uploadError}</div>}

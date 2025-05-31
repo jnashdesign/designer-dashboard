@@ -10,14 +10,26 @@ export default function AddProjectModal({ show, onHide, onProjectCreated, client
   const [newClientName, setNewClientName] = useState('');
   const [newClientEmail, setNewClientEmail] = useState('');
   const [isAddingNewClient, setIsAddingNewClient] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddProject = async (e) => {
     e.preventDefault();
-    if (isAddingNewClient) {
-      if (!newClientName || !newClientEmail || !newProjectName) return;
-      try {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      let clientId = selectedClient;
+
+      if (isAddingNewClient) {
+        if (!newClientName || !newClientEmail || !newProjectName) {
+          alert('Please fill in all required fields');
+          setIsSubmitting(false);
+          return;
+        }
+
         // Create the client first
-        const clientRef = await createClient(newClientName, newClientEmail);
+        await createClient(newClientName, newClientEmail);
+        
         // Fetch the new client ID
         const user = auth.currentUser;
         const clientQuery = query(
@@ -26,27 +38,29 @@ export default function AddProjectModal({ show, onHide, onProjectCreated, client
           where('email', '==', newClientEmail)
         );
         const snapshot = await getDocs(clientQuery);
-        let clientId = '';
-        if (!snapshot.empty) {
-          clientId = snapshot.docs[0].id;
+        
+        if (snapshot.empty) {
+          throw new Error('Failed to create client');
         }
-        await createProject(clientId, newProjectName, 'branding', 'in-progress', newProjectDescription);
-        resetForm();
-        if (onProjectCreated) onProjectCreated();
-      } catch (error) {
-        console.error('Error creating project:', error);
-        alert('Failed to create project. Please try again.');
+        
+        clientId = snapshot.docs[0].id;
+      } else {
+        if (!selectedClient || !newProjectName) {
+          alert('Please fill in all required fields');
+          setIsSubmitting(false);
+          return;
+        }
       }
-    } else {
-      if (!selectedClient || !newProjectName) return;
-      try {
-        await createProject(selectedClient, newProjectName, 'branding', 'in-progress', newProjectDescription);
-        resetForm();
-        if (onProjectCreated) onProjectCreated();
-      } catch (error) {
-        console.error('Error creating project:', error);
-        alert('Failed to create project. Please try again.');
-      }
+
+      // Create the project with the client ID
+      await createProject(clientId, newProjectName, 'branding', 'in-progress', newProjectDescription);
+      resetForm();
+      if (onProjectCreated) onProjectCreated();
+    } catch (error) {
+      console.error('Error creating project:', error);
+      alert('Failed to create project. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -106,7 +120,7 @@ export default function AddProjectModal({ show, onHide, onProjectCreated, client
                       setIsAddingNewClient(false);
                     }
                   }}
-                  required
+                  required={!isAddingNewClient}
                 >
                   <option value="">Select a client</option>
                   {clients.map(client => (
@@ -146,8 +160,12 @@ export default function AddProjectModal({ show, onHide, onProjectCreated, client
               <button type="button" className="btn btn-secondary" onClick={resetForm}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
-                Add Project
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Creating...' : 'Add Project'}
               </button>
             </div>
           </form>

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { auth, db } from '../../firebase/config';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { createClient, createProject, createCreativeBrief } from '../../firebase/saveFunctions';
 import AddProjectModal from '../projects/AddProjectModal';
+import { Modal } from 'react-bootstrap';
 import './Sidebar.css';
 
 const DefaultAvatar = ({ size = 64 }) => (
@@ -42,6 +43,7 @@ const Sidebar = ({
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const sidebarRef = useRef(null);
 
   // User info
   const [userName, setUserName] = useState('');
@@ -80,6 +82,25 @@ const Sidebar = ({
       window.removeEventListener('profilePhotoUpdated', handler);
     };
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Only handle desktop clicks (not mobile)
+      if (window.innerWidth >= 992) {
+        // Check if we're clicking on the main content area
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent && mainContent.contains(event.target)) {
+          setIsCollapsed(true);
+          if (onCollapse) onCollapse(true);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onCollapse]);
 
   // Designer-only: fetch clients and templates
   useEffect(() => {
@@ -203,7 +224,10 @@ const Sidebar = ({
         <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`} />
       </button>
       {/* Sidebar */}
-      <div className={`sidebar${isCollapsed ? ' collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+      <div 
+        ref={sidebarRef}
+        className={`sidebar${isCollapsed ? ' collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}
+      >
         {/* Toggle Button */}
         <button
           className="sidebar-toggle d-none d-lg-block"
@@ -252,18 +276,12 @@ const Sidebar = ({
           <div className="sidebar-buttons">
             {!isCollapsed ? (
               <>
-                <button className="btn btn-secondary" onClick={() => setShowAddProject(true)}>
-                  <i className="fas fa-folder-plus" /> Add Project
-                </button>
                 <button className="btn btn-primary" onClick={() => setShowNewQuestionnaire(true)}>
                   <i className="fas fa-file-alt" /> New Questionnaire
                 </button>
               </>
             ) : (
               <div className="collapsed-buttons">
-                <button className="btn btn-sm btn-outline-primary" title="Add Project" onClick={() => setShowAddProject(true)}>
-                  <i className="fas fa-plus" />
-                </button>
                 <button className="btn btn-sm btn-primary" title="Create New Questionnaire" onClick={() => setShowNewQuestionnaire(true)}>
                   <i className="fas fa-file-alt" />
                 </button>
@@ -279,6 +297,56 @@ const Sidebar = ({
         onProjectCreated={onProjectCreated}
         clients={clients}
       />
+
+      {/* New Questionnaire Modal */}
+      <Modal show={showNewQuestionnaire} onHide={() => setShowNewQuestionnaire(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create New Questionnaire</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-4">
+            <h5>What type of questionnaire do you want to create?</h5>
+            <div className="d-grid gap-2">
+              <button 
+                className="btn btn-outline-primary"
+                onClick={() => {
+                  setShowNewQuestionnaire(false);
+                  navigate('/choose-template/website');
+                }}
+              >
+                Website Questionnaire
+              </button>
+              <button 
+                className="btn btn-outline-primary"
+                onClick={() => {
+                  setShowNewQuestionnaire(false);
+                  navigate('/choose-template/app');
+                }}
+              >
+                App Questionnaire
+              </button>
+              <button 
+                className="btn btn-outline-primary"
+                onClick={() => {
+                  setShowNewQuestionnaire(false);
+                  navigate('/choose-template/branding');
+                }}
+              >
+                Branding Questionnaire
+              </button>
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button 
+              type="button" 
+              className="btn btn-secondary" 
+              onClick={() => setShowNewQuestionnaire(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

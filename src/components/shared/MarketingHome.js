@@ -98,9 +98,9 @@ export default function MarketingHome() {
       {/* Hero Section */}
       <section className="hero text-center bg-light">
         <div className="container">
-          <h1 className="display-4 mb-3">
-            Effortlessly Manage Branding&nbsp;Projects
-          </h1>
+          <h2 className="display-4 mb-3">
+            Effortless Branding&nbsp;Project Management
+          </h2>
           <p className="lead mb-4" style={{ lineHeight: "1.5" }}>
             BrandEZ helps you manage every aspect of your client projects—from
             creative briefs to brand guidelines, asset delivery, and more—in one
@@ -115,7 +115,7 @@ export default function MarketingHome() {
       </section>
 
       {/* Designer-Focused Marketing Section */}
-      <section className="designer-marketing bg-white py-5">
+      <section className="designer-marketing py-5">
         <div className="container">
           <h1
             className="text-center mb-4"
@@ -126,8 +126,8 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      <div className="text-center mb-4 pt-5 pb-3 cta-section">
-        <h4>Ready to level up your branding workflow?</h4>
+      <div className="text-center pt-5 pb-5 cta-section dark-bg">
+        <h4>Ready to level up your branding&nbsp;workflow?</h4>
         <Link to="/signup" className="btn btn-lg btn-primary mt-2">
           Try BrandEZ Free
         </Link>
@@ -142,7 +142,7 @@ export default function MarketingHome() {
           <div className="row">
             {features.map((f, i) => (
               <div className="col-12 col-md-3 mb-4 text-center" key={i}>
-                <div className="feature-card p-4 h-100 bg-white rounded">
+                <div className="feature-card p-4 h-100 rounded">
                   <i className={`${f.icon} fa-2x mb-4 text-primar`} />
                   <div className="feature-card-content">
                     <h5>{f.title}</h5>

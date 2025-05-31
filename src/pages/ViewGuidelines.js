@@ -102,7 +102,7 @@ export default function ViewGuidelines() {
           View Public Guidelines
         </button>
       </div>
-      <div className="container py-4 brand-guidelines">
+      <div className="brand-guidelines">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2>Brand Guidelines</h2>
           <div className="d-flex gap-2 action-buttons">
@@ -123,7 +123,6 @@ export default function ViewGuidelines() {
         </div>
 
         <div className="row">
-          <div className="col-md-12">
             {/* Primary Logo */}
             {guidelines.logoUrl && (
               <div className="card mb-4 logo-card">
@@ -175,7 +174,7 @@ export default function ViewGuidelines() {
                         <div style={{ height: '100px', backgroundColor: color.hex, border: '1px solid #ccc' }}></div>
                         <h6 className="text-muted mt-2">{color.name || `Color ${index + 1}`}</h6>
                         {color.hex && (
-                          <div style={{ fontSize: '0.95em', color: '#555' }}>
+                          <div style={{ fontSize: '0.95em' }}>
                           <div><strong>HEX:</strong> {color.hex}</div>
                           <div><strong>RGB:</strong> {color.rgb.r}, {color.rgb.g}, {color.rgb.b}</div>
                             <div><strong>CMYK:</strong> {color.cmyk.c}, {color.cmyk.m}, {color.cmyk.y}, {color.cmyk.k}</div>
@@ -271,7 +270,6 @@ export default function ViewGuidelines() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 } 
